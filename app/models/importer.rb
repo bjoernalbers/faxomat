@@ -21,12 +21,14 @@ class Importer
 
   # @returns [Hash]
   def clean_attributes
-    attributes.slice(
+    attr = attributes
+    attr['path'] = attr['file'] if attr['file']
+    attr.slice(
       'patient_first_name',
       'patient_last_name',
       'patient_date_of_birth',
       'phone',
-      'file')
+      'path')
   end
 
   # @returns [Hash]

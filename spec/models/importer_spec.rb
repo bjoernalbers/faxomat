@@ -54,10 +54,15 @@ describe Importer do
       [ 'patient_first_name',
         'patient_last_name',
         'patient_date_of_birth',
-        'phone',
-        'file'].each do |key|
+        'phone'].each do |key|
         expect(cleaned).to have_key(key)
       end
+    end
+
+    it 'renames "file" to "path"' do
+      cleaned = importer.send(:clean_attributes)
+      expect(cleaned).to have_key('path')
+      expect(cleaned).to_not have_key('file')
     end
 
     it 'drops unknown attributes' do
