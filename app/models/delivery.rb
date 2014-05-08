@@ -15,7 +15,7 @@ class Delivery < ActiveRecord::Base
   def run!
     unless print_job_id
       fail 'print job could not be delivered' unless print_job.print
-      update!(print_job_id: print_job.job_id)
+      self.print_job_id = print_job.job_id
     end
   end
 

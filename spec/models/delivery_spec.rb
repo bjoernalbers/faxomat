@@ -29,6 +29,9 @@ describe Delivery do
     end
 
     it 'can not be saved in the database' do
+      # NOTE: Delivery#run! would set the print_job_id in the `before_create`
+      # callback so we better disable it.
+      delivery.stub(:run!)
       expect { delivery.save(validate: false) }.to raise_error
     end
   end
@@ -100,21 +103,17 @@ describe Delivery do
     end
 
     context 'without print_job_id' do
-      before do
-        delivery.stub(:print_job_id).and_return(nil)
-        delivery.stub(:update!)
-      end
+      let(:delivery) { build(:delivery, print_job_id: nil) }
 
       it 'delivers the print job' do
         delivery.send(:run!)
         expect(print_job).to have_received(:print)
       end
 
-      it 'updates the print_job_id with the print job id' do
+      it 'sets the print_job_id' do
         expect(delivery.print_job_id).to be_nil
         delivery.send(:run!)
-        expect(delivery).to have_received(:update!).
-          with(print_job_id: print_job.job_id)
+        expect(delivery.print_job_id).to eq(print_job.job_id)
       end
 
       it 'fails on printer errors' do
@@ -124,19 +123,11 @@ describe Delivery do
     end
 
     context 'with print_job_id' do
-      before do
-        delivery.stub(:print_job_id).and_return(23)
-        delivery.stub(:update!)
-      end
+      let(:delivery) { build(:delivery, print_job_id: 23) }
 
       it 'does not deliver again' do
         delivery.send(:run!)
         expect(print_job).to_not have_received(:print)
-      end
-
-      it 'does not update the print_job_id' do
-        delivery.send(:run!)
-        expect(delivery).to_not have_received(:update!)
       end
     end
   end
