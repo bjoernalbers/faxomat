@@ -49,6 +49,45 @@ describe Delivery do
     }
   end
 
+  describe '#update_print_job_states' do
+    let(:print_jobs) { {} }
+
+    before do
+      Cups.stub(:all_jobs).and_return(print_jobs)
+    end
+
+    it 'updates the state for each matching delivery' do
+      delivery = create(:delivery, print_job_id: 1)
+      print_jobs[1] = {:state => :chunky}
+      expect(delivery.print_job_state).to_not eq('chunky')
+      Delivery.update_print_job_states
+      delivery.reload
+      expect(delivery.print_job_state).to eq('chunky')
+    end
+
+    it 'queries the jobs states via CUPS' do
+      Delivery.update_print_job_states
+      expect(Cups).to have_received(:all_jobs).with('Fax')
+    end
+
+    it 'handles unknown print jobs' do
+      print_jobs[1] = {:state => :chunky}
+      expect {
+        Delivery.update_print_job_states
+      }.to_not raise_error
+    end
+
+    it 'handles missing states' do
+      delivery = create(:delivery, print_job_id: 1)
+      print_jobs[1] = {}
+      expect {
+        Delivery.update_print_job_states
+      }.to_not raise_error
+      delivery.reload
+      expect(delivery.print_job_state).to eq('unknown')
+    end
+  end
+
   describe '#print_job' do
     let(:print_job) { double('print_job', :title= => nil) }
     let(:fax) { create(:fax) }

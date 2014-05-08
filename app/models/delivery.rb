@@ -9,6 +9,17 @@ class Delivery < ActiveRecord::Base
 
   before_create :run!
 
+  # Update all print job states by the corresponding states from CUPS.
+  def self.update_print_job_states
+    Cups.all_jobs(FAX_PRINTER).each do |print_job_id,print_job|
+      delivery = find_by(print_job_id: print_job_id)
+      state = print_job[:state]
+      if delivery && state
+        delivery.update(print_job_state: state)
+      end
+    end
+  end
+
   private
 
   # Run the actual delivery process
