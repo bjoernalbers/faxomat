@@ -107,6 +107,14 @@ describe Fax do
     expect(fax).to respond_to(:deliveries)
   end
 
+  it 'destroys dependend deliveries' do
+    fax = create(:fax)
+    2.times { create(:delivery, fax: fax) }
+    expect(fax.deliveries).to_not be_empty
+    fax.destroy
+    expect(fax.deliveries).to be_empty
+  end
+
   describe '#title' do
     it 'returns the patient infos' do
       patient = double('patient', info: 'hey')

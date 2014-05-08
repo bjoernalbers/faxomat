@@ -2,7 +2,7 @@ class Fax < ActiveRecord::Base
   belongs_to :recipient
   belongs_to :patient
 
-  has_many :deliveries
+  has_many :deliveries, dependent: :destroy
 
   validates :path, presence: true
   validates :recipient, presence: true
