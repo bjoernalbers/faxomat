@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/m0wfo/cups
+  revision: e41b7cea44e57f7e481b02d4ff48b7c51dfc22cf
+  specs:
+    cups (0.1.8)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -148,6 +154,7 @@ DEPENDENCIES
   bootstrap-sass (~> 3.1.1)
   capybara (~> 2.0)
   coffee-rails (~> 4.0.0)
+  cups!
   database_cleaner (~> 1.2)
   factory_girl_rails (~> 4.0)
   jbuilder (~> 2.0)

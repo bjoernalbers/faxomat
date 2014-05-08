@@ -75,6 +75,18 @@ describe Job do
     end
   end
 
+  describe '#process' do
+    context 'when successfully saved' do
+      it 'delivers the fax'
+      it 'returns true'
+    end
+
+    context 'when not successfully saved' do
+      it 'does not deliver the fax'
+      it 'returns false'
+    end
+  end
+
   describe '#recipient' do
     let(:recipient) { double('recipient') }
 

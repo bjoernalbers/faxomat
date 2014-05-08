@@ -80,55 +80,42 @@ describe Fax do
     end
   end
 
-  describe '#deliver' do
-    before do
-      fax.stub(:command).and_return('chunky bacon')
-      fax.stub(:system)
-    end
-
-    it 'runs the system command' do
-      fax.should_receive(:system).with('chunky bacon')
-      fax.deliver
-    end
-
-    context 'with successfully finished command' do
-      before do
-        fax.stub(:system).and_return(true)
-      end
-
-      it 'saved the deliver time in the database' do
-        now = Time.now
-        Time.stub(:now).and_return(now)
-        fax.deliver
-        expect(fax.delivered_at).to eq now
-      end
-    end
-
-    context 'without successfully finished command' do
-      before do
-        fax.stub(:system).and_return(false)
-      end
-
-      it 'does not save the deliver time in the database' do
-        fax.deliver
-        expect(fax.delivered_at).to be_nil
-      end
-    end
+  describe '#delivered?' do
   end
 
-  describe '#command' do
-    it 'returns the command line for sending the fax' do
-      fax.stub(:phone).and_return('042')
-      fax.stub(:path).and_return('/tmp/foo.pdf')
-      expect(fax.send(:command)).to eq("lp -d Fax -o phone=042 '/tmp/foo.pdf'")
+  describe '#verify' do
+    context 'when delivered' do
+      it 'updates the print job status'
+      it 'returns true'
+    end
+
+    context 'when not delivered' do
+      it 'does not update the status'
+      it 'returns false'
     end
   end
 
   describe '#phone' do
-    it 'returns the recipients phone number with prefixed zero' do
+    it 'returns the recipients phone number' do
       recipient = create(:recipient, phone: '0123456789')
       fax = create(:fax, recipient: recipient)
-      expect(fax.send(:phone)).to eq('00123456789')
+      expect(fax.phone).to eq recipient.phone
     end
+  end
+
+  it 'has many deliveries' do
+    expect(fax).to respond_to(:deliveries)
+  end
+
+  describe '#title' do
+    it 'returns the patient infos' do
+      patient = double('patient', info: 'hey')
+      fax.stub(:patient).and_return(patient)
+      expect(fax.title).to eq 'hey'
+    end
+  end
+
+  describe '#deliver!' do
+    it 'creates a new delivery'
   end
 end

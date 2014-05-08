@@ -1,8 +1,8 @@
 class Fax < ActiveRecord::Base
-  DIALOUT_PREFIX = '0'
-
   belongs_to :recipient
   belongs_to :patient
+
+  has_many :deliveries
 
   validates :path, presence: true
   validates :recipient, presence: true
@@ -18,22 +18,18 @@ class Fax < ActiveRecord::Base
     # TODO: Add implementation!
   end
 
-  # Deliver the fax via system command.
-  def deliver
-    # TODO: Store the print job ID on successful delivery, which is required
-    # for verification later!
-    update(delivered_at: Time.now) if system(command)
-  end
-
-  private
-
-  # @returns [String] command-line for CUPS fax-printer
-  def command
-    "lp -d Fax -o phone=#{phone} '#{path}'"
-  end
-
-  # @returns [String] recipients phone number with dialout prefix
+  # @returns [String] recipient phone number
   def phone
-    DIALOUT_PREFIX + recipient.phone
+    recipient.phone
+  end
+
+  # @returns [String] fax title
+  def title
+    patient.info
+  end
+
+  # Deliver the fax
+  def deliver!
+    deliveries.create!
   end
 end
