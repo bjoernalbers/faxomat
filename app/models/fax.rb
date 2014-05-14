@@ -32,4 +32,9 @@ class Fax < ActiveRecord::Base
   def deliver!
     deliveries.create!
   end
+
+  # @returns [String] Delivery state
+  def state
+    deliveries.last.print_job_state unless deliveries.empty?
+  end
 end

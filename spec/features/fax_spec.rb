@@ -1,42 +1,23 @@
 require 'spec_helper'
 
-# In order to see which faxes are delivered
-# As a user (MTA, doc, admin)
-# I want to see if and when a fax was delivered
+# In order check which faxes are (not) delivered
+# As an MTA
+# I want to see recent faxes and their state
 
-feature 'Fax' do
-  scenario 'successfully delivered' do
-    pending 'verification not implemented yet'
-    fax = create(:fax)
-    visit faxes_path
-    expect(page).to have_no_css('.fax.delivered')
+feature 'Faxes List' do
+  let(:app) { App.new }
+  let(:page) { app.faxes_page }
 
-    # - deliver fax (run fax.deliver!)
-    fax.should_receive(:status).and_return(:completed) # TODO: Un-fake this!
-
-    visit faxes_path
-    expect(page).to have_css('.fax.completed')
-    # - verify that the fax contains a delivered_at timestamp
-  end
-
-  scenario 'delivery aborted' do
-    #fax = create(:fax)
-    #visit faxes_path
-    #faxes_page = FaxesPage.new
-    #fax = faxes_page.find(fax)
+  scenario 'shows fax title, recipient and state' do
+    recipient = create(:recipient)
+    fax = create(:fax, recipient: recipient)
+    delivery = create(:delivery, fax: fax, print_job_state: 'awesome')
     
-    # - verify that page does not list fax as deliverd
-    #
-    # exercise
-    # - deliver fax (run fax.deliver!)
-    # - verify delivery (how to mark fax as not deliverd during tests?)
-    # - reload page
-    #
-    # verify
-    # - verify that the fax is now marked as not delivered
+    page.load
+
+    expect(page).to have(1).faxes
+    #expect(page).to have_fax(fax.title)
+    expect(page.faxes.first.title.text).to eq(fax.title)
+    expect(page.faxes.first.state.text).to eq('awesome')
   end
 end
-
-# NOTES: These tests only check the presentation. What about the actual delivery?
-# - deliver un-delivered faxes # As class method?!
-# - verify un-verified faxes # Also as class method?!

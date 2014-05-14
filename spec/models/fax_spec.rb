@@ -126,4 +126,22 @@ describe Fax do
   describe '#deliver!' do
     it 'creates a new delivery'
   end
+
+  describe '#state' do
+    let(:fax) { create(:fax) }
+
+    context 'when delivered' do
+      let!(:delivery) { create(:delivery, fax: fax, print_job_state: 'awesome') }
+
+      it 'returns the last delivery state' do
+        expect(fax.state).to eq('awesome')
+      end
+    end
+
+    context 'when not delivered' do
+      it 'returns nil' do
+        expect(fax.state).to be_nil
+      end
+    end
+  end
 end

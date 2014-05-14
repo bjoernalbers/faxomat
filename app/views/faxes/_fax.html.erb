@@ -1,3 +1,8 @@
 <%= div_for(fax, class: fax.status) do %>
-  <%= link_to fax.patient.info, fax, target: '_blank' %>
+  <%= content_tag(:span, class: 'title') do %>
+    <%= link_to fax.patient.info, fax, target: '_blank' %>
+  <% end %>
+  <%= content_tag(:span, class: 'state') do %>
+    <%= fax.state %>
+  <% end %>
 <% end %>
