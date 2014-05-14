@@ -16,8 +16,9 @@ feature 'Faxes List' do
     page.load
 
     expect(page).to have(1).faxes
-    #expect(page).to have_fax(fax.title)
     expect(page.faxes.first.title.text).to eq(fax.title)
     expect(page.faxes.first.state.text).to eq('awesome')
+    expect(page.faxes.first.phone.text).to eq(fax.phone)
+    expect(page.faxes.first.created_at.text).to eq(fax.created_at.to_s)
   end
 end

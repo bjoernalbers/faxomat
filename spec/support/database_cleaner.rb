@@ -4,8 +4,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    #DatabaseCleaner.strategy = :transaction # Won't work with feature specs
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, type: :feature) do
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   config.before(:each, :js => true) do
