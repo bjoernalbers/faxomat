@@ -6,7 +6,7 @@
     <th>Status</th>
   </tr>
   <% @faxes.each do |fax| %>
-    <%= content_tag(:tr, class: 'fax') do %>
+    <%= content_tag_for(:tr, fax, class: fax.state) do %>
       <%= content_tag(:td, class: 'title') do %>
         <%= link_to(fax.title, fax, target: '_blank') %>
       <% end %>

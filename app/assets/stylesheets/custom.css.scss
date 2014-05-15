@@ -1,0 +1,9 @@
+@import "bootstrap";
+
+.completed {
+  @extend .success;
+}
+
+.aborted {
+  @extend .danger;
+}

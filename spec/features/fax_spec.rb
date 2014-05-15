@@ -20,5 +20,6 @@ feature 'Faxes List' do
     expect(page.faxes.first.state.text).to eq('awesome')
     expect(page.faxes.first.phone.text).to eq(fax.phone)
     expect(page.faxes.first.created_at.text).to eq(fax.created_at.to_s)
+    expect(page.faxes.first).to have_css('.awesome')
   end
 end
