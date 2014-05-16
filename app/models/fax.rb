@@ -8,6 +8,10 @@ class Fax < ActiveRecord::Base
   validates :recipient, presence: true
   validates :patient, presence: true
 
+  def self.ordered_by_last_delivery
+    includes(:deliveries).order('created_at desc')
+  end
+
   def status
     if verified?
       success? ? :completed : :aborted
@@ -36,5 +40,10 @@ class Fax < ActiveRecord::Base
   # @returns [String] Delivery state
   def state
     deliveries.last.print_job_state unless deliveries.empty?
+  end
+
+  # @returns [DateTime] Last delivery
+  def last_delivery_at
+    deliveries.order(:created_at).last.created_at unless deliveries.empty?
   end
 end

@@ -74,6 +74,38 @@ describe Fax do
     end
   end
 
+  describe '.ordered_by_last_delivery' do
+    let(:fax) { create(:fax) }
+
+    before do
+      create(:delivery, fax: fax)
+    end
+
+    it 'returns last delivered faxes first' do
+      last_delivered_fax = create(:fax)
+      create(:delivery, fax: last_delivered_fax,
+             created_at: DateTime.now + 1.hour)
+
+      faxes = Fax.ordered_by_last_delivery
+
+      # Broken with --seed 54172
+      expect(faxes.count).to eq 2 #debug
+      expect(faxes.first).to eq last_delivered_fax
+      expect(faxes.last).to eq fax
+    end
+
+    it 'returns undelivered faxes on top' do
+      undelivered_fax = create(:fax)
+
+      faxes = Fax.ordered_by_last_delivery
+
+      # Broken with --seed 54172
+      expect(faxes.count).to eq 2 #debug
+      expect(faxes.first).to eq undelivered_fax
+      expect(faxes.last).to eq fax
+    end
+  end
+
   describe '#verified?' do
     it 'returns nil by default (not implemented yet)' do
       expect(fax.verified?).to be_nil
@@ -131,10 +163,12 @@ describe Fax do
     let(:fax) { create(:fax) }
 
     context 'when delivered' do
-      let!(:delivery) { create(:delivery, fax: fax, print_job_state: 'awesome') }
+      let!(:first_delivery) { create(:delivery, fax: fax, print_job_state: 'awesome') }
+      let!(:last_delivery) { create(:delivery, fax: fax, print_job_state: 'awesome',
+                                   created_at: first_delivery.created_at + 1.second) }
 
       it 'returns the last delivery state' do
-        expect(fax.state).to eq('awesome')
+        expect(fax.state).to eq(last_delivery.print_job_state)
       end
     end
 
@@ -142,6 +176,21 @@ describe Fax do
       it 'returns nil' do
         expect(fax.state).to be_nil
       end
+    end
+  end
+
+  describe '#last_delivery_at' do
+    let(:fax) { create(:fax) }
+
+    it 'returns the creation time for the last delivery' do
+      first_delivery = create(:delivery, fax: fax)
+      last_delivery = create(:delivery, fax: fax,
+                             created_at: first_delivery.created_at + 1.second)
+      expect(fax.last_delivery_at).to eq(last_delivery.created_at)
+    end
+
+    it 'does not raise without deliveries' do
+      expect { fax.last_delivery_at }.to_not raise_error
     end
   end
 end

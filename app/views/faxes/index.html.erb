@@ -2,7 +2,7 @@
   <tr>
     <th>Fax</th>
     <th>Empfänger</th>
-    <th>Erstellt</th>
+    <th>Letzter Versand</th>
     <th>Status</th>
   </tr>
   <% @faxes.each do |fax| %>
@@ -11,7 +11,7 @@
         <%= link_to(fax.title, fax, target: '_blank') %>
       <% end %>
       <%= content_tag(:td, fax.phone, class: 'phone') %>
-      <%= content_tag(:td, fax.created_at, class: 'created_at') %>
+      <%= content_tag(:td, fax.last_delivery_at, class: 'last_delivery_at') %>
       <%= content_tag(:td, fax.state, class: 'state') %>
     <% end %>
   <% end %>

@@ -1,7 +1,6 @@
 class FaxesController < ApplicationController
   def index
-    #@faxes = faxes.all
-    @faxes = faxes.order('created_at desc').limit(100) #TODO: Add test and refactor!
+    @faxes = faxes.ordered_by_last_delivery.limit(100) #TODO: Add test and refactor!
   end
 
   def show
