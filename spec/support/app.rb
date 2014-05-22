@@ -9,6 +9,14 @@ class FaxesPage < SitePrism::Page
   set_url '/faxes'
 
   sections :faxes, FaxSection, '.fax'
+
+  def has_fax?(fax)
+    faxes.any? { |f| f.has_css?("#fax_#{fax.id}") }
+  end
+end
+
+class AbortedFaxesPage < FaxesPage
+  set_url '/faxes/aborted'
 end
 
 class App

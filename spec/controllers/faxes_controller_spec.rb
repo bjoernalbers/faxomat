@@ -27,4 +27,27 @@ describe FaxesController do
       get :show, id: fax
     end
   end
+
+  describe 'GET aborted' do
+    let(:fax) { create(:fax) }
+
+    before do
+      allow(Fax).to receive(:aborted) { [fax] }
+    end
+
+    it 'assigns aborted faxes' do
+      get :aborted
+      expect(assigns(:faxes)).to match_array([fax])
+    end
+
+    it 'fetches all aborted faxes through the model' do
+      get :aborted
+      expect(Fax).to have_received(:aborted)
+    end
+
+    it 'renders the index template' do
+      get :aborted
+      expect(response).to render_template(:index)
+    end
+  end
 end

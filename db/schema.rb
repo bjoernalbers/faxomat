@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140508125939) do
+ActiveRecord::Schema.define(version: 20140522204250) do
 
   create_table "deliveries", force: true do |t|
     t.integer  "print_job_id",    null: false
@@ -32,7 +32,10 @@ ActiveRecord::Schema.define(version: 20140508125939) do
     t.datetime "delivered_at"
     t.integer  "patient_id",   null: false
     t.integer  "print_job_id"
+    t.string   "state"
   end
+
+  add_index "faxes", ["print_job_id"], name: "index_faxes_on_print_job_id", unique: true
 
   create_table "patients", force: true do |t|
     t.string   "first_name",    null: false

@@ -46,84 +46,126 @@ describe Fax do
     end
   end
 
-  describe '#status' do
-    context 'when not verified' do
-      before do
-        fax.stub(:verified?).and_return(false)
-      end
+  context 'without unique print_job_id' do
+    let(:other_fax) { create(:fax, print_job_id: 5) }
+    let(:fax) { build(:fax, print_job_id: other_fax.print_job_id) }
 
-      it 'returns nil' do
-        expect(fax.status).to be_nil
-      end
+    it 'is invalid' do
+      expect(fax).to have(1).errors_on(:print_job_id)
     end
 
-    context 'when verified' do
-      before do
-        fax.stub(:verified?).and_return(true)
-      end
-
-      it 'returns :completed on success' do
-        fax.stub(:success?).and_return(true)
-        expect(fax.status).to eq :completed
-      end
-
-      it 'returns :aborted on failure' do
-        fax.stub(:success?).and_return(false)
-        expect(fax.status).to eq :aborted
-      end
+    it 'can not be saved in the database' do
+      expect {
+        fax.save(validate: false)
+      }.to raise_error ActiveRecord::RecordNotUnique
     end
   end
 
-  describe '.ordered_by_last_delivery' do
-    let(:fax) { create(:fax) }
+  context 'without print_job_id' do
+    let(:fax) { build(:fax, print_job_id: nil) }
+
+    it 'is valid' do
+      expect(fax).to be_valid
+    end
+
+    it 'can be saved in the database' do
+      expect {
+        fax.save(validate: false)
+      }.to_not raise_error ActiveRecord::RecordNotUnique
+    end
+
+    it 'can be saved even with other null print_job_ids' do
+      2.times {
+        expect { create(:fax, print_job_id: nil) }.to_not raise_error
+      }
+    end
+  end
+
+  describe '.deliver' do
+    before do
+      allow(Fax).to receive(:undelivered).and_return( [fax] )
+      allow(fax).to receive(:deliver)
+    end
+
+    it 'processes only undelivered faxes' do
+      Fax.deliver
+      expect(Fax).to have_received(:undelivered)
+    end
+
+    it 'delivers each fax' do
+      Fax.deliver
+      expect(fax).to have_received(:deliver)
+    end
+
+    it 'returns all delivered faxes' do
+      expect(Fax.deliver).to eq( [fax] )
+    end
+  end
+
+  describe '.undelivered' do
+    before do
+      Fax.delete_all #TODO: Fix specs and remove this hack!
+    end
+
+    it 'includes faxes without print job id' do
+      fax.update!(print_job_id: nil)
+      expect(Fax.undelivered).to match_array([fax])
+    end
+
+    it 'excludes faxes with print job id' do
+      fax.update!(print_job_id: 23)
+      expect(Fax.undelivered).to be_empty
+    end
+  end
+
+  describe '#update_states' do
+    let(:print_jobs) { {} }
 
     before do
-      create(:delivery, fax: fax)
+      Cups.stub(:all_jobs).and_return(print_jobs)
     end
 
-    it 'returns last delivered faxes first' do
-      last_delivered_fax = create(:fax)
-      create(:delivery, fax: last_delivered_fax,
-             created_at: DateTime.now + 1.hour)
-
-      faxes = Fax.ordered_by_last_delivery
-
-      # Broken with --seed 54172
-      expect(faxes.count).to eq 2 #debug
-      expect(faxes.first).to eq last_delivered_fax
-      expect(faxes.last).to eq fax
+    it 'updates the state for each matching delivery' do
+      fax = create(:fax, print_job_id: 1)
+      print_jobs[1] = {:state => :chunky}
+      expect(fax.state).to_not eq('chunky')
+      Fax.update_states
+      fax.reload
+      expect(fax.state).to eq('chunky')
     end
 
-    it 'returns undelivered faxes on top' do
-      undelivered_fax = create(:fax)
+    it 'queries the jobs states via CUPS' do
+      Fax.update_states
+      expect(Cups).to have_received(:all_jobs).with('Fax')
+    end
 
-      faxes = Fax.ordered_by_last_delivery
+    it 'handles unknown print jobs' do
+      print_jobs[1] = {:state => :chunky}
+      expect {
+        Fax.update_states
+      }.to_not raise_error
+    end
 
-      # Broken with --seed 54172
-      expect(faxes.count).to eq 2 #debug
-      expect(faxes.first).to eq undelivered_fax
-      expect(faxes.last).to eq fax
+    it 'handles missing states' do
+      fax = create(:fax, print_job_id: 1)
+      print_jobs[1] = {}
+      expect {
+        Fax.update_states
+      }.to_not raise_error
     end
   end
 
-  describe '#verified?' do
-    it 'returns nil by default (not implemented yet)' do
-      expect(fax.verified?).to be_nil
-    end
-  end
-
-  describe '#delivered?' do
-  end
-
-  describe '#verify' do
-    context 'when delivered' do
-      it 'updates the print job status'
-      it 'returns true'
+  describe '.aborted' do
+    it 'returns aborted faxes' do
+      fax.update(state: 'aborted')
+      expect(Fax.aborted).to match_array([fax])
     end
 
-    context 'when not delivered' do
-      it 'does not update the status'
-      it 'returns false'
+    it 'does not return faxes in other states' do
+      create(:fax, state:'completed')
+      create(:fax)
+      create(:fax, state:'funky')
+      expect(Fax.aborted).to be_empty
     end
   end
 
@@ -155,42 +197,81 @@ describe Fax do
     end
   end
 
-  describe '#deliver!' do
-    it 'creates a new delivery'
-  end
-
-  describe '#state' do
+  describe '#deliver' do
+    let(:print_job) { double('print_job', print: true, job_id: 23) }
     let(:fax) { create(:fax) }
 
-    context 'when delivered' do
-      let!(:first_delivery) { create(:delivery, fax: fax, print_job_state: 'awesome') }
-      let!(:last_delivery) { create(:delivery, fax: fax, print_job_state: 'awesome',
-                                   created_at: first_delivery.created_at + 1.second) }
+    before do
+      fax.stub(:print_job).and_return(print_job)
+    end
 
-      it 'returns the last delivery state' do
-        expect(fax.state).to eq(last_delivery.print_job_state)
+    context 'with print_job_id' do
+      let(:fax) { create(:fax, print_job_id: 23) }
+
+      it 'does not deliver again' do
+        fax.deliver
+        expect(print_job).to_not have_received(:print)
       end
     end
 
-    context 'when not delivered' do
-      it 'returns nil' do
-        expect(fax.state).to be_nil
+    context 'without print_job_id' do
+      let(:fax) { create(:fax, print_job_id: nil) }
+
+      it 'delivers the print job' do
+        fax.deliver
+        expect(print_job).to have_received(:print)
+      end
+
+      it 'saves the print_job_id' do
+        expect(fax.print_job_id).to be_nil
+        fax.deliver
+        fax.reload
+        expect(fax.print_job_id).to eq(print_job.job_id)
+      end
+
+      it 'fails on printer errors' do
+        print_job.stub(:print).and_return(false)
+        expect { fax.deliver }.to raise_error
       end
     end
   end
 
-  describe '#last_delivery_at' do
+  describe '#print_job' do
+    let(:print_job) { double('print_job', :title= => nil) }
     let(:fax) { create(:fax) }
 
-    it 'returns the creation time for the last delivery' do
-      first_delivery = create(:delivery, fax: fax)
-      last_delivery = create(:delivery, fax: fax,
-                             created_at: first_delivery.created_at + 1.second)
-      expect(fax.last_delivery_at).to eq(last_delivery.created_at)
+    before do
+      Cups::PrintJob.stub(:new).and_return(print_job)
     end
 
-    it 'does not raise without deliveries' do
-      expect { fax.last_delivery_at }.to_not raise_error
+    it 'initializes a print job' do
+      fax.stub(:path).and_return('chunky.pdf')
+      fax.stub(:phone).and_return('42')
+      fax.send(:print_job)
+      expect(Cups::PrintJob).to have_received(:new).
+        with('chunky.pdf', 'Fax', {'phone' => '042'})
+    end
+
+    it 'returns the instance' do
+      expect(fax.send(:print_job)).to eq print_job
+    end
+
+    it 'caches the instance' do
+      2.times { fax.send(:print_job) }
+      expect(Cups::PrintJob).to have_received(:new).once
+    end
+
+    it 'sets the print job title' do
+      fax.stub(:title).and_return('chunky bacon')
+      fax.send(:print_job)
+      expect(print_job).to have_received(:title=).with(fax.title)
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns the fax title' do
+      allow(fax).to receive(:title) { 'an awesome fax' }
+      expect(fax.to_s).to eq(fax.title)
     end
   end
 end

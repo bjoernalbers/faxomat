@@ -1,5 +1,5 @@
 namespace :faxomat do
-  #desc 'Import fax jobs from WiCoRIS.'
+  desc 'Import fax jobs from WiCoRIS.'
   task :import do
     Dir.glob('/Library/FileMaker Server/Data/Documents/2014-*.JSON').each do |file|
       puts file
@@ -7,19 +7,16 @@ namespace :faxomat do
     end
   end
 
-  #desc 'Deliver faxes.'
+  desc 'Deliver all undelivered faxes.'
   task :deliver do
-    Fax.includes(:deliveries).where(deliveries: {fax_id: nil}).each do |fax|
-      puts fax.title
-      fax.deliver!
-    end
+    puts Fax.deliver
   end
 
-  #desc 'Update delivery states.'
-  task :verify do
-    Delivery.update_print_job_states
+  desc 'Synchronize fax (print job) states from CUPS.'
+  task :update do
+    Fax.update_states
   end
 
-  desc 'Send faxes like a maniac.'
-  task :run => [:import, :deliver, :verify]
+  desc 'Perform all faxomat tasks: import, deliver and update.'
+  task :run => [:import, :deliver, :update]
 end
