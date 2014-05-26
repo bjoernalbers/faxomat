@@ -9,7 +9,7 @@ class FaxesController < ApplicationController
   end
 
   def aborted
-    @faxes = faxes.aborted
+    @faxes = faxes.aborted.order('created_at desc').limit(100) # TODO: Test this!
     render :index
   end
 
