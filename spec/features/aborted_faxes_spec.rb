@@ -14,5 +14,8 @@ feature 'Aborted faxes' do
 
     expect(page).to have(1).faxes
     expect(page).to have_fax(aborted_fax)
+
+    fax_section = page.faxes.first
+    expect(fax_section.created_at.text).to eq(aborted_fax.created_at.to_s)
   end
 end
