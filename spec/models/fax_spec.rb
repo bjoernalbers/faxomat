@@ -7,6 +7,17 @@ describe Fax do
     pending
   end
 
+  it 'orders faxes by default by descending creation date' do
+    now = DateTime.current
+    old_fax = create(:fax, created_at: now-1.day)
+    new_fax = create(:fax, created_at: now)
+
+    faxes = Fax.all
+
+    expect(faxes.first).to eq(new_fax)
+    expect(faxes.last).to eq(old_fax)
+  end
+
   context 'without a path' do
     let(:fax) { build(:fax, path: nil) }
 
@@ -78,6 +89,20 @@ describe Fax do
       2.times {
         expect { create(:fax, print_job_id: nil) }.to_not raise_error
       }
+    end
+  end
+
+  describe '.created_today' do
+    let(:now) { DateTime.current }
+
+    it 'returns today created faxes' do
+      fax = create(:fax, created_at: now.beginning_of_day)
+      expect(Fax.created_today).to include(fax)
+    end
+
+    it 'does not return faxes created before today' do
+      fax = create(:fax, created_at: now.beginning_of_day-1.second)
+      expect(Fax.created_today).to_not include(fax)
     end
   end
 

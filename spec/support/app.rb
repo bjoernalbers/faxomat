@@ -7,6 +7,7 @@ end
 
 class FaxesPage < SitePrism::Page
   set_url '/faxes'
+  set_url_matcher /faxes\/?/
 
   sections :faxes, FaxSection, '.fax'
 
@@ -17,10 +18,15 @@ end
 
 class AbortedFaxesPage < FaxesPage
   set_url '/faxes/aborted'
+  set_url_matcher /faxes\/aborted\/?/
 end
 
 class App
   def faxes_page
     FaxesPage.new
+  end
+
+  def aborted_faxes_page
+    AbortedFaxesPage.new
   end
 end

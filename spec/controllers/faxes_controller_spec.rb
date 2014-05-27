@@ -16,6 +16,16 @@ describe FaxesController do
       get :index, recipient_id: recipient
       expect(assigns(:faxes)).to_not include fax
     end
+
+    it 'assigns today created faxes' do
+      fax = create(:fax)
+      allow(Fax).to receive(:created_today) { [fax] }
+
+      get :index
+
+      expect(assigns(:faxes)).to eq [fax]
+      expect(Fax).to have_received(:created_today)
+    end
   end
 
   describe 'GET show' do

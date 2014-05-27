@@ -7,3 +7,8 @@
 .aborted {
   @extend .danger;
 }
+
+table {
+  @extend .table;
+  @extend .table-hover;
+}

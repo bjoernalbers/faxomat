@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root 'faxes#index'
+
   resources :faxes, only: [:index, :show] do
     get 'aborted', on: :collection
   end

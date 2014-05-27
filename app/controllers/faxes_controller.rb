@@ -1,6 +1,6 @@
 class FaxesController < ApplicationController
   def index
-    @faxes = faxes.all.order('created_at desc').limit(100) # TODO: Test this!
+    @faxes = faxes.created_today
   end
 
   def show
@@ -9,7 +9,7 @@ class FaxesController < ApplicationController
   end
 
   def aborted
-    @faxes = faxes.aborted.order('created_at desc').limit(100) # TODO: Test this!
+    @faxes = faxes.aborted
     render :index
   end
 

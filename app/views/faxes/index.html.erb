@@ -1,4 +1,9 @@
-<table class='table table-hover'>
+<ul class='nav nav-tabs'>
+  <%= content_tag(:li, link_to('Heutige Faxe', faxes_path), class: ('active' if action_name == 'index')) %>
+  <%= content_tag(:li, link_to('Abgebrochene Faxe', aborted_faxes_path), class: ('active' if action_name == 'aborted')) %>
+</ul>
+
+<table>
   <tr>
     <th>Fax</th>
     <th>Empfänger</th>

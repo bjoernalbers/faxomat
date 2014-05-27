@@ -12,8 +12,14 @@ class Fax < ActiveRecord::Base
   validates :patient, presence: true
   validates_uniqueness_of :print_job_id, allow_nil: true
 
+  default_scope { order('created_at DESC') }
+
   def self.aborted
     where(state: 'aborted')
+  end
+
+  def self.created_today
+    where('created_at >= ?', DateTime.current.beginning_of_day)
   end
 
   def self.undelivered
