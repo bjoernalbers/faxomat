@@ -17,6 +17,6 @@ namespace :faxomat do
     Fax.update_states
   end
 
-  desc 'Perform all faxomat tasks: import, deliver and update.'
-  task :run => [:import, :deliver, :update]
+  desc 'Import and deliver fax jobs from WiCoRIS.'
+  task :run => [:import, :deliver]
 end
