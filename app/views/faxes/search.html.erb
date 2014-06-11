@@ -4,6 +4,17 @@
   <%= content_tag(:li, link_to('Suche', search_faxes_path), class: ('active' if action_name == 'search')) %>
 </ul>
 
+<p>
+Suche nach Geburtsdatum der Patientin (TT.MM.JJJJ), Name(n) oder Fax-Nummer des
+Empfängers (min. 4 Ziffern) in beliebiger Kombination.
+</p>
+
+<%= form_tag(search_faxes_path, method: :get) do %>
+  <%= label_tag(:q, 'Suche:') %>
+  <%= text_field_tag(:q, params[:q]) %>
+  <%= submit_tag('Los gehts!') %>
+<% end %>
+
 <table>
   <tr>
     <th>Fax</th>

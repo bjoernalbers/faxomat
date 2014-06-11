@@ -33,6 +33,21 @@ class Fax < ActiveRecord::Base
     undelivered.each(&:deliver)
   end
 
+  # Search faxes by patient name(s) and/or date of birth.
+  def self.search(q)
+    query = Query.new(q)
+    results = joins(:patient, :recipient)
+    if query.blank?
+      results.none
+    else
+      results = results.
+        merge(Patient.by_birth_date(query.birth_date)) if query.birth_date
+      results = results.merge(Recipient.by_phone(query.phone)) if query.phone
+      query.names.each { |n| results = results.merge(Patient.by_name(n)) }
+      results
+    end
+  end
+
   # Update print job states from CUPS.
   def self.update_states
     Cups.all_jobs(PRINTER).each do |print_job_id,print_job|
@@ -76,5 +91,42 @@ class Fax < ActiveRecord::Base
       tap do |print_job|
         print_job.title = title
       end
+  end
+
+  # Helper class to strip down a search query string.
+  class Query
+    attr_reader :query
+
+    def initialize(query)
+      @query = query
+    end
+
+    def blank?
+      birth_date.nil? && phone.nil? && names.empty?
+    end
+
+    def birth_date
+      words.map do |word|
+        begin
+          Time.strptime(word, '%d.%m.%Y').to_date
+        rescue ArgumentError
+          nil
+        end
+      end.compact.first
+    end
+
+    def phone
+      words.find { |word| /\A\d{4,}\Z/ =~ word }
+    end
+
+    def names
+      words.select { |word| /\A[[:alpha:]]+\Z/ =~ word }
+    end
+
+    private
+
+    def words
+      query ? query.split : []
+    end
   end
 end

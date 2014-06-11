@@ -194,6 +194,61 @@ describe Fax do
     end
   end
 
+  describe '.search' do
+    let!(:patient) { create(:patient,
+                            first_name: 'Bruce',
+                            last_name: 'Willis',
+                            date_of_birth: '1955-03-19') }
+    let!(:recipient) { create(:recipient,
+                              phone: '0987654321') }
+    let!(:fax) { create(:fax, patient: patient, recipient: recipient) }
+    let!(:other_fax) { create(:fax) }
+
+    it 'searches by patient date of birth' do
+      %w(19.3.1955 19.3.1955).each do |query|
+        expect(Fax.search(query)).to match_array [fax]
+      end
+    end
+
+    it 'searches by patient last name' do
+      %w(Willis willis illi).each do |query|
+        expect(Fax.search(query)).to match_array [fax]
+      end
+    end
+
+    it 'handles german umlauts' do
+      patient = create(:patient, first_name: 'Björn')
+      fax = create(:fax, patient: patient)
+      expect(Fax.search('Björn')).to match_array [fax]
+    end
+
+    it 'searches by patient first name' do
+      %w(Bruce bruce ruc).each do |query|
+        expect(Fax.search(query)).to match_array [fax]
+      end
+    end
+
+    it 'searches by date of birth and name' do
+      expect(Fax.search('chuck 19.3.1955')).to be_empty
+      expect(Fax.search('bruce 19.3.1955')).to match_array [fax]
+    end
+
+    it 'searches by multiple patient names' do
+      expect(Fax.search('willis chuck')).to be_empty
+      expect(Fax.search('willis bruce')).to match_array [fax]
+    end
+
+    it 'searches by recipient phone number' do
+      expect(Fax.search('8765')).to match_array [fax]
+    end
+
+    it 'does not search with blank query' do
+      [nil, ''].each do |query|
+        expect(Fax.search(query)).to be_empty
+      end
+    end
+  end
+
   describe '#phone' do
     it 'returns the recipients phone number' do
       recipient = create(:recipient, phone: '0123456789')

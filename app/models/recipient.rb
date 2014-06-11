@@ -12,6 +12,10 @@ class Recipient < ActiveRecord::Base
     length: {minimum: MINIMUM_PHONE_LENGTH},
     format: {with: AREA_CODE_REGEX, message: 'has no area code'}
 
+  def self.by_phone(phone)
+    where('recipients.phone LIKE ?', "%#{phone}%")
+  end
+
   private
 
   # Strip non-digits from phone.

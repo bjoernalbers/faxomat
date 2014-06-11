@@ -13,6 +13,11 @@ class FaxesController < ApplicationController
     render :index
   end
 
+  def search
+    @faxes = faxes.search(params[:q])
+    #render :index
+  end
+
   private
 
   def faxes

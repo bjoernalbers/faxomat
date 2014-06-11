@@ -4,7 +4,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
+    #NOTE: Somehow transactions don't always delete faxes between runs! Fuck!
+    #DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each, type: :feature) do

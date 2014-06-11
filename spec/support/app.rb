@@ -21,6 +21,11 @@ class AbortedFaxesPage < FaxesPage
   set_url_matcher /faxes\/aborted\/?/
 end
 
+class SearchFaxesPage < FaxesPage
+  set_url '/faxes/search{?q*}'
+  set_url_matcher /faxes\/search\/?/
+end
+
 class App
   def faxes_page
     FaxesPage.new

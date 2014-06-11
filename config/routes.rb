@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resources :faxes, only: [:index, :show] do
     get 'aborted', on: :collection
+    get 'search', on: :collection
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

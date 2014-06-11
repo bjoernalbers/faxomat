@@ -7,6 +7,16 @@ class Patient < ActiveRecord::Base
 
   before_validation :clean_name
 
+  def self.by_name(name)
+    pattern = "%#{name}%"
+    where('patients.last_name LIKE ? OR patients.first_name LIKE ?',
+          pattern, pattern)
+  end
+
+  def self.by_birth_date(date)
+    where('patients.date_of_birth = ?', date)
+  end
+
   def info
     format('%s, %s (*%s)', last_name, first_name, date_of_birth)
   end
