@@ -38,14 +38,14 @@ class Fax < ActiveRecord::Base
     query = Query.new(q)
     results = joins(:patient, :recipient)
     if query.blank?
-      results.none
+      results = none
     else
       results = results.
         merge(Patient.by_birth_date(query.birth_date)) if query.birth_date
       results = results.merge(Recipient.by_phone(query.phone)) if query.phone
       query.names.each { |n| results = results.merge(Patient.by_name(n)) }
-      results
     end
+    results
   end
 
   # Update print job states from CUPS.

@@ -20,7 +20,7 @@ feature 'View documents' do
     #visit recipient_path(recipient)
     visit faxes_path(recipient_id: recipient)
 
-    expect(page).to have_content('Norris, Chuck (*1940-03-10)')
-    expect(page).to_not have_content('Schwarzenegger, Arnold (*1947-07-30)')
+    expect(page).to have_content('Norris, Chuck (* 10.3.1940)')
+    expect(page).to_not have_content('Schwarzenegger, Arnold (* 30.7.1947)')
   end
 end

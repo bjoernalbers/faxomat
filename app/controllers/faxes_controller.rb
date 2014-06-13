@@ -15,7 +15,6 @@ class FaxesController < ApplicationController
 
   def search
     @faxes = faxes.search(params[:q])
-    #render :index
   end
 
   private

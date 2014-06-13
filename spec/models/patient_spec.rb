@@ -78,7 +78,7 @@ describe Patient do
                       first_name: 'Homer',
                       last_name: 'Simpson',
                       date_of_birth: '1970-01-01')
-      expect(patient.info).to eq 'Simpson, Homer (*1970-01-01)'
+      expect(patient.info).to eq 'Simpson, Homer (* 1.1.1970)'
     end
   end
 

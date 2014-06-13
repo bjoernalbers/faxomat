@@ -18,7 +18,10 @@ class Patient < ActiveRecord::Base
   end
 
   def info
-    format('%s, %s (*%s)', last_name, first_name, date_of_birth)
+    format('%s, %s (* %s)',
+           last_name,
+           first_name,
+           date_of_birth.strftime('%-d.%-m.%Y'))
   end
 
   private
