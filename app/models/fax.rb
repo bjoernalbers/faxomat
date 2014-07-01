@@ -87,10 +87,15 @@ class Fax < ActiveRecord::Base
   # @returns [Cups::PrintJob]
   def print_job
     @print_job ||=
-      Cups::PrintJob.new(path, PRINTER, {'phone' => DIALOUT_PREFIX + phone}).
+      Cups::PrintJob.new(path, PRINTER, {'phone' => full_phone}).
       tap do |print_job|
         print_job.title = title
       end
+  end
+
+  # @returns [String] Dialout prefix + recipient phone.
+  def full_phone
+    [Rails.application.config.dialout_prefix, phone].join
   end
 
   # Helper class to strip down a search query string.

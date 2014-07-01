@@ -326,10 +326,10 @@ describe Fax do
 
     it 'initializes a print job' do
       fax.stub(:path).and_return('chunky.pdf')
-      fax.stub(:phone).and_return('42')
+      fax.stub(:full_phone).and_return('123')
       fax.send(:print_job)
       expect(Cups::PrintJob).to have_received(:new).
-        with('chunky.pdf', 'Fax', {'phone' => '042'})
+        with('chunky.pdf', 'Fax', {'phone' => '123'})
     end
 
     it 'returns the instance' do
@@ -345,6 +345,14 @@ describe Fax do
       fax.stub(:title).and_return('chunky bacon')
       fax.send(:print_job)
       expect(print_job).to have_received(:title=).with(fax.title)
+    end
+  end
+
+  describe '#full_phone' do
+    it 'returns the joined dialout prefix and recipient phone' do
+      expect(fax).to receive(:phone).and_return('42')
+      expect(Rails.application.config).to receive(:dialout_prefix).and_return('0')
+      expect(fax.send(:full_phone)).to eq('042')
     end
   end
 
