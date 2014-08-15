@@ -32,7 +32,7 @@ class FaxesController < ApplicationController
 
   def fax_params
     params.require(:fax).
-      permit(:path,
+      permit(:path, :phone,
              recipient_attributes: [:phone],
              patient_attributes: [:first_name, :last_name, :date_of_birth])
   end

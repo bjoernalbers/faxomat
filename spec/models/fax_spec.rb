@@ -7,6 +7,50 @@ describe Fax do
     pending
   end
 
+  context 'without recipient' do
+    let(:phone) { '01230123' }
+    let(:fax) { build(:fax, recipient: nil, phone: phone) }
+
+    it 'creates and assigns a new recipient by phone' do
+      expect{fax.save}.to change(Recipient, :count).by 1
+      expect(fax.recipient).to eq Recipient.find_by(phone: phone)
+    end
+
+    it 'finds and assigns an existing recipient by phone' do
+      create(:recipient, phone: phone)
+      expect{fax.save}.to change(Recipient, :count).by 0
+      expect(fax.recipient).to eq Recipient.find_by(phone: phone)
+    end
+  end
+
+  it 'validates the presence of phone' do
+    fax = build(:fax, recipient: nil, phone: nil)
+    expect(fax).to be_invalid
+    expect(fax.errors_on(:phone)).to_not be_empty
+  end
+
+  it 'cleans the phone number from non-digits before save' do
+    fax = create(:fax, phone: ' 0123-456 789 ')
+    expect(fax.phone).to eq '0123456789'
+  end
+
+  it 'is invalid with too short phone' do
+    fax = build(:fax, phone: '0123456')
+    expect(fax).to have(1).errors_on(:phone)
+  end
+
+  it 'is invalid when phone has no leading zero' do
+    fax = build(:fax, phone: '123456789')
+    expect(fax).to have(1).errors_on(:phone)
+    expect(fax.errors_on(:phone)).to include('has no area code')
+  end
+
+  it 'is invalid when phone has more then one leading zero' do
+    fax = build(:fax, phone: '00123456789')
+    expect(fax).to have(1).errors_on(:phone)
+    expect(fax.errors_on(:phone)).to include('has no area code')
+  end
+
   it 'orders faxes by default by descending creation date' do
     now = DateTime.current
     old_fax = create(:fax, created_at: now-1.day)
@@ -34,11 +78,6 @@ describe Fax do
   context 'without a recipient' do
     let(:fax) { build(:fax, recipient: nil) }
 
-    it 'is invalid' do
-      expect(fax).to be_invalid
-      expect(fax).to have(1).errors_on(:recipient)
-    end
-
     it 'can not be saved in the database' do
       expect { fax.save!(validate: false) }.to raise_error
     end
@@ -57,7 +96,7 @@ describe Fax do
     end
   end
 
-  context 'without unique print_job_id' do
+  context 'with non-unique print_job_id' do
     let(:other_fax) { create(:fax, print_job_id: 5) }
     let(:fax) { build(:fax, print_job_id: other_fax.print_job_id) }
 
@@ -250,10 +289,22 @@ describe Fax do
   end
 
   describe '#phone' do
-    it 'returns the recipients phone number' do
-      recipient = create(:recipient, phone: '0123456789')
-      fax = create(:fax, recipient: recipient)
+    let(:phone) { '01234754' }
+
+    it 'returns @phone when set' do
+      fax = build(:fax, phone: phone, recipient: nil)
+      expect(fax.phone).to eq phone
+    end
+
+    it 'returns recipient.phone when @phone is not set' do
+      recipient = build(:recipient, phone: '09823121')
+      fax = build(:fax, phone: nil, recipient: recipient)
       expect(fax.phone).to eq recipient.phone
+    end
+
+    it 'returns nil when @phone and recipient are not set' do
+      fax = build(:fax, phone: nil, recipient: nil)
+      expect(fax.phone).to be_nil
     end
   end
 

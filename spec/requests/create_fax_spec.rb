@@ -13,9 +13,7 @@ describe 'Create Fax' do
       {
         fax: {
           path: '/tmp/hello.pdf',
-          recipient_attributes: {
-            phone: '0123456789'
-          },
+          phone: '0123456789',
           patient_attributes: {
             first_name: 'Chuck',
             last_name: 'Norris',

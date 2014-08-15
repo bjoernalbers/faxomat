@@ -2,17 +2,24 @@ class Fax < ActiveRecord::Base
   PRINTER        = 'Fax'
   DIALOUT_PREFIX = '0'
 
+  attr_writer :phone
+
   belongs_to :recipient
   belongs_to :patient
 
   has_many :deliveries, dependent: :destroy
 
-  accepts_nested_attributes_for :recipient, :patient
+  accepts_nested_attributes_for :patient
 
   validates :path, presence: true
-  validates :recipient, presence: true
   validates :patient, presence: true
   validates_uniqueness_of :print_job_id, allow_nil: true
+  validates :phone,
+    presence: true,
+    length: {minimum: Recipient::MINIMUM_PHONE_LENGTH},
+    format: {with: Recipient::AREA_CODE_REGEX, message: 'has no area code'}
+
+  before_save :assign_recipient
 
   default_scope { order('created_at DESC') }
 
@@ -68,9 +75,8 @@ class Fax < ActiveRecord::Base
     end
   end
 
-  # @returns [String] recipient phone number
   def phone
-    recipient.phone
+    @phone ? @phone.gsub(/[^0-9]/, '') : recipient.try(:phone)
   end
 
   # @returns [String] fax title
@@ -135,5 +141,11 @@ class Fax < ActiveRecord::Base
     def words
       query ? query.split : []
     end
+  end
+
+  private
+
+  def assign_recipient
+    self.recipient = Recipient.find_or_create_by!(phone: phone)
   end
 end
