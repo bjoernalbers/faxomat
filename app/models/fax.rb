@@ -7,6 +7,8 @@ class Fax < ActiveRecord::Base
 
   has_many :deliveries, dependent: :destroy
 
+  accepts_nested_attributes_for :recipient, :patient
+
   validates :path, presence: true
   validates :recipient, presence: true
   validates :patient, presence: true

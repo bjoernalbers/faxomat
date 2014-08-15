@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root 'faxes#index'
 
-  resources :faxes, only: [:index, :show] do
+  resources :faxes, only: [:index, :show, :create] do
     get 'aborted', on: :collection
     get 'search', on: :collection
   end

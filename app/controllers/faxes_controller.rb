@@ -1,4 +1,6 @@
 class FaxesController < ApplicationController
+  protect_from_forgery except: :create
+
   def index
     @faxes = faxes.created_today
   end
@@ -6,6 +8,15 @@ class FaxesController < ApplicationController
   def show
     fax = Fax.find(params[:id]) # TODO: only render faxes for current user/recipient!
     send_file fax.path, type: 'application/pdf', disposition: 'inline'
+  end
+
+  def create
+    fax = Fax.new(fax_params)
+    if fax.save
+      render json: 'OK', status: :created #TODO: Render fax: phone, patient, path?!
+    else
+      render json: fax.errors, status: :unprocessable_entity
+    end
   end
 
   def aborted
@@ -18,6 +29,13 @@ class FaxesController < ApplicationController
   end
 
   private
+
+  def fax_params
+    params.require(:fax).
+      permit(:path,
+             recipient_attributes: [:phone],
+             patient_attributes: [:first_name, :last_name, :date_of_birth])
+  end
 
   def faxes
     if params[:recipient_id]
