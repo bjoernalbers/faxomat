@@ -2,11 +2,13 @@ namespace :faxomat do
   desc 'Import fax jobs from WiCoRIS.'
   task :import do
     Dir.glob('/Library/FileMaker Server/Data/Documents/2014-*.JSON').each do |file|
-      puts file
-      Importer.new(file).run
-    rescue => e
-      warn "Unable to import file: #{file}"
-      warn e
+      begin
+        puts file
+        Importer.new(file).run
+      rescue => e
+        warn "Unable to import file: #{file}"
+        warn e
+      end
     end
   end
 

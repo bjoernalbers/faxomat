@@ -83,19 +83,6 @@ describe Fax do
     end
   end
 
-  context 'without a patient' do
-    let(:fax) { build(:fax, patient: nil) }
-
-    it 'is invalid' do
-      expect(fax).to be_invalid
-      expect(fax).to have(1).errors_on(:patient)
-    end
-
-    it 'can not be saved in the database' do
-      expect { fax.save!(validate: false) }.to raise_error
-    end
-  end
-
   context 'with non-unique print_job_id' do
     let(:other_fax) { create(:fax, print_job_id: 5) }
     let(:fax) { build(:fax, print_job_id: other_fax.print_job_id) }
@@ -234,50 +221,45 @@ describe Fax do
   end
 
   describe '.search' do
-    let!(:patient) { create(:patient,
-                            first_name: 'Bruce',
-                            last_name: 'Willis',
-                            date_of_birth: '1955-03-19') }
-    let!(:recipient) { create(:recipient,
-                              phone: '0987654321') }
-    let!(:fax) { create(:fax, patient: patient, recipient: recipient) }
-    let!(:other_fax) { create(:fax) }
+    let!(:other_fax) { create(:fax, title: 'another fax') }
+    let!(:fax) { create(:fax, title: 'Chunky Bacon') }
 
-    it 'searches by patient date of birth' do
-      %w(19.3.1955 19.3.1955).each do |query|
-        expect(Fax.search(query)).to match_array [fax]
-      end
+    it 'searches by matching title' do
+      query = 'Chunky Bacon'
+      expect(Fax.search(query)).to match_array [fax]
     end
 
-    it 'searches by patient last name' do
-      %w(Willis willis illi).each do |query|
-        expect(Fax.search(query)).to match_array [fax]
-      end
+    it 'searches case-insensitive' do
+      query = 'chunky bacon'
+      expect(Fax.search(query)).to match_array [fax]
+    end
+
+    it 'searches by title fragment' do
+      query = 'unk'
+      expect(Fax.search(query)).to match_array [fax]
+    end
+
+    it 'searches for all query words' do
+      query = 'Bacon Chunky'
+      expect(Fax.search(query)).to match_array [fax]
     end
 
     it 'handles german umlauts' do
-      patient = create(:patient, first_name: 'Björn')
-      fax = create(:fax, patient: patient)
-      expect(Fax.search('Björn')).to match_array [fax]
+      fax = create(:fax, title: 'Björn')
+      query = 'Björn'
+      expect(Fax.search(query)).to match_array [fax]
     end
 
-    it 'searches by patient first name' do
-      %w(Bruce bruce ruc).each do |query|
-        expect(Fax.search(query)).to match_array [fax]
-      end
-    end
+    it 'searches for the document name'
 
-    it 'searches by date of birth and name' do
-      expect(Fax.search('chuck 19.3.1955')).to be_empty
-      expect(Fax.search('bruce 19.3.1955')).to match_array [fax]
-    end
-
-    it 'searches by multiple patient names' do
-      expect(Fax.search('willis chuck')).to be_empty
-      expect(Fax.search('willis bruce')).to match_array [fax]
+    it 'searches by phone' do
+      fax = create(:fax, phone: '042424242')
+      query = fax.phone
+      expect(Fax.search(query)).to match_array [fax]
     end
 
     it 'searches by recipient phone number' do
+      pending
       expect(Fax.search('8765')).to match_array [fax]
     end
 
@@ -321,10 +303,12 @@ describe Fax do
   end
 
   describe '#title' do
-    it 'returns the patient infos' do
-      patient = double('patient', info: 'hey')
-      fax.stub(:patient).and_return(patient)
-      expect(fax.title).to eq 'hey'
+    context 'when set' do
+      it 'returns the given value'
+    end
+
+    context 'when not set' do
+      it 'returns the document filename'
     end
   end
 

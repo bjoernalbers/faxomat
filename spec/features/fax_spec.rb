@@ -10,7 +10,8 @@ feature 'Faxes List' do
 
   scenario 'shows fax title, recipient and state' do
     recipient = create(:recipient)
-    fax = create(:fax, recipient: recipient, state: 'completed')
+    fax = create(:fax, title: 'a nice fax',
+                 recipient: recipient, state: 'completed')
     
     page.load
 

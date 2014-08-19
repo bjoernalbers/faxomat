@@ -5,14 +5,10 @@ class Fax < ActiveRecord::Base
   attr_writer :phone
 
   belongs_to :recipient
-  belongs_to :patient
 
   has_many :deliveries, dependent: :destroy
 
-  accepts_nested_attributes_for :patient
-
   validates :path, presence: true
-  validates :patient, presence: true
   validates_uniqueness_of :print_job_id, allow_nil: true
   validates :phone,
     presence: true,
@@ -42,17 +38,16 @@ class Fax < ActiveRecord::Base
     undelivered.each(&:deliver)
   end
 
-  # Search faxes by patient name(s) and/or date of birth.
   def self.search(q)
     query = Query.new(q)
-    results = joins(:patient, :recipient)
+    results = joins(:recipient)
     if query.blank?
       results = none
     else
-      results = results.
-        merge(Patient.by_birth_date(query.birth_date)) if query.birth_date
       results = results.merge(Recipient.by_phone(query.phone)) if query.phone
-      query.names.each { |n| results = results.merge(Patient.by_name(n)) }
+      query.names.each do |name|
+        results = results.where('title LIKE ?', "%#{name}%")
+      end
     end
     results
   end
@@ -80,9 +75,9 @@ class Fax < ActiveRecord::Base
   end
 
   # @returns [String] fax title
-  def title
-    patient.info
-  end
+  #def title
+    #'' # TODO: Set better default title!
+  #end
 
   def to_s
     title
@@ -115,17 +110,7 @@ class Fax < ActiveRecord::Base
     end
 
     def blank?
-      birth_date.nil? && phone.nil? && names.empty?
-    end
-
-    def birth_date
-      words.map do |word|
-        begin
-          Time.strptime(word, '%d.%m.%Y').to_date
-        rescue ArgumentError
-          nil
-        end
-      end.compact.first
+      phone.nil? && names.empty?
     end
 
     def phone

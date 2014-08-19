@@ -13,7 +13,7 @@ class FaxesController < ApplicationController
   def create
     fax = Fax.new(fax_params)
     if fax.save
-      render json: 'OK', status: :created #TODO: Render fax: phone, patient, path?!
+      render json: 'OK', status: :created #TODO: Return more infos about the new fax!
     else
       render json: fax.errors, status: :unprocessable_entity
     end
@@ -31,10 +31,7 @@ class FaxesController < ApplicationController
   private
 
   def fax_params
-    params.require(:fax).
-      permit(:path, :phone,
-             recipient_attributes: [:phone],
-             patient_attributes: [:first_name, :last_name, :date_of_birth])
+    params.require(:fax).permit(:path, :phone)
   end
 
   def faxes

@@ -14,11 +14,7 @@ describe 'Create Fax' do
         fax: {
           path: '/tmp/hello.pdf',
           phone: '0123456789',
-          patient_attributes: {
-            first_name: 'Chuck',
-            last_name: 'Norris',
-            date_of_birth: '1940-03-10'
-          }
+          title: 'hello, world!'
         }
       }.to_json
     end

@@ -27,6 +27,7 @@ describe Importer do
 
   describe '#job' do
     it 'returns a new job' do
+      pending 'replace by fax'
       job = double('job')
       Job.stub(:new).and_return(job)
       importer.stub(:clean_attributes).and_return('attributes')
