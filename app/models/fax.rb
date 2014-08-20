@@ -8,12 +8,15 @@ class Fax < ActiveRecord::Base
 
   has_many :deliveries, dependent: :destroy
 
-  validates :path, presence: true
+  has_attached_file :document
+
   validates_uniqueness_of :print_job_id, allow_nil: true
   validates :phone,
     presence: true,
     length: {minimum: Recipient::MINIMUM_PHONE_LENGTH},
     format: {with: Recipient::AREA_CODE_REGEX, message: 'has no area code'}
+  validates_attachment :document,
+    content_type: { content_type: 'application/pdf' }
 
   before_save :assign_recipient
 
@@ -90,7 +93,7 @@ class Fax < ActiveRecord::Base
   # @returns [Cups::PrintJob]
   def print_job
     @print_job ||=
-      Cups::PrintJob.new(path, PRINTER, {'phone' => full_phone}).
+      Cups::PrintJob.new(document.path, PRINTER, {'phone' => full_phone}).
       tap do |print_job|
         print_job.title = title
       end

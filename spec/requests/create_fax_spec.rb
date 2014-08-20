@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe 'Create Fax' do
+  let(:path) do
+    File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
+  end
+
   let(:headers) do
     {
       'Accept'       => 'application/json',
@@ -12,9 +16,13 @@ describe 'Create Fax' do
     let(:params) do
       {
         fax: {
-          path: '/tmp/hello.pdf',
-          phone: '0123456789',
-          title: 'hello, world!'
+          phone:    '0123456789',
+          title:    'hello, world!',
+          document: {
+            filename: File.basename(path),
+            data:     Base64.encode64(File.read(path)),
+            type:     'application/pdf'
+          }
         }
       }.to_json
     end
@@ -28,6 +36,8 @@ describe 'Create Fax' do
       expect( response.status ).to eq 201
     end
 
+    it 'returns the fax as JSON'
+
     it 'responds in JSON' do
       do_post
       expect( response.content_type ).to be_json
@@ -36,11 +46,24 @@ describe 'Create Fax' do
     it 'creates a new fax' do
       expect{ do_post }.to change(Fax, :count).by(1)
     end
+
+    it 'saves the content' do
+      do_post
+      fax = Fax.first
+      expect(File.read(fax.document.path)).to eq File.read(path)
+      #expect(Fax.count).to eq 1
+      #expect(Fax.first.document.path).to_not be_nil
+    end
   end
 
   context 'with invalid params' do
     let(:params) do
-      { fax: { path: nil } }.to_json
+      {
+        fax: {
+          phone: nil,
+          document: nil
+        }
+      }.to_json
     end
 
     it 'responds with HTTP 422' do
@@ -56,7 +79,7 @@ describe 'Create Fax' do
     it 'returns the validation errors' do
       fax = Fax.new
       fax.valid? # Used to populate the errors
-      post '/faxes', {fax: {path: nil}}.to_json, headers
+      post '/faxes', params, headers
       expect(response.body).to eq fax.errors.to_json
     end
   end

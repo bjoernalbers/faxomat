@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140819122815) do
+ActiveRecord::Schema.define(version: 20140819192557) do
 
   create_table "deliveries", force: true do |t|
     t.integer  "print_job_id",    null: false
@@ -25,8 +25,7 @@ ActiveRecord::Schema.define(version: 20140819122815) do
   add_index "deliveries", ["print_job_id"], name: "index_deliveries_on_print_job_id", unique: true
 
   create_table "faxes", force: true do |t|
-    t.integer  "recipient_id", null: false
-    t.string   "path",         null: false
+    t.integer  "recipient_id",          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "delivered_at"
@@ -34,6 +33,10 @@ ActiveRecord::Schema.define(version: 20140819122815) do
     t.string   "state"
     t.integer  "patient_id"
     t.string   "title"
+    t.string   "document_file_name"
+    t.string   "document_content_type"
+    t.integer  "document_file_size"
+    t.datetime "document_updated_at"
   end
 
   add_index "faxes", ["print_job_id"], name: "index_faxes_on_print_job_id", unique: true

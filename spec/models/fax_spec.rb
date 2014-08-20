@@ -3,10 +3,6 @@ require 'spec_helper'
 describe Fax do
   let(:fax) { build(:fax) }
 
-  it 'validates that path points to an existing file' do
-    pending
-  end
-
   context 'without recipient' do
     let(:phone) { '01230123' }
     let(:fax) { build(:fax, recipient: nil, phone: phone) }
@@ -60,19 +56,6 @@ describe Fax do
 
     expect(faxes.first).to eq(new_fax)
     expect(faxes.last).to eq(old_fax)
-  end
-
-  context 'without a path' do
-    let(:fax) { build(:fax, path: nil) }
-
-    it 'is invalid' do
-      expect(fax).to be_invalid
-      expect(fax).to have(1).errors_on(:path)
-    end
-
-    it 'can not be saved in the database' do
-      expect { fax.save!(validate: false) }.to raise_error
-    end
   end
 
   context 'without a recipient' do
@@ -304,11 +287,20 @@ describe Fax do
 
   describe '#title' do
     context 'when set' do
-      it 'returns the given value'
+      let(:title) { 'My wonderful fax' }
+      let(:fax) { create(:fax, title: title) }
+
+      it 'returns the given value' do
+        expect(fax.title).to eq title
+      end
     end
 
     context 'when not set' do
-      it 'returns the document filename'
+      let(:fax) { create(:fax, title: nil) }
+
+      it 'returns nil' do
+        expect(fax.title).to be_nil
+      end
     end
   end
 
@@ -351,6 +343,18 @@ describe Fax do
     end
   end
 
+  describe '#document' do
+    it 'allows to attach documents' do
+      filename = File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
+      #expect {
+      file = File.open(filename)
+        fax.document = file
+        fax.save!
+      file.close
+      #}.to_not raise_error
+    end
+  end
+
   describe '#print_job' do
     let(:print_job) { double('print_job', :title= => nil) }
     let(:fax) { create(:fax) }
@@ -360,7 +364,7 @@ describe Fax do
     end
 
     it 'initializes a print job' do
-      fax.stub(:path).and_return('chunky.pdf')
+      fax.stub_chain(:document, :path).and_return('chunky.pdf')
       fax.stub(:full_phone).and_return('123')
       fax.send(:print_job)
       expect(Cups::PrintJob).to have_received(:new).

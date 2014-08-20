@@ -10,7 +10,7 @@ feature 'deliveries' do
     Fax.deliver
 
     expect(Cups::PrintJob).to have_received(:new).
-      with(fax.path, 'Fax', {'phone' => fax.phone})
+      with(fax.document.path, 'Fax', {'phone' => fax.phone})
     expect(print_job).to have_received(:print)
 
     fax.reload
