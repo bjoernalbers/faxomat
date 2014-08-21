@@ -7,7 +7,9 @@ class FaxesController < ApplicationController
 
   def show
     fax = Fax.find(params[:id]) # TODO: only render faxes for current user/recipient!
-    send_file fax.document.path, type: 'application/pdf', disposition: 'inline'
+    send_file fax.document.path,
+      type: fax.document.content_type,
+      disposition: 'inline'
   end
 
   def create
