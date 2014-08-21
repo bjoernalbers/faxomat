@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Fax do
   let(:fax) { build(:fax) }
 
+  it 'has a factory with attached document' do
+    expect(fax.document.path).to_not be_nil
+  end
+
   context 'without recipient' do
     let(:phone) { '01230123' }
     let(:fax) { build(:fax, recipient: nil, phone: phone) }

@@ -30,10 +30,13 @@ describe FaxesController do
 
   describe 'GET show' do
     it 'sends the pdf document' do
-      pending 'this test is broke and I have no clue: "missing template"'
+      # NOTE: This fixes the missing template error
+      # (see http://stackoverflow.com/questions/4701108/rspec-send-file-testing)
+      controller.stub!(:render)
+
       fax = create(:fax)
       controller.should_receive(:send_file).
-        with(fax.path, type: 'application/pdf', disposition: 'inline')
+        with(fax.document.path, type: 'application/pdf', disposition: 'inline')
       get :show, id: fax
     end
   end
