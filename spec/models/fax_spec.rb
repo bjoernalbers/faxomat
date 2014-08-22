@@ -37,6 +37,12 @@ describe Fax do
     expect(fax.errors_on(:phone)).to_not be_empty
   end
 
+  it 'validates the presence of a document' do
+    fax = build(:fax, document: nil)
+    expect(fax).to_not be_valid
+    expect(fax.errors[:document].size).to eq(1)
+  end
+
   it 'cleans the phone number from non-digits before save' do
     fax = create(:fax, phone: ' 0123-456 789 ')
     expect(fax.phone).to eq '0123456789'
