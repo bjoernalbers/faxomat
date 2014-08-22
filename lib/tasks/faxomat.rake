@@ -18,7 +18,7 @@ namespace :faxomat do
   end
 
   desc 'Synchronize fax (print job) states from CUPS.'
-  task :update do
+  task :update => :environment do
     Fax.update_states
   end
 
