@@ -7,6 +7,14 @@ describe Fax do
     expect(fax.document.path).to_not be_nil
   end
 
+  it 'does not store documents under a public available location' do
+    File.open(Rails.root.join('spec', 'support', 'sample.pdf')) do |doc|
+      fax.document = doc
+      fax.save!
+    end
+    expect(fax.document.path).to_not match /public/i
+  end
+
   context 'without recipient' do
     let(:phone) { '01230123' }
     let(:fax) { build(:fax, recipient: nil, phone: phone) }

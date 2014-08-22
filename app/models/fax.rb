@@ -8,7 +8,10 @@ class Fax < ActiveRecord::Base
 
   has_many :deliveries, dependent: :destroy
 
-  has_attached_file :document
+  has_attached_file :document,
+    path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
+
+  validates_attachment :document, content_type: { content_type: "application/pdf" }
 
   validates_uniqueness_of :print_job_id, allow_nil: true
   validates :phone,
