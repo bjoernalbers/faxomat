@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-cd $(dirname $0) && RAILS_ENV=production bin/rake faxomat:run
