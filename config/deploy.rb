@@ -9,7 +9,7 @@ set :repo_url, 'git@github.com:bjoernalbers/faxomat.git'
 
 # Default deploy_to directory is /var/www/my_app
 # set :deploy_to, '/var/www/my_app'
-set :deploy_to, '/Users/rgp/faxomat'
+set :deploy_to, ->{ File.join('/Users', fetch(:user), fetch(:application)) }
 
 # Default value for :scm is :git
 # set :scm, :git
