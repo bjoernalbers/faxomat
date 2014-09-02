@@ -30,6 +30,9 @@ set :linked_files, %w{config/database.yml db/production.sqlite3}
 # set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 set :linked_dirs, %w{storage}
 
+# Launchd-Services
+set :services, %w(unicorn rake)
+
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
@@ -41,7 +44,8 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      execute 'kill -QUIT `cat /tmp/unicorn.pid`'
+      invoke 'launchd:unload'
+      invoke 'launchd:load'
     end
   end
 
