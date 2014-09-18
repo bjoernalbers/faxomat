@@ -5,6 +5,14 @@ describe 'Create Fax' do
     File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
   end
 
+  let(:deliverer) { double(:deliverer) }
+
+  before do
+    # NOTE: Disable delivery during tests!
+    allow(Fax::Deliverer).to receive(:new).and_return(deliverer)
+    allow(deliverer).to receive(:deliver)
+  end
+
   let(:headers) do
     {
       'Accept'       => 'application/json',

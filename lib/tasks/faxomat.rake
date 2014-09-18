@@ -1,16 +1,13 @@
 namespace :faxomat do
-  desc 'Deliver all undelivered faxes.'
+  desc 'Deliver all deliverable faxes.'
   task :deliver => :environment do
-    puts "Delivering faxes in #{Rails.env}..."
-    puts Fax.deliver
+    puts "#{Time.zone.now.iso8601} Delivering faxes in #{Rails.env}."
+    Fax.deliver
   end
 
-  desc 'Synchronize fax (print job) states from CUPS.'
-  task :update => :environment do
-    puts "Updating fax states in #{Rails.env}."
-    Fax.update_states
+  desc 'Check currently being delivered fax.'
+  task :check => :environment do
+    puts "#{Time.zone.now.iso8601} Checking fax in #{Rails.env}."
+    Fax.check
   end
-
-  desc 'Import and deliver fax jobs from WiCoRIS.'
-  task :run => [:update, :deliver]
 end

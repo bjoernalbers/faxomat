@@ -1,7 +1,4 @@
 class Fax < ActiveRecord::Base
-  PRINTER        = 'Fax'
-  DIALOUT_PREFIX = '0'
-
   attr_writer :phone
 
   belongs_to :recipient
@@ -25,6 +22,8 @@ class Fax < ActiveRecord::Base
 
   before_save :assign_recipient
 
+  after_create :deliver
+
   default_scope { order('created_at DESC') }
 
   def self.aborted
@@ -35,15 +34,14 @@ class Fax < ActiveRecord::Base
     where('created_at >= ?', DateTime.current.beginning_of_day)
   end
 
-  def self.undelivered
-    where(print_job_id: nil)
+  # Deliver all deliverable faxes.
+  def self.deliver
+    Deliverer.deliver
   end
 
-  # Deliver all undelivered faxes.
-  #
-  # @returns [Array] Delivered faxes.
-  def self.deliver
-    undelivered.each(&:deliver)
+  # Check deliveries.
+  def self.check
+    Deliverer.check
   end
 
   def self.search(q)
@@ -60,22 +58,9 @@ class Fax < ActiveRecord::Base
     results
   end
 
-  # Update print job states from CUPS.
-  def self.update_states
-    Cups.all_jobs(PRINTER).each do |print_job_id,print_job|
-      fax = find_by(print_job_id: print_job_id)
-      if fax && print_job[:state]
-        fax.update(state: print_job[:state].to_s) #TODO: Test updated at with same value!
-      end
-    end
-  end
-
-  # Deliver the fax
+  # Deliver the fax.
   def deliver
-    unless self.print_job_id
-      fail 'print job could not be delivered' unless print_job.print
-      update(print_job_id: print_job.job_id)
-    end
+    Deliverer.new(self).deliver
   end
 
   def phone
@@ -91,23 +76,12 @@ class Fax < ActiveRecord::Base
     title
   end
 
+  # Returns the document path
+  def path
+    document.path
+  end
+
   private
-
-  # Initialize a new print job
-  #
-  # @returns [Cups::PrintJob]
-  def print_job
-    @print_job ||=
-      Cups::PrintJob.new(document.path, PRINTER, {'phone' => full_phone}).
-      tap do |print_job|
-        print_job.title = title
-      end
-  end
-
-  # @returns [String] Dialout prefix + recipient phone.
-  def full_phone
-    [Rails.application.config.dialout_prefix, phone].join
-  end
 
   # Helper class to strip down a search query string.
   class Query

@@ -4,9 +4,17 @@ require 'spec_helper'
 # so that I can retrigger them manually
 
 feature 'Aborted faxes' do
+  let(:deliverer) { double(:deliverer) }
+
+  before do
+    # NOTE: Disable delivery during tests!
+    allow(Fax::Deliverer).to receive(:new).and_return(deliverer)
+    allow(deliverer).to receive(:deliver)
+  end
+
   scenario 'shows aborted faxes' do
-    aborted_fax = create(:fax, state:'aborted')
-    completed_fax = create(:fax, state:'completed')
+    aborted_fax = create(:aborted_fax)
+    completed_fax = create(:completed_fax)
     undelivered_fax = create(:fax)
 
     page = AbortedFaxesPage.new

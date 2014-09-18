@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe Fax do
   let(:fax) { build(:fax) }
+  let(:deliverer) { double(:deliverer) }
+
+  before do
+    allow(Fax::Deliverer).to receive(:new).and_return(deliverer)
+    allow(deliverer).to receive(:deliver)
+  end
 
   it 'has a factory with attached document' do
     expect(fax.document.path).to_not be_nil
@@ -13,6 +19,24 @@ describe Fax do
       fax.save!
     end
     expect(fax.document.path).to_not match /public/i
+  end
+
+  context 'when created' do
+    before do
+      allow(fax).to receive(:deliver)
+    end
+
+    it 'gets delivered' do
+      expect(fax).to_not have_received(:deliver)
+      fax.save
+      expect(fax).to have_received(:deliver)
+    end
+  end
+
+  describe '#path' do
+    it 'returns the document path' do
+      expect(fax.path).to eq(fax.document.path)
+    end
   end
 
   context 'without recipient' do
@@ -135,75 +159,25 @@ describe Fax do
 
   describe '.deliver' do
     before do
-      allow(Fax).to receive(:undelivered).and_return( [fax] )
-      allow(fax).to receive(:deliver)
+      allow(Fax::Deliverer).to receive(:deliver)
     end
 
-    it 'processes only undelivered faxes' do
+    it 'delivers faxes with the deliverer' do
+      expect(Fax::Deliverer).to_not have_received(:deliver)
       Fax.deliver
-      expect(Fax).to have_received(:undelivered)
-    end
-
-    it 'delivers each fax' do
-      Fax.deliver
-      expect(fax).to have_received(:deliver)
-    end
-
-    it 'returns all delivered faxes' do
-      expect(Fax.deliver).to eq( [fax] )
+      expect(Fax::Deliverer).to have_received(:deliver)
     end
   end
 
-  describe '.undelivered' do
+  describe '.check' do
     before do
-      Fax.delete_all #TODO: Fix specs and remove this hack!
+      allow(Fax::Deliverer).to receive(:check)
     end
 
-    it 'includes faxes without print job id' do
-      fax.update!(print_job_id: nil)
-      expect(Fax.undelivered).to match_array([fax])
-    end
-
-    it 'excludes faxes with print job id' do
-      fax.update!(print_job_id: 23)
-      expect(Fax.undelivered).to be_empty
-    end
-  end
-
-  describe '#update_states' do
-    let(:print_jobs) { {} }
-
-    before do
-      Cups.stub(:all_jobs).and_return(print_jobs)
-    end
-
-    it 'updates the state for each matching delivery' do
-      fax = create(:fax, print_job_id: 1)
-      print_jobs[1] = {:state => :chunky}
-      expect(fax.state).to_not eq('chunky')
-      Fax.update_states
-      fax.reload
-      expect(fax.state).to eq('chunky')
-    end
-
-    it 'queries the jobs states via CUPS' do
-      Fax.update_states
-      expect(Cups).to have_received(:all_jobs).with('Fax')
-    end
-
-    it 'handles unknown print jobs' do
-      print_jobs[1] = {:state => :chunky}
-      expect {
-        Fax.update_states
-      }.to_not raise_error
-    end
-
-    it 'handles missing states' do
-      fax = create(:fax, print_job_id: 1)
-      print_jobs[1] = {}
-      expect {
-        Fax.update_states
-      }.to_not raise_error
+    it 'checks faxes with the deliverer' do
+      expect(Fax::Deliverer).to_not have_received(:check)
+      Fax.check
+      expect(Fax::Deliverer).to have_received(:check)
     end
   end
 
@@ -323,93 +297,26 @@ describe Fax do
   end
 
   describe '#deliver' do
-    let(:print_job) { double('print_job', print: true, job_id: 23) }
-    let(:fax) { create(:fax) }
-
     before do
-      fax.stub(:print_job).and_return(print_job)
+      fax.deliver
     end
 
-    context 'with print_job_id' do
-      let(:fax) { create(:fax, print_job_id: 23) }
-
-      it 'does not deliver again' do
-        fax.deliver
-        expect(print_job).to_not have_received(:print)
-      end
+    it 'creates a new deliverer' do
+      expect(Fax::Deliverer).to have_received(:new).with(fax)
     end
 
-    context 'without print_job_id' do
-      let(:fax) { create(:fax, print_job_id: nil) }
-
-      it 'delivers the print job' do
-        fax.deliver
-        expect(print_job).to have_received(:print)
-      end
-
-      it 'saves the print_job_id' do
-        expect(fax.print_job_id).to be_nil
-        fax.deliver
-        fax.reload
-        expect(fax.print_job_id).to eq(print_job.job_id)
-      end
-
-      it 'fails on printer errors' do
-        print_job.stub(:print).and_return(false)
-        expect { fax.deliver }.to raise_error
-      end
+    it 'delivers the fax' do
+      expect(deliverer).to have_received(:deliver)
     end
   end
 
   describe '#document' do
     it 'allows to attach documents' do
       filename = File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
-      #expect {
       file = File.open(filename)
         fax.document = file
         fax.save!
       file.close
-      #}.to_not raise_error
-    end
-  end
-
-  describe '#print_job' do
-    let(:print_job) { double('print_job', :title= => nil) }
-    let(:fax) { create(:fax) }
-
-    before do
-      Cups::PrintJob.stub(:new).and_return(print_job)
-    end
-
-    it 'initializes a print job' do
-      fax.stub_chain(:document, :path).and_return('chunky.pdf')
-      fax.stub(:full_phone).and_return('123')
-      fax.send(:print_job)
-      expect(Cups::PrintJob).to have_received(:new).
-        with('chunky.pdf', 'Fax', {'phone' => '123'})
-    end
-
-    it 'returns the instance' do
-      expect(fax.send(:print_job)).to eq print_job
-    end
-
-    it 'caches the instance' do
-      2.times { fax.send(:print_job) }
-      expect(Cups::PrintJob).to have_received(:new).once
-    end
-
-    it 'sets the print job title' do
-      fax.stub(:title).and_return('chunky bacon')
-      fax.send(:print_job)
-      expect(print_job).to have_received(:title=).with(fax.title)
-    end
-  end
-
-  describe '#full_phone' do
-    it 'returns the joined dialout prefix and recipient phone' do
-      expect(fax).to receive(:phone).and_return('42')
-      expect(Rails.application.config).to receive(:dialout_prefix).and_return('0')
-      expect(fax.send(:full_phone)).to eq('042')
     end
   end
 
