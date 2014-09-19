@@ -22,7 +22,7 @@ class Fax < ActiveRecord::Base
 
   before_save :assign_recipient
 
-  after_create :deliver
+  after_commit :deliver, :on => :create
 
   default_scope { order('created_at DESC') }
 
