@@ -8,7 +8,7 @@ namespace :launchd do
   end
 
   def template(from, to)
-    template_path = File.expand_path("../../templates/#{from}", __FILE__)
+    template_path = File.expand_path("../../templates/launchd/#{from}.plist.erb", __FILE__)
     template = ERB.new(File.new(template_path).read).result(binding)
     upload! StringIO.new(template), to
 
@@ -22,7 +22,7 @@ namespace :launchd do
       fetch(:services).each do |service|
         tmp_dir = Pathname.new('/tmp')
         tmp_filename = tmp_dir.join(File.basename(plist_for(service)))
-        template "#{service}_launchd.erb", tmp_filename
+        template service, tmp_filename
         execute :sudo, :mv, tmp_filename, plist_for(service)
       end
     end

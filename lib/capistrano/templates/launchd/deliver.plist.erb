@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>de.faxomat.rake</string>
+  <string>de.faxomat.deliver</string>
   <key>ProgramArguments</key>
   <array>
     <string>bundle</string>
     <string>exec</string>
     <string>rake</string>
-    <string>faxomat:check</string>
+    <string>faxomat:deliver</string>
   </array>
   <key>EnvironmentVariables</key>
   <dict>
@@ -19,9 +19,22 @@
     <string>production</string>
   </dict>
   <key>RunAtLoad</key>
-  <true/>
-  <key>StartInterval</key>
-  <integer>300</integer>
+  <false/>
+  <key>StartCalendarInterval</key>
+  <array>
+    <% (1..5).each do |weekday| %>
+      <% (8..17).each do |hour| %>
+        <dict>
+          <key>Weekday</key>
+          <integer><%= weekday %></integer>
+          <key>Hour</key>
+          <integer><%= hour %></integer>
+          <key>Minute</key>
+          <integer>15</integer>
+        </dict>
+      <% end %>
+    <% end %>
+  </array>
   <key>WorkingDirectory</key>
   <string><%= current_path %></string>
   <key>UserName</key>
@@ -29,8 +42,8 @@
   <key>GroupName</key>
   <string>staff</string>
   <key>StandardOutPath</key>
-  <string><%= current_path.join('log', 'rake.log') %></string>
+  <string><%= current_path.join('log', 'deliver.log') %></string>
   <key>StandardErrorPath</key>
-  <string><%= current_path.join('log', 'rake.log') %></string>
+  <string><%= current_path.join('log', 'deliver.log') %></string>
 </dict>
 </plist>

@@ -31,7 +31,7 @@ set :linked_files, %w{config/database.yml db/production.sqlite3}
 set :linked_dirs, %w{storage}
 
 # Launchd-Services
-set :services, %w(unicorn rake)
+set :services, %w(app check deliver)
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
