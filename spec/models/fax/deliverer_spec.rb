@@ -52,6 +52,14 @@ describe Fax::Deliverer do
       fax.update(print_job_id: nil, created_at: Time.zone.now-4.days)
       expect(Fax::Deliverer.deliverable).to match_array([ fax ])
     end
+
+    it 'orders faxes by creation date (fifo)' do
+      old = create(:fax, print_job_id: nil)
+      new = create(:fax, print_job_id: nil)
+      expect(old.created_at).to be < new.created_at
+      expect(old.updated_at).to be < new.updated_at
+      expect(Fax::Deliverer.deliverable.to_a).to eq [ old, new ]
+    end
   end
 
   describe '.check' do
