@@ -10,6 +10,7 @@
     <th>Empfänger</th>
     <th>Erstellt</th>
     <th>Status</th>
+    <th>Zustellversuche</th>
   </tr>
   <% @faxes.each do |fax| %>
     <%= content_tag_for(:tr, fax, class: fax.state) do %>
@@ -19,6 +20,9 @@
       <%= content_tag(:td, fax.phone, class: 'phone') %>
       <%= content_tag(:td, fax.created_at, class: 'created_at') %>
       <%= content_tag(:td, fax.state, class: 'state') %>
+      <%= content_tag(:td, class: 'delivery_attempts') do %>
+        <%= content_tag(:span, fax.delivery_attempts, class: 'badge') %>
+      <% end %>
     <% end %>
   <% end %>
 </table>

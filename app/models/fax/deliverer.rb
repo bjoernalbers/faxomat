@@ -48,7 +48,8 @@ class Fax::Deliverer
   # Actually deliver the fax.
   def deliver!
     fail 'print job could not be delivered' unless print_job.print
-    fax.update(print_job_id: print_job.job_id)
+    fax.update(print_job_id: print_job.job_id,
+               delivery_attempts: (fax.delivery_attempts || 0) + 1)
   end
 
   # Returns a new print job

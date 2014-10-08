@@ -160,6 +160,7 @@ describe Fax::Deliverer do
       allow(print_job).to receive(:job_id).and_return(23)
       allow(deliverer).to receive(:print_job).and_return(print_job)
       allow(fax).to receive(:update)
+      allow(fax).to receive(:delivery_attempts).and_return(nil, 1)
 
       deliverer.send(:deliver!)
     end
@@ -168,9 +169,12 @@ describe Fax::Deliverer do
       expect(print_job).to have_received(:print)
     end
 
-    it 'saves the print job id' do
+    it 'saves the print job id and increments the delivery attempts' do
       expect(fax).to have_received(:update).
-        with(print_job_id: print_job.job_id)
+        with(print_job_id: print_job.job_id, delivery_attempts: 1)
+      deliverer.send(:deliver!)
+      expect(fax).to have_received(:update).
+        with(print_job_id: print_job.job_id, delivery_attempts: 2)
     end
 
     context 'when printing fails' do
