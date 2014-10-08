@@ -56,10 +56,9 @@ class FaxesController < ApplicationController
 
   def faxes
     if params[:recipient_id]
-      recipient = Recipient.find(params[:recipient_id])
-      recipient.faxes
+      Recipient.find(params[:recipient_id]).faxes
     else
       Fax
-    end
+    end.order('updated_at DESC')
   end
 end

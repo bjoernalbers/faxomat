@@ -89,17 +89,6 @@ describe Fax do
     expect(fax.errors_on(:phone)).to include('has no area code')
   end
 
-  it 'orders faxes by default by descending creation date' do
-    now = DateTime.current
-    old_fax = create(:fax, created_at: now-1.day)
-    new_fax = create(:fax, created_at: now)
-
-    faxes = Fax.all
-
-    expect(faxes.first).to eq(new_fax)
-    expect(faxes.last).to eq(old_fax)
-  end
-
   context 'without a recipient' do
     let(:fax) { build(:fax, recipient: nil) }
 

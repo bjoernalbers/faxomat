@@ -11,7 +11,7 @@ class Fax::Deliverer
 
     # Returns deliverable and recently created faxes.
     def deliverable
-      Fax.unscoped.
+      Fax.
         where('print_job_id IS NULL OR state = "aborted"').
         where('created_at >= ?', DateTime.current.beginning_of_day - 4.days).
         order('created_at')

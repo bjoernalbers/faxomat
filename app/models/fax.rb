@@ -24,8 +24,6 @@ class Fax < ActiveRecord::Base
 
   after_commit :deliver, :on => :create
 
-  default_scope { order('created_at DESC') }
-
   def self.aborted
     where(state: 'aborted')
   end

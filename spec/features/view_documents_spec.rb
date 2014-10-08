@@ -24,4 +24,16 @@ feature 'View documents' do
     expect(page).to have_content('Norris, Chuck (* 10.3.1940)')
     expect(page).to_not have_content('Schwarzenegger, Arnold (* 30.7.1947)')
   end
+
+  scenario 'ordered by time of last delivery / update' do
+    fax = create(:fax)
+    last_created = create(:fax, title: 'last created',
+                          created_at: fax.created_at + 1.second)
+    last_updated = create(:fax, title: 'last updated',
+                          created_at: fax.updated_at + 1.second)
+    visit faxes_path
+
+    faxes = page.all('.fax')
+    expect(faxes.first[:id]).to eq "fax_#{last_updated.id}" # TODO: Put this into a wrapper API!
+  end
 end
