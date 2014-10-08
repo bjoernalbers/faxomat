@@ -63,39 +63,46 @@ describe Fax::Deliverer do
   end
 
   describe '.check' do
+    let(:fax) { create(:fax, print_job_id: 1, state: :pending) }
     let(:print_jobs) { {} }
 
     before do
-      Cups.stub(:all_jobs).and_return(print_jobs)
+      allow(fax).to receive(:update)
+      allow(Fax).to receive(:find_by).and_return(fax)
+      allow(Cups).to receive(:all_jobs).and_return(print_jobs)
     end
 
-    it 'updates the fax state for each matching print job id' do
-      fax = create(:fax, print_job_id: 1)
-      print_jobs[1] = {:state => :chunky}
-      expect(fax.state).to_not eq('chunky')
+    it 'updates the fax when state has changed' do
+      print_jobs[1] = {state: :chunky}
       Fax::Deliverer.check
-      fax.reload
-      expect(fax.state).to eq('chunky')
+      expect(fax).to have_received(:update).with(state: 'chunky')
     end
 
-    it 'queries the jobs states via CUPS' do
+    it 'does not update the fax when state is unchanged' do
+      print_jobs[1] = {state: :pending}
+      Fax::Deliverer.check
+      expect(fax).to_not have_received(:update)
+    end
+
+    it 'queries CUPS print job states for the right printer' do
       Fax::Deliverer.check
       expect(Cups).to have_received(:all_jobs).with('Fax')
     end
 
-    it 'handles unknown print jobs' do
-      print_jobs[1] = {:state => :chunky}
-      expect {
-        Fax::Deliverer.check
-      }.to_not raise_error
+    it 'finds synchronizes fax states by their print job id' do
+      print_jobs[1] = {state: :chunky}
+      Fax::Deliverer.check
+      expect(Fax).to have_received(:find_by).with(print_job_id: 1)
     end
 
-    it 'handles missing states' do
-      fax = create(:fax, print_job_id: 1)
+    it 'handles unknown print job ids' do
+      allow(Fax).to receive(:find_by).and_return(nil)
+      expect{ Fax::Deliverer.check }.to_not raise_error
+    end
+
+    it 'handles print job without a state' do
       print_jobs[1] = {}
-      expect {
-        Fax::Deliverer.check
-      }.to_not raise_error
+      expect{ Fax::Deliverer.check }.to_not raise_error
     end
   end
 

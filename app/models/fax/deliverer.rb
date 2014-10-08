@@ -20,9 +20,10 @@ class Fax::Deliverer
     # Check deliveries.
     def check
       Cups.all_jobs(PRINTER).each do |print_job_id,print_job|
+        state = print_job[:state].to_s
         fax = Fax.find_by(print_job_id: print_job_id)
-        if fax && print_job[:state]
-          fax.update(state: print_job[:state].to_s)
+        if fax && fax.state.to_s != state
+          fax.update(state: state)
         end
       end
     end
