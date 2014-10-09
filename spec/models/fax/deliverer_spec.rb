@@ -73,7 +73,7 @@ describe Fax::Deliverer do
 
     before do
       allow(fax).to receive(:update)
-      allow(fax).to receive(:delivery_attempts).and_return(0)
+      allow(fax).to receive(:delivery_attempts).and_return(nil)
       allow(Fax).to receive(:find_by).and_return(fax)
       allow(Cups).to receive(:all_jobs).and_return(print_jobs)
     end
@@ -89,6 +89,13 @@ describe Fax::Deliverer do
       print_jobs[1] = {state: :aborted}
       Fax::Deliverer.check
       expect(fax).to have_received(:update).with(state: 'undeliverable')
+    end
+
+    it 'does not rais when delivery attempts are nil' do
+      allow(fax).to receive(:delivery_attempts).and_return(nil)
+      print_jobs[1] = {state: :aborted}
+      expect{ Fax::Deliverer.check }.to_not raise_error
+      #expect(fax).to have_received(:update).with(state: 'undeliverable')
     end
 
     it 'does not update the fax when state is unchanged' do

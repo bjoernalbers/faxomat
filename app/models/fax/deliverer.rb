@@ -22,7 +22,7 @@ class Fax::Deliverer
       Cups.all_jobs(PRINTER).each do |print_job_id,print_job|
         if fax = Fax.find_by(print_job_id: print_job_id)
           state = print_job[:state].to_s
-          if state == 'aborted' && fax.delivery_attempts >= 9
+          if state == 'aborted' && fax.delivery_attempts.to_i >= 9
             state = 'undeliverable'
           end
           if fax && fax.state.to_s != state
