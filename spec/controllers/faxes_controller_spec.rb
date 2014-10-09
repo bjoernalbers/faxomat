@@ -17,13 +17,10 @@ describe FaxesController do
       expect(assigns(:faxes)).to_not include fax
     end
 
-    it 'assigns only today created faxes' do
-      today = create(:fax)
-      yesterday = create(:fax, created_at: today.created_at-1.day)
-
+    it 'assigns only today updated faxes' do
+      allow(Fax).to receive(:updated_today)
       get :index
-
-      expect(assigns(:faxes)).to eq [today]
+      expect(Fax).to have_received(:updated_today)
     end
   end
 

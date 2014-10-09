@@ -132,17 +132,17 @@ describe Fax do
     end
   end
 
-  describe '.created_today' do
+  describe '.updated_today' do
     let(:now) { DateTime.current }
 
-    it 'returns today created faxes' do
-      fax = create(:fax, created_at: now.beginning_of_day)
-      expect(Fax.created_today).to include(fax)
+    it 'returns today updated faxes' do
+      fax = create(:fax, updated_at: now.beginning_of_day)
+      expect(Fax.updated_today).to include(fax)
     end
 
-    it 'does not return faxes created before today' do
-      fax = create(:fax, created_at: now.beginning_of_day-1.second)
-      expect(Fax.created_today).to_not include(fax)
+    it 'does not return faxes updated before today' do
+      fax = create(:fax, updated_at: now.beginning_of_day-1.second)
+      expect(Fax.updated_today).to_not include(fax)
     end
   end
 

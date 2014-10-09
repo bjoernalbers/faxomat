@@ -28,8 +28,8 @@ class Fax < ActiveRecord::Base
     where(state: 'undeliverable')
   end
 
-  def self.created_today
-    where('created_at >= ?', DateTime.current.beginning_of_day)
+  def self.updated_today
+    where('updated_at >= ?', DateTime.current.beginning_of_day)
   end
 
   # Deliver all deliverable faxes.

@@ -2,7 +2,7 @@ class FaxesController < ApplicationController
   protect_from_forgery except: :create
 
   def index
-    @faxes = faxes.created_today
+    @faxes = faxes.updated_today
   end
 
   def show
