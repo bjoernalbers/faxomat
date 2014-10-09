@@ -84,8 +84,15 @@ describe Fax::Deliverer do
       expect(fax).to have_received(:update).with(state: 'chunky')
     end
 
-    it 'updates the fax state to undeliverable after too many attempts' do
+    it 'updates the fax state not to undeliverable before 10 attempts' do
       allow(fax).to receive(:delivery_attempts).and_return(9)
+      print_jobs[1] = {state: :aborted}
+      Fax::Deliverer.check
+      expect(fax).to have_received(:update).with(state: 'aborted')
+    end
+
+    it 'updates the fax state to undeliverable on the 10. attempt' do
+      allow(fax).to receive(:delivery_attempts).and_return(10)
       print_jobs[1] = {state: :aborted}
       Fax::Deliverer.check
       expect(fax).to have_received(:update).with(state: 'undeliverable')
@@ -95,7 +102,6 @@ describe Fax::Deliverer do
       allow(fax).to receive(:delivery_attempts).and_return(nil)
       print_jobs[1] = {state: :aborted}
       expect{ Fax::Deliverer.check }.to_not raise_error
-      #expect(fax).to have_received(:update).with(state: 'undeliverable')
     end
 
     it 'does not update the fax when state is unchanged' do
