@@ -1,21 +1,21 @@
 require 'spec_helper'
 
 feature 'navigation' do
-  scenario 'all faxes' do
+  scenario 'todays faxes' do
     app = App.new
 
     visit '/'
-    click_link 'Heutige Faxe'
+    click_link 'Heute'
 
     expect(app.faxes_page).to be_displayed
   end
 
-  scenario 'aborted faxes' do
+  scenario 'undeliverable faxes' do
     app = App.new
 
     visit '/'
-    click_link 'Abgebrochene Faxe'
+    click_link 'Unzustellbar'
 
-    expect(app.aborted_faxes_page).to be_displayed
+    expect(app.undeliverable_faxes_page).to be_displayed
   end
 end

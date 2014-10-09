@@ -39,8 +39,8 @@ class FaxesController < ApplicationController
     end
   end
 
-  def aborted
-    @faxes = faxes.aborted
+  def undeliverable
+    @faxes = faxes.undeliverable
     render :index
   end
 

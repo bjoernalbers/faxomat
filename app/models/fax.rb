@@ -24,8 +24,8 @@ class Fax < ActiveRecord::Base
 
   after_commit :deliver, :on => :create
 
-  def self.aborted
-    where(state: 'aborted')
+  def self.undeliverable
+    where(state: 'undeliverable')
   end
 
   def self.created_today

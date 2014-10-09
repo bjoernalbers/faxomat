@@ -170,17 +170,17 @@ describe Fax do
     end
   end
 
-  describe '.aborted' do
-    it 'returns aborted faxes' do
-      fax.update(state: 'aborted')
-      expect(Fax.aborted).to match_array([fax])
+  describe '.undeliverable' do
+    it 'returns undeliverable' do
+      fax.update(state: 'undeliverable')
+      expect(Fax.undeliverable).to match_array([fax])
     end
 
     it 'does not return faxes in other states' do
       create(:fax, state:'completed')
       create(:fax)
       create(:fax, state:'funky')
-      expect(Fax.aborted).to be_empty
+      expect(Fax.undeliverable).to be_empty
     end
   end
 

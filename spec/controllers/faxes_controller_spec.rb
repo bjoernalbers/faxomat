@@ -40,25 +40,23 @@ describe FaxesController do
     end
   end
 
-  describe 'GET aborted' do
+  describe 'GET undeliverable' do
     let(:fax) { create(:fax) }
 
     before do
-      allow(Fax).to receive(:aborted) { [fax] }
+      allow(Fax).to receive(:undeliverable) { [fax] }
+      get :undeliverable
     end
 
-    it 'assigns aborted faxes' do
-      get :aborted
+    it 'assigns undeliverable faxes' do
       expect(assigns(:faxes)).to match_array([fax])
     end
 
     it 'fetches all aborted faxes through the model' do
-      get :aborted
-      expect(Fax).to have_received(:aborted)
+      expect(Fax).to have_received(:undeliverable)
     end
 
     it 'renders the index template' do
-      get :aborted
       expect(response).to render_template(:index)
     end
   end

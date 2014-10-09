@@ -16,8 +16,5 @@ feature 'Search faxes' do
     expect(page).to have_fax(fax)
     expect(page).to_not have_fax(other_fax)
     expect(page).to have(1).faxes
-
-    #fax_section = page.faxes.first
-    #expect(fax_section.created_at.text).to eq(aborted_fax.created_at.to_s)
   end
 end

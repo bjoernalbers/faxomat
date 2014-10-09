@@ -5,6 +5,10 @@
 }
 
 .aborted {
+  @extend .warning;
+}
+
+.undeliverable {
   @extend .danger;
 }
 

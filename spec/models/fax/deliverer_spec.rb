@@ -38,6 +38,11 @@ describe Fax::Deliverer do
       expect(Fax::Deliverer.deliverable).to be_empty
     end
 
+    it 'does not include undeliverable faxes' do
+      fax.update(state: 'undeliverable')
+      expect(Fax::Deliverer.deliverable).to be_empty
+    end
+
     it 'does not include currently being delivered faxes' do
       fax.update(state: 'chunky bacon', print_job_id: 42)
       expect(Fax::Deliverer.deliverable).to be_empty
@@ -68,6 +73,7 @@ describe Fax::Deliverer do
 
     before do
       allow(fax).to receive(:update)
+      allow(fax).to receive(:delivery_attempts).and_return(0)
       allow(Fax).to receive(:find_by).and_return(fax)
       allow(Cups).to receive(:all_jobs).and_return(print_jobs)
     end
@@ -76,6 +82,13 @@ describe Fax::Deliverer do
       print_jobs[1] = {state: :chunky}
       Fax::Deliverer.check
       expect(fax).to have_received(:update).with(state: 'chunky')
+    end
+
+    it 'updates the fax state to undeliverable after too many attempts' do
+      allow(fax).to receive(:delivery_attempts).and_return(9)
+      print_jobs[1] = {state: :aborted}
+      Fax::Deliverer.check
+      expect(fax).to have_received(:update).with(state: 'undeliverable')
     end
 
     it 'does not update the fax when state is unchanged' do
