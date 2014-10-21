@@ -21,6 +21,7 @@ module Faxomat
     # config.i18n.default_locale = :de
 
     # A number which will be added to every fax phone number in order to dial out (default: nil).
-    config.dialout_prefix = nil
+    #config.dialout_prefix = nil
+    config.dialout_prefix = 0
   end
 end
