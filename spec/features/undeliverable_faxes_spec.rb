@@ -21,7 +21,7 @@ feature 'Undeliverable faxes' do
     page = UndeliverableFaxesPage.new
     page.load
 
-    expect(page).to have(1).faxes
+    expect(page.faxes.size).to eq 1
     expect(page).to have_fax(undeliverable_fax)
 
     fax_section = page.faxes.first

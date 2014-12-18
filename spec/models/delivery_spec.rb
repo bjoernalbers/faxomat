@@ -13,7 +13,8 @@ describe Delivery do
     let(:delivery) { build(:delivery, fax: nil) }
 
     it 'is invalid' do
-      expect(delivery).to have(1).errors_on(:fax)
+      expect(delivery).to be_invalid
+      expect(delivery.errors[:fax]).to_not be_empty
     end
 
     it 'can not be saved in the database' do
@@ -25,7 +26,7 @@ describe Delivery do
     let(:delivery) { build(:delivery, print_job_id: nil) }
 
     it 'is valid because we set it after validations' do
-      expect(delivery).to be_valid #have(1).errors_on(:print_job_id)
+      expect(delivery).to be_valid
     end
 
     it 'can not be saved in the database' do
@@ -40,7 +41,7 @@ describe Delivery do
     delivery = create(:delivery)
     expect {
       create(:delivery, print_job_id: delivery.print_job_id)
-    }.to raise_error ActiveRecord::RecordNotUnique
+    }.to raise_error
   end
 
   it 'has a factory that builds objects with unique print_job_id' do

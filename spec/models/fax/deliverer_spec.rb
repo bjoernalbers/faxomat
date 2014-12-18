@@ -228,7 +228,7 @@ describe Fax::Deliverer do
       end
 
       it 'is true' do
-        expect(deliverer.send(:deliverable?)).to be_true
+        expect(deliverer.send(:deliverable?)).to be_truthy
       end
     end
 
@@ -239,12 +239,12 @@ describe Fax::Deliverer do
 
       it 'is true when aborted' do
         allow(fax).to receive(:state).and_return('aborted')
-        expect(deliverer.send(:deliverable?)).to be_true
+        expect(deliverer.send(:deliverable?)).to be_truthy
       end
 
       it 'is false when not aborted' do
         allow(fax).to receive(:state).and_return('chunky bacon')
-        expect(deliverer.send(:deliverable?)).to be_false
+        expect(deliverer.send(:deliverable?)).to be_falsey
       end
     end
   end

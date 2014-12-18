@@ -15,7 +15,7 @@ feature 'Faxes List' do
     
     page.load
 
-    expect(page).to have(1).faxes
+    expect(page.faxes.count).to eq 1
 
     fax_section = page.faxes.first
 

@@ -15,6 +15,6 @@ feature 'Search faxes' do
 
     expect(page).to have_fax(fax)
     expect(page).to_not have_fax(other_fax)
-    expect(page).to have(1).faxes
+    expect(page.faxes.size).to eq 1
   end
 end

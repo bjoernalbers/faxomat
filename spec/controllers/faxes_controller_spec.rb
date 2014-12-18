@@ -28,7 +28,7 @@ describe FaxesController do
     it 'sends the pdf document' do
       # NOTE: This fixes the missing template error
       # (see http://stackoverflow.com/questions/4701108/rspec-send-file-testing)
-      controller.stub!(:render)
+      controller.stub(:render)
 
       fax = create(:fax)
       controller.should_receive(:send_file).

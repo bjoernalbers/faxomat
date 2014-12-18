@@ -58,7 +58,7 @@ describe Fax do
   it 'validates the presence of phone' do
     fax = build(:fax, recipient: nil, phone: nil)
     expect(fax).to be_invalid
-    expect(fax.errors_on(:phone)).to_not be_empty
+    expect(fax.errors[:phone]).to_not be_empty
   end
 
   it 'validates the presence of a document' do
@@ -74,18 +74,21 @@ describe Fax do
 
   it 'is invalid with too short phone' do
     fax = build(:fax, phone: '0123456')
-    expect(fax).to have(1).errors_on(:phone)
+    fax.valid?
+    expect(fax.errors[:phone].size).to eq 1
   end
 
   it 'is invalid when phone has no leading zero' do
     fax = build(:fax, phone: '123456789')
-    expect(fax).to have(1).errors_on(:phone)
+    fax.valid?
+    expect(fax.errors[:phone].size).to eq 1
     expect(fax.errors_on(:phone)).to include('has no area code')
   end
 
   it 'is invalid when phone has more then one leading zero' do
     fax = build(:fax, phone: '00123456789')
-    expect(fax).to have(1).errors_on(:phone)
+    fax.valid?
+    expect(fax.errors[:phone].size).to eq 1
     expect(fax.errors_on(:phone)).to include('has no area code')
   end
 
@@ -102,13 +105,14 @@ describe Fax do
     let(:fax) { build(:fax, print_job_id: other_fax.print_job_id) }
 
     it 'is invalid' do
-      expect(fax).to have(1).errors_on(:print_job_id)
+      expect(fax).to be_invalid
+      expect(fax.errors[:print_job_id].size).to eq 1
     end
 
     it 'can not be saved in the database' do
       expect {
         fax.save(validate: false)
-      }.to raise_error ActiveRecord::RecordNotUnique
+      }.to raise_error
     end
   end
 
@@ -122,7 +126,7 @@ describe Fax do
     it 'can be saved in the database' do
       expect {
         fax.save(validate: false)
-      }.to_not raise_error ActiveRecord::RecordNotUnique
+      }.to_not raise_error
     end
 
     it 'can be saved even with other null print_job_ids' do
@@ -223,7 +227,7 @@ describe Fax do
     end
 
     it 'searches by recipient phone number' do
-      pending
+      skip
       expect(Fax.search('8765')).to match_array [fax]
     end
 

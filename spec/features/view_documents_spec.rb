@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature 'View documents' do
   scenario 'single job imported' do
-    pending 'fix patient stuff first'
+    skip 'fix patient stuff first'
     # setup
     job = Job.new(phone: '0123456789',
                   path: '/tmp/letter.pdf',
