@@ -10,15 +10,13 @@ class Fax < ActiveRecord::Base
 
   validates_attachment :document,
     presence: true,
-    content_type: { content_type: "application/pdf" }
+    content_type: { content_type: 'application/pdf' }
 
   validates_uniqueness_of :print_job_id, allow_nil: true
   validates :phone,
     presence: true,
     length: {minimum: Recipient::MINIMUM_PHONE_LENGTH},
     format: {with: Recipient::AREA_CODE_REGEX, message: 'has no area code'}
-  validates_attachment :document,
-    content_type: { content_type: 'application/pdf' }
 
   before_save :assign_recipient
 

@@ -10,7 +10,7 @@ describe Recipient do
 
     it 'is invalid' do
       expect(recipient).to be_invalid
-      expect(recipient.errors_on(:phone)).to_not be_empty
+      expect(recipient.errors[:phone]).to_not be_empty
     end
 
     it 'can not be saved in the database' do
@@ -52,13 +52,13 @@ describe Recipient do
     recipient = build(:recipient, phone: '123456789')
     expect(recipient).to be_invalid
     expect(recipient.errors[:phone].count).to eq 1
-    expect(recipient.errors_on(:phone)).to include('has no area code')
+    expect(recipient.errors[:phone]).to include('has no area code')
   end
 
   it 'is invalid when phone has more then one leading zero' do
     recipient = build(:recipient, phone: '00123456789')
     expect(recipient).to be_invalid
     expect(recipient.errors[:phone].count).to eq 1
-    expect(recipient.errors_on(:phone)).to include('has no area code')
+    expect(recipient.errors[:phone]).to include('has no area code')
   end
 end

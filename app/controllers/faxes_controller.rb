@@ -1,5 +1,5 @@
 class FaxesController < ApplicationController
-  protect_from_forgery except: :create
+  protect_from_forgery except: [:create, :create2]
 
   def index
     @faxes = faxes.updated_today
@@ -36,6 +36,15 @@ class FaxesController < ApplicationController
     if tempfile
       tempfile.close
       tempfile.unlink
+    end
+  end
+
+  def create2
+    fax = Fax.new(fax_params)
+    if fax.save
+      render json: 'OK', status: :created #TODO: Return more infos about the new fax!
+    else
+      render json: fax.errors, status: :unprocessable_entity
     end
   end
 

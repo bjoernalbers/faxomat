@@ -32,7 +32,7 @@ describe Delivery do
     it 'can not be saved in the database' do
       # NOTE: Delivery#run! would set the print_job_id in the `before_create`
       # callback so we better disable it.
-      delivery.stub(:run!)
+      allow(delivery).to receive(:run!)
       expect { delivery.save(validate: false) }.to raise_error
     end
   end

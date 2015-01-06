@@ -8,18 +8,18 @@ describe Importer do
     let(:job) { double('job', save: false) }
 
     before do
-      FileUtils.stub(:rm)
-      importer.stub(:job).and_return(job)
+      allow(FileUtils).to receive(:rm)
+      allow(importer).to receive(:job).and_return(job)
     end
 
     it 'deletes the file when job was saved' do
-      job.stub(:save).and_return(true)
+      allow(job).to receive(:save).and_return(true)
       importer.run
       expect(FileUtils).to have_received(:rm).with(file)
     end
 
     it 'does not delete the file when job was not saved' do
-      job.stub(:save).and_return(false)
+      allow(job).to receive(:save).and_return(false)
       importer.run
       expect(FileUtils).to_not have_received(:rm)
     end
@@ -29,8 +29,8 @@ describe Importer do
     it 'returns a new job' do
       skip 'replace by fax'
       job = double('job')
-      Job.stub(:new).and_return(job)
-      importer.stub(:clean_attributes).and_return('attributes')
+      allow(Job).to receive(:new).and_return(job)
+      allow(importer).to receive(:clean_attributes).and_return('attributes')
       expect(importer.job).to eq job
       expect(Job).to have_received(:new).with('attributes')
     end
@@ -47,7 +47,7 @@ describe Importer do
     end
 
     before do
-      importer.stub(:attributes).and_return(attributes)
+      allow(importer).to receive(:attributes).and_return(attributes)
     end
 
     it 'keeps required attributes' do
@@ -74,8 +74,8 @@ describe Importer do
 
   describe '#attributes' do
     it 'returns the parsed JSON' do
-      JSON.stub(:parse)
-      importer.stub(:json).and_return('json')
+      allow(JSON).to receive(:parse)
+      allow(importer).to receive(:json).and_return('json')
       importer.send(:attributes)
       expect(JSON).to have_received(:parse).with('json')
     end
@@ -83,7 +83,7 @@ describe Importer do
 
   describe '#json' do
     before do
-      File.stub(:read).and_return("Schl\237ter")
+      allow(File).to receive(:read).and_return("Schl\237ter")
     end
 
     it 'encodes the content from MacRoman to UTF-8' do

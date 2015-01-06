@@ -82,14 +82,14 @@ describe Fax do
     fax = build(:fax, phone: '123456789')
     fax.valid?
     expect(fax.errors[:phone].size).to eq 1
-    expect(fax.errors_on(:phone)).to include('has no area code')
+    expect(fax.errors[:phone]).to include('has no area code')
   end
 
   it 'is invalid when phone has more then one leading zero' do
     fax = build(:fax, phone: '00123456789')
     fax.valid?
     expect(fax.errors[:phone].size).to eq 1
-    expect(fax.errors_on(:phone)).to include('has no area code')
+    expect(fax.errors[:phone]).to include('has no area code')
   end
 
   context 'without a recipient' do
