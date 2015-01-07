@@ -1,5 +1,5 @@
-# config valid only for Capistrano 3.1
-lock '3.2.1'
+# config valid only for current version of Capistrano
+lock '3.3.5'
 
 set :application, 'faxomat'
 set :repo_url, 'git@github.com:bjoernalbers/faxomat.git'
@@ -7,8 +7,8 @@ set :repo_url, 'git@github.com:bjoernalbers/faxomat.git'
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
-# Default deploy_to directory is /var/www/my_app
-# set :deploy_to, '/var/www/my_app'
+# Default deploy_to directory is /var/www/my_app_name
+# set :deploy_to, '/var/www/my_app_name'
 set :deploy_to, ->{ File.join('/Users', fetch(:user), fetch(:application)) }
 
 # Default value for :scm is :git
@@ -24,11 +24,10 @@ set :log_level, :info
 set :pty, true
 
 # Default value for :linked_files is []
-set :linked_files, %w{config/database.yml db/production.sqlite3}
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'db/production.sqlite3')
 
 # Default value for linked_dirs is []
-# set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
-set :linked_dirs, %w{storage}
+set :linked_dirs, fetch(:linked_dirs, []).push('storage')
 
 # Launchd-Services
 set :services, %w(app check deliver)
