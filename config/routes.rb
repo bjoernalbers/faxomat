@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :faxes, only: [:index, :show, :create] do
     get 'undeliverable', on: :collection
     get 'search', on: :collection
+    get 'harmsen', on: :collection
   end
 
   post '/faxes2' => 'faxes#create2'

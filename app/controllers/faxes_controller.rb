@@ -57,6 +57,14 @@ class FaxesController < ApplicationController
     @faxes = faxes.search(params[:q])
   end
 
+  def harmsen
+    now = Time.zone.now
+    @faxes = Recipient.find_by(phone: '0294118673').faxes.
+      where('created_at >= ? AND created_at <= ?',
+            now.beginning_of_week-1.week,
+            now.end_of_week-1.week)
+  end
+
   private
 
   def fax_params
