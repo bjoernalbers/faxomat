@@ -46,6 +46,7 @@ group :development, :test do
   gem 'database_cleaner', '~> 1.3'
   gem 'factory_girl_rails', '~> 4.5'
   gem 'site_prism', '~> 2.6'
+  gem 'timecop', '~> 0.7'
 end
 
 gem 'bootstrap-sass', '~> 3.1.1'

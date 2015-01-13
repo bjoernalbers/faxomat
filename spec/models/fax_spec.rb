@@ -150,6 +150,40 @@ describe Fax do
     end
   end
 
+  describe '.created_last_week' do
+    let(:now) { Time.zone.local(2015, 1, 13, 20, 59, 59) }
+    let(:monday_morning_last_week) { Time.zone.local(2015, 1, 5, 0, 0, 0) }
+    let(:sunday_night_last_week) { Time.zone.local(2015, 1, 11, 23, 59, 59) }
+
+    before do
+      Timecop.freeze(now)
+    end
+
+    after do
+      Timecop.return
+    end
+
+    it 'includes fax from monday morning last week' do
+      fax = create(:fax, created_at: monday_morning_last_week)
+      expect(Fax.created_last_week).to include fax
+    end
+
+    it 'includes fax from sunday night last week' do
+      fax = create(:fax, created_at: sunday_night_last_week)
+      expect(Fax.created_last_week).to include fax
+    end
+
+    it 'excludes fax before monday morning last week' do
+      fax = create(:fax, created_at: monday_morning_last_week - 1.second)
+      expect(Fax.created_last_week).not_to include fax
+    end
+
+    it 'excludes fax after sunday night last week' do
+      fax = create(:fax, created_at: sunday_night_last_week + 1.second)
+      expect(Fax.created_last_week).not_to include fax
+    end
+  end
+
   describe '.deliver' do
     before do
       allow(Fax::Deliverer).to receive(:deliver)

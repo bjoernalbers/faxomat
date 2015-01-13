@@ -1,7 +1,5 @@
 FactoryGirl.define do
   factory :recipient do
-    sequence :phone do |n|
-      "0123456#{n}"
-    end
+    phone { '0' + Faker::PhoneNumber.phone_number }
   end
 end
