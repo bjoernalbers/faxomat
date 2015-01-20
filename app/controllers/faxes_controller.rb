@@ -1,5 +1,5 @@
 class FaxesController < ApplicationController
-  protect_from_forgery except: [:create, :create2]
+  protect_from_forgery except: [:create]
 
   def index
     @faxes = faxes.updated_today
@@ -13,33 +13,6 @@ class FaxesController < ApplicationController
   end
 
   def create
-    # See http://stackoverflow.com/questions/9758879/sending-files-to-a-rails-json-api !!!
-    if params[:fax][:document]
-      tempfile = Tempfile.new('fileupload')
-      tempfile.binmode
-      tempfile.write(Base64.decode64(params[:fax][:document][:data]))
-
-      params[:fax][:document] = ActionDispatch::Http::UploadedFile.new(
-        tempfile: tempfile,
-        filename: params[:fax][:document][:filename],
-        type:     params[:fax][:document][:type])
-    end
-
-    fax = Fax.new(fax_params)
-
-    if fax.save
-      render json: 'OK', status: :created #TODO: Return more infos about the new fax!
-    else
-      render json: fax.errors, status: :unprocessable_entity
-    end
-  ensure
-    if tempfile
-      tempfile.close
-      tempfile.unlink
-    end
-  end
-
-  def create2
     fax = Fax.new(fax_params)
     if fax.save
       render json: 'OK', status: :created #TODO: Return more infos about the new fax!

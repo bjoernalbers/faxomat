@@ -4,6 +4,7 @@ describe 'Create Fax' do
   let(:path) do
     File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
   end
+  let(:mime_type) { 'application/pdf' }
 
   let(:deliverer) { double(:deliverer) }
 
@@ -15,8 +16,8 @@ describe 'Create Fax' do
 
   let(:headers) do
     {
-      'Accept'       => 'application/json',
-      'Content-Type' => 'application/json'
+      #'Accept'       => 'application/json',
+      #'Content-Type' => 'application/json'
     }
   end
 
@@ -24,15 +25,11 @@ describe 'Create Fax' do
     let(:params) do
       {
         fax: {
-          phone:    '0123456789',
+          phone:    '013456789',
           title:    'hello, world!',
-          document: {
-            filename: File.basename(path),
-            data:     Base64.encode64(File.read(path)),
-            type:     'application/pdf'
-          }
+          document: Rack::Test::UploadedFile.new(path, mime_type)
         }
-      }.to_json
+      }
     end
 
     def do_post
@@ -71,7 +68,7 @@ describe 'Create Fax' do
           phone: nil,
           document: nil
         }
-      }.to_json
+      }
     end
 
     it 'responds with HTTP 422' do
