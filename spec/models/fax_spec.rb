@@ -304,22 +304,16 @@ describe Fax do
     expect(fax.deliveries).to be_empty
   end
 
-  describe '#title' do
-    context 'when set' do
-      let(:title) { 'My wonderful fax' }
-      let(:fax) { create(:fax, title: title) }
+  context 'without title' do
+    let(:fax) { build(:fax, title: nil) }
 
-      it 'returns the given value' do
-        expect(fax.title).to eq title
-      end
+    it 'is not valid' do
+      expect(fax).not_to be_valid
+      expect(fax.errors[:title]).not_to be_empty
     end
 
-    context 'when not set' do
-      let(:fax) { create(:fax, title: nil) }
-
-      it 'returns nil' do
-        expect(fax.title).to be_nil
-      end
+    it 'is not storable' do
+      expect{ fax.save!(validate: false) }.to raise_error
     end
   end
 

@@ -24,6 +24,21 @@ describe FaxesController do
     end
   end
 
+  describe 'POST #create' do
+    context 'with valid params' do
+      it 'redirects to faxes'
+      it 'returns successfully created'
+      it 'saves fax'
+    end
+
+    context 'with invalid params' do
+      it 'renders new template' do
+        post :create, fax: attributes_for(:fax, title: nil)
+        expect(response).to render_template :new
+      end
+    end
+  end
+
   describe 'GET show' do
     it 'sends the pdf document' do
       # NOTE: This fixes the missing template error

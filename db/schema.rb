@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141008204820) do
+ActiveRecord::Schema.define(version: 20150127144511) do
 
   create_table "deliveries", force: true do |t|
     t.integer  "print_job_id",    null: false
@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20141008204820) do
     t.datetime "delivered_at"
     t.integer  "print_job_id"
     t.string   "state"
-    t.string   "title"
+    t.string   "title",                 null: false
     t.string   "document_file_name"
     t.string   "document_content_type"
     t.integer  "document_file_size"

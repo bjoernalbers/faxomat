@@ -1,0 +1,38 @@
+<div class='container'>
+<%= form_for(@fax, html: { class: 'form-horizontal' }) do |f| %>
+  <% if @fax.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@fax.errors.count, "error") %> prohibited this fax from being saved:</h2>
+
+      <ul>
+      <% @fax.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class='form-group'>
+    <%= f.label :title, class: 'control-label col-md-2' %>
+    <div class='col-md-4'>
+      <%= f.text_field :title, class: 'form-control', placeholder: 'Titel (z.B. Nachname, Vorname und Geb.-Datum)' %>
+    </div>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :phone, class: 'control-label col-md-2' %>
+    <div class='col-md-4'>
+      <%= f.text_field :phone, class: 'form-control', placeholder: 'Fax-Nummer (mit Vorwahl)' %>
+    </div>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :document, class: 'control-label col-md-2' %>
+    <div class='col-md-4'>
+      <%= f.file_field :document, class: 'form-control', accept: 'application/pdf' %>
+    </div>
+  </div>
+
+  <%= f.submit 'Fax senden', class: 'btn btn-primary' %>
+<% end %>
+</div>

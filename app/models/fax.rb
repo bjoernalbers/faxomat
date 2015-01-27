@@ -8,6 +8,9 @@ class Fax < ActiveRecord::Base
   has_attached_file :document,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
 
+  validates :title,
+    presence: true
+
   validates_attachment :document,
     presence: true,
     content_type: { content_type: 'application/pdf' }
@@ -69,11 +72,6 @@ class Fax < ActiveRecord::Base
   def phone
     @phone ? @phone.gsub(/[^0-9]/, '') : recipient.try(:phone)
   end
-
-  # @returns [String] fax title
-  #def title
-    #'' # TODO: Set better default title!
-  #end
 
   def to_s
     title

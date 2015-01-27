@@ -16,7 +16,7 @@ describe 'Create Fax' do
 
   let(:headers) do
     {
-      #'Accept'       => 'application/json',
+      'Accept'       => 'application/json',
       #'Content-Type' => 'application/json'
     }
   end
