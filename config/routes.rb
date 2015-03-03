@@ -4,6 +4,6 @@ Rails.application.routes.draw do
   resources :faxes, only: [:index, :new, :show, :create] do
     get 'undeliverable', on: :collection
     get 'search', on: :collection
-    get 'harmsen', on: :collection
+    get 'filter', on: :collection
   end
 end

@@ -39,8 +39,26 @@ class FaxesController < ApplicationController
     @faxes = faxes.search(params[:q])
   end
 
-  def harmsen
-    @faxes = Recipient.find_by(phone: '0294118673').faxes.created_last_week
+  def filter
+    @faxes = faxes.none # Return by default no faxes
+
+    # by phone
+    if params[:phone]
+      if recipient = Recipient.find_by(phone: params[:phone])
+        @faxes = recipient.faxes
+      else
+        @faxes = faxes.none
+      end
+    end
+
+    # by creation time
+    if params[:created]
+      if params[:created].to_sym == :last_week
+        @faxes = @faxes.created_last_week
+      else
+        @faxes = faxes.none
+      end
+    end
   end
 
   private
