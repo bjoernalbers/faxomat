@@ -21,6 +21,18 @@ describe Fax do
     expect(fax.document.path).to_not match /public/i
   end
 
+  it 'has many print_jobs' do
+    print_job = create(:print_job, fax: fax)
+    expect(fax.print_jobs).to match_array [print_job]
+  end
+
+  it 'destroy dependent print_jobs' do
+    print_job = create(:print_job, fax: fax)
+    expect(fax.print_jobs).to match_array [print_job]
+    fax.destroy
+    expect(fax.print_jobs).to be_empty
+  end
+
   context 'when created' do
     before do
       allow(fax).to receive(:deliver)

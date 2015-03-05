@@ -5,6 +5,8 @@ class Fax < ActiveRecord::Base
 
   has_many :deliveries, dependent: :destroy
 
+  has_many :print_jobs, dependent: :destroy
+
   has_attached_file :document,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
 
