@@ -2,9 +2,6 @@ class Fax < ActiveRecord::Base
   attr_writer :phone
 
   belongs_to :recipient
-
-  has_many :deliveries, dependent: :destroy
-
   has_many :print_jobs, dependent: :destroy
 
   has_attached_file :document,

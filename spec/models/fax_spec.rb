@@ -304,18 +304,6 @@ describe Fax do
     end
   end
 
-  it 'has many deliveries' do
-    expect(fax).to respond_to(:deliveries)
-  end
-
-  it 'destroys dependend deliveries' do
-    fax = create(:fax)
-    2.times { create(:delivery, fax: fax) }
-    expect(fax.deliveries).to_not be_empty
-    fax.destroy
-    expect(fax.deliveries).to be_empty
-  end
-
   context 'without title' do
     let(:fax) { build(:fax, title: nil) }
 
