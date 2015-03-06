@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150305164101) do
+ActiveRecord::Schema.define(version: 20150306121936) do
 
   create_table "faxes", force: true do |t|
     t.integer  "recipient_id",          null: false
@@ -31,11 +31,12 @@ ActiveRecord::Schema.define(version: 20150305164101) do
   add_index "faxes", ["print_job_id"], name: "index_faxes_on_print_job_id", unique: true
 
   create_table "print_jobs", force: true do |t|
-    t.integer  "cups_id",    null: false
-    t.string   "cups_state"
-    t.integer  "fax_id",     null: false
+    t.integer  "cups_id",                 null: false
+    t.string   "cups_status"
+    t.integer  "fax_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "status",      default: 0, null: false
   end
 
   add_index "print_jobs", ["cups_id"], name: "index_print_jobs_on_cups_id", unique: true
