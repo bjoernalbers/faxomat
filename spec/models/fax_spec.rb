@@ -352,4 +352,51 @@ describe Fax do
       expect(fax.to_s).to eq(fax.title)
     end
   end
+
+  describe '#status' do
+    context 'is pending' do
+      it 'without print jobs' do
+        expect(fax.print_jobs).to be_empty
+        expect(fax).to be_pending
+      end
+
+      it 'by default' do
+        expect(fax).to be_pending
+      end
+    end
+
+    context 'is processing' do
+      it 'with active print job(s)' do
+        create(:active_print_job, fax: fax)
+        expect(fax).to be_processing
+      end
+
+      it 'with completed, aborted and active print jobs' do
+        create(:completed_print_job, fax: fax)
+        create(:aborted_print_job, fax: fax)
+        create(:active_print_job, fax: fax)
+        expect(fax).to be_processing
+      end
+    end
+
+    context 'is delivered' do
+      it 'with completed print job(s)' do
+        create(:completed_print_job, fax: fax)
+        expect(fax).to be_delivered
+      end
+
+      it 'with completed and aborted print jobs' do
+        create(:completed_print_job, fax: fax)
+        create(:aborted_print_job, fax: fax)
+        expect(fax).to be_delivered
+      end
+    end
+
+    context 'is aborted' do
+      it 'with aborted print job(s)' do
+        create(:aborted_print_job, fax: fax)
+        expect(fax).to be_aborted
+      end
+    end
+  end
 end

@@ -1,4 +1,6 @@
 class Fax < ActiveRecord::Base
+  enum status: { pending: 0, processing: 1, delivered: 2, aborted: 3 }
+
   attr_writer :phone
 
   belongs_to :recipient
@@ -21,6 +23,7 @@ class Fax < ActiveRecord::Base
     format: {with: Recipient::AREA_CODE_REGEX, message: 'has no area code'}
 
   before_save :assign_recipient
+  before_save :set_status
 
   after_commit :deliver, :on => :create
 
@@ -114,5 +117,15 @@ class Fax < ActiveRecord::Base
 
   def assign_recipient
     self.recipient = Recipient.find_or_create_by!(phone: phone)
+  end
+
+  def set_status
+    self.status =
+      case
+      when print_jobs.empty?             then 'pending'
+      when print_jobs.active.present?    then 'processing'
+      when print_jobs.completed.present? then 'delivered'
+      else                                    'aborted'
+      end
   end
 end

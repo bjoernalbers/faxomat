@@ -8,6 +8,7 @@ class PrintJob < ActiveRecord::Base
   validates :cups_id, presence: true, uniqueness: true
 
   before_save :set_status
+  after_save :save_fax
 
   private
 
@@ -18,5 +19,9 @@ class PrintJob < ActiveRecord::Base
       when 'aborted','canceled' then 'aborted'
       else                           'active'
       end
+  end
+
+  def save_fax
+    self.fax.save
   end
 end

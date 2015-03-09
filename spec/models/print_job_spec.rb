@@ -47,11 +47,21 @@ RSpec.describe PrintJob, :type => :model do
       it 'by default' do
         expect(PrintJob.new).to be_active
       end
+
+      it 'by factory :active_print_job' do
+        print_job = create(:active_print_job)
+        expect(print_job).to be_active
+      end
     end
 
     context 'is completed' do
       it 'with cups_status=completed' do
         print_job.update!(cups_status: 'completed')
+        expect(print_job).to be_completed
+      end
+
+      it 'by factory :completed_print_job' do
+        print_job = create(:completed_print_job)
         expect(print_job).to be_completed
       end
     end
@@ -64,6 +74,11 @@ RSpec.describe PrintJob, :type => :model do
 
       it 'with cups_status=canceled' do
         print_job.update!(cups_status: 'canceled')
+        expect(print_job).to be_aborted
+      end
+
+      it 'by factory :aborted_print_job' do
+        print_job = create(:aborted_print_job)
         expect(print_job).to be_aborted
       end
     end
