@@ -11,36 +11,36 @@ RSpec.describe PrintJob, :type => :model do
     end
   end
 
-  describe '#cups_id' do
+  describe '#cups_job_id' do
     it 'must be present' do
-      print_job.cups_id = nil
+      print_job.cups_job_id = nil
       expect(print_job).not_to be_valid
       expect{ print_job.save!(validate: false) }.to raise_error
     end
 
     it 'must be unique' do
-      print_job.cups_id = create(:print_job).cups_id
+      print_job.cups_job_id = create(:print_job).cups_job_id
       expect(print_job).not_to be_valid
       expect{ print_job.save!(validate: false) }.to raise_error
     end
   end
 
-  describe '#cups_status' do
+  describe '#cups_job_status' do
     it 'can be present' do
-      print_job.cups_status = :chunky_bacon
-      expect(print_job.cups_status).to eq :chunky_bacon
+      print_job.cups_job_status = :chunky_bacon
+      expect(print_job.cups_job_status).to eq :chunky_bacon
     end
   end
 
   describe '#status' do
     context 'is active' do
-      it 'with cups_status=nil' do
-        print_job.update!(cups_status: nil)
+      it 'with cups_job_status=nil' do
+        print_job.update!(cups_job_status: nil)
         expect(print_job).to be_active
       end
 
-      it 'with cups_status=unknown' do
-        print_job.update!(cups_status: :chunky_bacon)
+      it 'with cups_job_status=unknown' do
+        print_job.update!(cups_job_status: :chunky_bacon)
         expect(print_job).to be_active
       end
 
@@ -55,8 +55,8 @@ RSpec.describe PrintJob, :type => :model do
     end
 
     context 'is completed' do
-      it 'with cups_status=completed' do
-        print_job.update!(cups_status: 'completed')
+      it 'with cups_job_status=completed' do
+        print_job.update!(cups_job_status: 'completed')
         expect(print_job).to be_completed
       end
 
@@ -67,13 +67,13 @@ RSpec.describe PrintJob, :type => :model do
     end
 
     context 'is aborted' do
-      it 'with cups_status=aborted' do
-        print_job.update!(cups_status: 'aborted')
+      it 'with cups_job_status=aborted' do
+        print_job.update!(cups_job_status: 'aborted')
         expect(print_job).to be_aborted
       end
 
-      it 'with cups_status=canceled' do
-        print_job.update!(cups_status: 'canceled')
+      it 'with cups_job_status=canceled' do
+        print_job.update!(cups_job_status: 'canceled')
         expect(print_job).to be_aborted
       end
 

@@ -5,7 +5,7 @@ class PrintJob < ActiveRecord::Base
   belongs_to :fax
 
   validates :fax, presence: true
-  validates :cups_id, presence: true, uniqueness: true
+  validates :cups_job_id, presence: true, uniqueness: true
 
   before_save :set_status
   after_save :save_fax
@@ -14,7 +14,7 @@ class PrintJob < ActiveRecord::Base
 
   def set_status
     self.status =
-      case cups_status
+      case cups_job_status
       when 'completed'          then 'completed'
       when 'aborted','canceled' then 'aborted'
       else                           'active'

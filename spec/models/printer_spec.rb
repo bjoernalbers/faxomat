@@ -5,14 +5,14 @@ RSpec.describe Printer, :type => :model do
 
   describe '#print' do
     let(:fax) { create(:fax) }
-    let(:cups_print_job) { double('cups_print_job') }
+    let(:cups_job) { double('cups_job') }
 
     before do
-      allow(Cups::PrintJob).to receive(:new).and_return(cups_print_job)
+      allow(Cups::PrintJob).to receive(:new).and_return(cups_job)
 
-      allow(cups_print_job).to receive(:title=)
-      allow(cups_print_job).to receive(:print) { true }
-      allow(cups_print_job).to receive(:job_id) { 42 }
+      allow(cups_job).to receive(:title=)
+      allow(cups_job).to receive(:print) { true }
+      allow(cups_job).to receive(:job_id) { 42 }
 
       allow(fax).to receive(:path).and_return('chunky_bacon.pdf')
       allow(fax).to receive(:phone).and_return('012456789')
@@ -23,31 +23,31 @@ RSpec.describe Printer, :type => :model do
       printer.print(fax)
       expect(Cups::PrintJob).to have_received(:new).
         with(fax.path, printer.printer_name, {'phone' => '5'+fax.phone})
-      expect(cups_print_job).to have_received(:print)
+      expect(cups_job).to have_received(:print)
     end
 
     it 'sets print job title' do
       printer.print(fax)
-      expect(cups_print_job).to have_received(:title=).with(fax.title)
+      expect(cups_job).to have_received(:title=).with(fax.title)
     end
 
     context 'when printed successfully' do
       before do
-        allow(cups_print_job).to receive(:print).and_return(true)
+        allow(cups_job).to receive(:print).and_return(true)
       end
 
       it 'creates print job with CUPS jobs id' do
         expect {
           printer.print(fax)
         }.to change(fax.print_jobs, :count).by(1)
-        print_job = fax.print_jobs.find_by(cups_id: cups_print_job.job_id)
+        print_job = fax.print_jobs.find_by(cups_job_id: cups_job.job_id)
         expect(print_job).not_to be nil
       end
     end
 
     context 'when not printed successfully' do
       before do
-        allow(cups_print_job).to receive(:print).and_return(false)
+        allow(cups_job).to receive(:print).and_return(false)
       end
 
       it 'creates no print job' do
@@ -61,15 +61,15 @@ RSpec.describe Printer, :type => :model do
     let(:print_job) { create(:print_job) }
 
     before do
-      allow(printer).to receive(:cups_statuses) { { } }
+      allow(printer).to receive(:cups_job_statuses) { { } }
     end
 
-    it 'updates cups_status of print jobs' do
-      allow(printer).to receive(:cups_statuses).and_return(
-        { print_job.cups_id => 'completed' }
+    it 'updates cups_job_status of print jobs' do
+      allow(printer).to receive(:cups_job_statuses).and_return(
+        { print_job.cups_job_id => 'completed' }
       )
       printer.check [print_job]
-      expect(print_job.cups_status).to eq 'completed'
+      expect(print_job.cups_job_status).to eq 'completed'
     end
   end
 
@@ -86,13 +86,13 @@ RSpec.describe Printer, :type => :model do
   end
 
 
-  describe '#cups_statuses' do
+  describe '#cups_job_statuses' do
     before do
       allow(Cups).to receive(:all_jobs).and_return( {} )
     end
 
     it 'queries statuses from CUPS' do
-      printer.send(:cups_statuses)
+      printer.send(:cups_job_statuses)
       expect(Cups).to have_received(:all_jobs).with('Fax')
     end
 
@@ -100,13 +100,13 @@ RSpec.describe Printer, :type => :model do
       allow(Cups).to receive(:all_jobs).and_return(
         { 1 => {state: :chunky}, 2 => {state: :bacon} }
       )
-      expect(printer.send(:cups_statuses)).to eq(
+      expect(printer.send(:cups_job_statuses)).to eq(
         { 1 => 'chunky', 2 => 'bacon' }
       )
     end
 
     it 'caches result' do
-      2.times { printer.send(:cups_statuses) }
+      2.times { printer.send(:cups_job_statuses) }
       expect(Cups).to have_received(:all_jobs).once
     end
   end
