@@ -25,8 +25,6 @@ class Fax < ActiveRecord::Base
   before_save :assign_recipient
   before_save :set_status
 
-  after_commit :deliver, :on => :create
-
   def self.undeliverable
     where(state: 'undeliverable')
   end
@@ -44,12 +42,12 @@ class Fax < ActiveRecord::Base
 
   # Deliver all deliverable faxes.
   def self.deliver
-    Deliverer.deliver
+    #Deliverer.deliver #NOOP!
   end
 
   # Check deliveries.
   def self.check
-    Deliverer.check
+    #Deliverer.check #NOOP!
   end
 
   def self.search(q)
@@ -68,7 +66,7 @@ class Fax < ActiveRecord::Base
 
   # Deliver the fax.
   def deliver
-    Deliverer.new(self).deliver
+    #Deliverer.new(self).deliver #NOOP!
   end
 
   def phone

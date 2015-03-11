@@ -2,12 +2,6 @@ require 'spec_helper'
 
 describe Fax do
   let(:fax) { build(:fax) }
-  let(:deliverer) { double(:deliverer) }
-
-  before do
-    allow(Fax::Deliverer).to receive(:new).and_return(deliverer)
-    allow(deliverer).to receive(:deliver)
-  end
 
   it 'has a factory with attached document' do
     expect(fax.document.path).to_not be_nil
@@ -31,18 +25,6 @@ describe Fax do
     expect(fax.print_jobs).to match_array [print_job]
     fax.destroy
     expect(fax.print_jobs).to be_empty
-  end
-
-  context 'when created' do
-    before do
-      allow(fax).to receive(:deliver)
-    end
-
-    it 'gets delivered' do
-      expect(fax).to_not have_received(:deliver)
-      fax.save
-      expect(fax).to have_received(:deliver)
-    end
   end
 
   describe '#path' do
@@ -197,27 +179,11 @@ describe Fax do
   end
 
   describe '.deliver' do
-    before do
-      allow(Fax::Deliverer).to receive(:deliver)
-    end
-
-    it 'delivers faxes with the deliverer' do
-      expect(Fax::Deliverer).to_not have_received(:deliver)
-      Fax.deliver
-      expect(Fax::Deliverer).to have_received(:deliver)
-    end
+    it '...'
   end
 
   describe '.check' do
-    before do
-      allow(Fax::Deliverer).to receive(:check)
-    end
-
-    it 'checks faxes with the deliverer' do
-      expect(Fax::Deliverer).to_not have_received(:check)
-      Fax.check
-      expect(Fax::Deliverer).to have_received(:check)
-    end
+    it '...'
   end
 
   describe '.undeliverable' do
@@ -318,17 +284,7 @@ describe Fax do
   end
 
   describe '#deliver' do
-    before do
-      fax.deliver
-    end
-
-    it 'creates a new deliverer' do
-      expect(Fax::Deliverer).to have_received(:new).with(fax)
-    end
-
-    it 'delivers the fax' do
-      expect(deliverer).to have_received(:deliver)
-    end
+    it 'prints itself on fax printer'
   end
 
   it 'has no delivery attempts when initialized' do
