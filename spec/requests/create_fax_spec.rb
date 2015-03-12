@@ -51,6 +51,13 @@ describe 'Create Fax' do
       #expect(Fax.count).to eq 1
       #expect(Fax.first.document.path).to_not be_nil
     end
+
+    it 'delivers fax' do
+      fax = double(:fax, save: true, deliver: nil)
+      allow(Fax).to receive(:new).and_return(fax)
+      do_post
+      expect(fax).to have_received(:deliver)
+    end
   end
 
   context 'with invalid params' do

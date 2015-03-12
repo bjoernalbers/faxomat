@@ -61,7 +61,7 @@ class Fax < ActiveRecord::Base
 
   # Deliver the fax.
   def deliver
-    #Deliverer.new(self).deliver #NOOP!
+    Printer.new.print(self)
   end
 
   def phone

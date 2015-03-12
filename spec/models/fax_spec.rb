@@ -234,7 +234,17 @@ describe Fax do
   end
 
   describe '#deliver' do
-    it 'prints itself on fax printer'
+    let(:printer) { double(:printer) }
+
+    before do
+      allow(Printer).to receive(:new).and_return(printer)
+      allow(printer).to receive(:print)
+    end
+
+    it 'prints itself' do
+      fax.deliver
+      expect(printer).to have_received(:print).with(fax)
+    end
   end
 
   it 'has no delivery attempts when initialized' do

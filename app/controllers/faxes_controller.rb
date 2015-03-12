@@ -17,6 +17,7 @@ class FaxesController < ApplicationController
     @fax = Fax.new(fax_params)
     respond_to do |format|
       if @fax.save
+        @fax.deliver
         flash[:notice] = 'Fax wird versendet...'
         format.html { redirect_to(@fax) }
         format.json { render json: 'OK', status: :created } #TODO: Return more infos about the new fax!
