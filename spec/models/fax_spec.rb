@@ -150,20 +150,6 @@ describe Fax do
     it '...'
   end
 
-  describe '.undeliverable' do
-    it 'returns undeliverable' do
-      fax.update(state: 'undeliverable')
-      expect(Fax.undeliverable).to match_array([fax])
-    end
-
-    it 'does not return faxes in other states' do
-      create(:fax, state:'completed')
-      create(:fax)
-      create(:fax, state:'funky')
-      expect(Fax.undeliverable).to be_empty
-    end
-  end
-
   describe '.search' do
     let!(:other_fax) { create(:fax, title: 'another fax') }
     let!(:fax) { create(:fax, title: 'Chunky Bacon') }

@@ -1,14 +1,14 @@
 @import "bootstrap";
 
-.completed {
+.delivered {
   @extend .success;
 }
 
-.aborted {
+.processing {
   @extend .warning;
 }
 
-.undeliverable {
+.aborted {
   @extend .danger;
 }
 

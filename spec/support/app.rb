@@ -2,7 +2,7 @@ class FaxSection < SitePrism::Section
   element :title, '.title'
   element :phone, '.phone'
   element :created_at, '.created_at'
-  element :state, '.state'
+  element :status, '.status'
 end
 
 class FaxesPage < SitePrism::Page

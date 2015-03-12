@@ -8,10 +8,10 @@ FactoryGirl.define do
   end
 
   factory :completed_fax, parent: :fax do
-    state { 'completed' }
+    #state { 'completed' }
   end
 
   factory :aborted_fax, parent: :fax do
-    state { 'aborted' }
+    #state { 'aborted' }
   end
 end

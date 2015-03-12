@@ -31,7 +31,7 @@ class FaxesController < ApplicationController
   end
 
   def undeliverable
-    @faxes = faxes.undeliverable
+    @faxes = faxes.none # TODO: Fix this!
     render :index
   end
 

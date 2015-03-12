@@ -24,10 +24,6 @@ class Fax < ActiveRecord::Base
   before_save :assign_recipient
   before_save :set_status
 
-  def self.undeliverable
-    where(state: 'undeliverable')
-  end
-
   def self.updated_today
     where('updated_at >= ?', DateTime.current.beginning_of_day)
   end

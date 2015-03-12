@@ -52,24 +52,24 @@ describe FaxesController do
     end
   end
 
-  describe 'GET undeliverable' do
-    let(:fax) { create(:fax) }
-
-    before do
-      allow(Fax).to receive(:undeliverable) { [fax] }
-      get :undeliverable
-    end
-
-    it 'assigns undeliverable faxes' do
-      expect(assigns(:faxes)).to match_array([fax])
-    end
-
-    it 'fetches all aborted faxes through the model' do
-      expect(Fax).to have_received(:undeliverable)
-    end
-
-    it 'renders the index template' do
-      expect(response).to render_template(:index)
-    end
-  end
+#  describe 'GET undeliverable' do
+#    let(:fax) { create(:fax) }
+#
+#    before do
+#      allow(Fax).to receive(:undeliverable) { [fax] }
+#      get :undeliverable
+#    end
+#
+#    it 'assigns undeliverable faxes' do
+#      expect(assigns(:faxes)).to match_array([fax])
+#    end
+#
+#    it 'fetches all aborted faxes through the model' do
+#      expect(Fax).to have_received(:undeliverable)
+#    end
+#
+#    it 'renders the index template' do
+#      expect(response).to render_template(:index)
+#    end
+#  end
 end
