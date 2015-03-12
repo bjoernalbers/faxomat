@@ -10,6 +10,11 @@ class PrintJob < ActiveRecord::Base
   before_save :set_status
   after_save :save_fax
 
+  # Update active print jobs.
+  def self.update_active
+    Printer.new.check(self.active)
+  end
+
   private
 
   def set_status

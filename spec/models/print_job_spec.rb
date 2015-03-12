@@ -3,6 +3,20 @@ require 'spec_helper'
 RSpec.describe PrintJob, :type => :model do
   let(:print_job) { build(:print_job) }
 
+  describe '.update_active' do
+    let(:printer) { double(:printer) }
+
+    it 'checks active print jobs' do
+      allow(Printer).to receive(:new).and_return(printer)
+      allow(printer).to receive(:check)
+      allow(PrintJob).to receive(:active).and_return(:active_print_jobs)
+
+      PrintJob.update_active
+
+      expect(printer).to have_received(:check).with(:active_print_jobs)
+    end
+  end
+
   describe '#fax' do
     it 'must be present' do
       print_job.fax = nil

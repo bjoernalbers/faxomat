@@ -147,7 +147,11 @@ describe Fax do
   end
 
   describe '.check' do
-    it '...'
+    it 'updates active print jobs' do
+      allow(PrintJob).to receive(:update_active)
+      Fax.check
+      expect(PrintJob).to have_received(:update_active)
+    end
   end
 
   describe '.search' do

@@ -40,9 +40,9 @@ class Fax < ActiveRecord::Base
     #Deliverer.deliver #NOOP!
   end
 
-  # Check deliveries.
+  # Update active print jobs.
   def self.check
-    #Deliverer.check #NOOP!
+    PrintJob.update_active
   end
 
   def self.search(q)
