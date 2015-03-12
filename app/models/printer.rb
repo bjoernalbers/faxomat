@@ -19,9 +19,9 @@ class Printer
 
   # Update CUPS job statuses on print jobs.
   def check(print_jobs)
+    statuses = cups_job_statuses
     print_jobs.each do |print_job|
-      cups_job_status = cups_job_statuses[print_job.cups_job_id]
-      print_job.update! cups_job_status: cups_job_status
+      print_job.update! cups_job_status: statuses[print_job.cups_job_id]
     end
   end
 
@@ -37,10 +37,9 @@ class Printer
 
   # Return hash of CUPS job statuses by CUPS job id.
   def cups_job_statuses
-    @cups_job_statuses ||=
-      Cups.all_jobs(printer_name).inject({}) do |memo, (cups_job_id,cups_job)|
-        memo[cups_job_id] = cups_job.fetch(:state).to_s
-        memo
-      end
+    Cups.all_jobs(printer_name).inject({}) do |memo, (cups_job_id,cups_job)|
+      memo[cups_job_id] = cups_job.fetch(:state).to_s
+      memo
+    end
   end
 end

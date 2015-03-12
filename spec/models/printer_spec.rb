@@ -71,6 +71,11 @@ RSpec.describe Printer, :type => :model do
       printer.check [print_job]
       expect(print_job.cups_job_status).to eq 'completed'
     end
+
+    it 'calls cups_job_status only once' do
+      printer.check [print_job, print_job]
+      expect(printer).to have_received(:cups_job_statuses).once
+    end
   end
 
   describe '#printer_name' do
@@ -103,11 +108,6 @@ RSpec.describe Printer, :type => :model do
       expect(printer.send(:cups_job_statuses)).to eq(
         { 1 => 'chunky', 2 => 'bacon' }
       )
-    end
-
-    it 'caches result' do
-      2.times { printer.send(:cups_job_statuses) }
-      expect(Cups).to have_received(:all_jobs).once
     end
   end
 end
