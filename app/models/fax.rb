@@ -1,5 +1,5 @@
 class Fax < ActiveRecord::Base
-  enum status: { pending: 0, processing: 1, delivered: 2, aborted: 3 }
+  enum status: { pending: 0, active: 1, delivered: 2, aborted: 3 }
 
   attr_writer :phone
 
@@ -115,10 +115,10 @@ class Fax < ActiveRecord::Base
   def set_status
     self.status =
       case
-      when print_jobs.empty?             then 'pending'
-      when print_jobs.active.present?    then 'processing'
-      when print_jobs.completed.present? then 'delivered'
-      else                                    'aborted'
+      when print_jobs.empty?             then :pending
+      when print_jobs.active.present?    then :active
+      when print_jobs.completed.present? then :delivered
+      else                                    :aborted
       end
   end
 end

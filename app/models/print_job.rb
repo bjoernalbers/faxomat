@@ -20,9 +20,9 @@ class PrintJob < ActiveRecord::Base
   def set_status
     self.status =
       case cups_job_status
-      when 'completed'            then 'completed'
-      when 'aborted', 'cancelled' then 'aborted'
-      else                             'active'
+      when 'completed'            then :completed
+      when 'aborted', 'cancelled' then :aborted
+      else                             :active
       end
   end
 

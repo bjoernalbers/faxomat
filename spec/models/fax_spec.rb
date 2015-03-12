@@ -285,17 +285,17 @@ describe Fax do
       end
     end
 
-    context 'is processing' do
+    context 'is active' do
       it 'with active print job(s)' do
         create(:active_print_job, fax: fax)
-        expect(fax).to be_processing
+        expect(fax).to be_active
       end
 
       it 'with completed, aborted and active print jobs' do
         create(:completed_print_job, fax: fax)
         create(:aborted_print_job, fax: fax)
         create(:active_print_job, fax: fax)
-        expect(fax).to be_processing
+        expect(fax).to be_active
       end
     end
 
