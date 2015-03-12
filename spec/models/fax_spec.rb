@@ -274,14 +274,14 @@ describe Fax do
   end
 
   describe '#status' do
-    context 'is pending' do
+    context 'is nil' do
       it 'without print jobs' do
         expect(fax.print_jobs).to be_empty
-        expect(fax).to be_pending
+        expect(fax.status).to be nil
       end
 
       it 'by default' do
-        expect(fax).to be_pending
+        expect(fax.status).to be nil
       end
     end
 
