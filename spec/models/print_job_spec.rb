@@ -72,8 +72,8 @@ RSpec.describe PrintJob, :type => :model do
         expect(print_job).to be_aborted
       end
 
-      it 'with cups_job_status=canceled' do
-        print_job.update!(cups_job_status: 'canceled')
+      it 'with cups_job_status=cancelled' do
+        print_job.update!(cups_job_status: 'cancelled')
         expect(print_job).to be_aborted
       end
 
