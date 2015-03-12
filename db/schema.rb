@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150312064853) do
+ActiveRecord::Schema.define(version: 20150312083420) do
 
   create_table "faxes", force: true do |t|
     t.integer  "recipient_id",                      null: false
