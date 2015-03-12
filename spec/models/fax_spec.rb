@@ -94,42 +94,6 @@ describe Fax do
     end
   end
 
-  context 'with non-unique print_job_id' do
-    let(:other_fax) { create(:fax, print_job_id: 5) }
-    let(:fax) { build(:fax, print_job_id: other_fax.print_job_id) }
-
-    it 'is invalid' do
-      expect(fax).to be_invalid
-      expect(fax.errors[:print_job_id].size).to eq 1
-    end
-
-    it 'can not be saved in the database' do
-      expect {
-        fax.save(validate: false)
-      }.to raise_error
-    end
-  end
-
-  context 'without print_job_id' do
-    let(:fax) { build(:fax, print_job_id: nil) }
-
-    it 'is valid' do
-      expect(fax).to be_valid
-    end
-
-    it 'can be saved in the database' do
-      expect {
-        fax.save(validate: false)
-      }.to_not raise_error
-    end
-
-    it 'can be saved even with other null print_job_ids' do
-      2.times {
-        expect { create(:fax, print_job_id: nil) }.to_not raise_error
-      }
-    end
-  end
-
   describe '.updated_today' do
     let(:now) { DateTime.current }
 
