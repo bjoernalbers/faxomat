@@ -19,6 +19,11 @@
       <%= content_tag(:td, fax.phone, class: 'phone') %>
       <%= content_tag(:td, fax.created_at, class: 'created_at') %>
       <%= content_tag(:td, fax.status, class: 'status') %>
+      <% if fax.aborted? %>
+        <td>
+          <%= link_to 'Noch mal senden...', deliver_fax_path(fax), method: :patch %>
+        </td>
+      <% end %>
     <% end %>
   <% end %>
 </table>

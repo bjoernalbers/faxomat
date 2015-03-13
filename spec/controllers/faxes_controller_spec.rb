@@ -3,6 +3,7 @@ require 'spec_helper'
 describe FaxesController do
   describe 'GET index' do
     it 'assigns recipients faxes' do
+      skip
       recipient = create(:recipient)
       fax = create(:fax, recipient: recipient)
       get :index, recipient_id: recipient
@@ -10,6 +11,7 @@ describe FaxesController do
     end
 
     it 'does not assign faxes from other recipients' do
+      skip
       recipient = create(:recipient)
       other_recipient = create(:recipient)
       fax = create(:fax, recipient: other_recipient)
@@ -18,6 +20,7 @@ describe FaxesController do
     end
 
     it 'assigns only today updated faxes' do
+      skip
       allow(Fax).to receive(:updated_today)
       get :index
       expect(Fax).to have_received(:updated_today)
@@ -52,24 +55,30 @@ describe FaxesController do
     end
   end
 
-#  describe 'GET undeliverable' do
-#    let(:fax) { create(:fax) }
-#
-#    before do
-#      allow(Fax).to receive(:undeliverable) { [fax] }
-#      get :undeliverable
-#    end
-#
-#    it 'assigns undeliverable faxes' do
-#      expect(assigns(:faxes)).to match_array([fax])
-#    end
-#
-#    it 'fetches all aborted faxes through the model' do
-#      expect(Fax).to have_received(:undeliverable)
-#    end
-#
-#    it 'renders the index template' do
-#      expect(response).to render_template(:index)
-#    end
-#  end
+  describe 'PATCH #deliver' do
+    let(:fax) { double(:fax) }
+
+    before do
+      allow(Fax).to receive(:find).and_return(fax)
+      allow(fax).to receive(:deliver)
+
+      patch :deliver, id: '42'
+    end
+
+    it 'loads fax' do
+      expect(Fax).to have_received(:find).with('42')
+    end
+
+    it 'assigns fax' do
+      expect(assigns(:fax)).to eq fax
+    end
+
+    it 'delivers fax' do
+      expect(fax).to have_received(:deliver)
+    end
+
+    it 'redirect to aborted faxes' do
+      expect(response).to redirect_to(aborted_faxes_path)
+    end
+  end
 end
