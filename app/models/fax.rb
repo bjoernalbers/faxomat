@@ -1,5 +1,6 @@
+# Stores faxes.
 class Fax < ActiveRecord::Base
-  enum status: { active: 0, delivered: 1, aborted: 2 }
+  enum status: { active: 0, completed: 1, aborted: 2 }
 
   attr_writer :phone
 
@@ -117,7 +118,7 @@ class Fax < ActiveRecord::Base
       case
       when print_jobs.empty?             then nil
       when print_jobs.active.present?    then :active
-      when print_jobs.completed.present? then :delivered
+      when print_jobs.completed.present? then :completed
       else                                    :aborted
       end
   end

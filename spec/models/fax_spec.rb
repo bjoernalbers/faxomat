@@ -299,16 +299,16 @@ describe Fax do
       end
     end
 
-    context 'is delivered' do
+    context 'is completed' do
       it 'with completed print job(s)' do
         create(:completed_print_job, fax: fax)
-        expect(fax).to be_delivered
+        expect(fax).to be_completed
       end
 
       it 'with completed and aborted print jobs' do
         create(:completed_print_job, fax: fax)
         create(:aborted_print_job, fax: fax)
-        expect(fax).to be_delivered
+        expect(fax).to be_completed
       end
     end
 
