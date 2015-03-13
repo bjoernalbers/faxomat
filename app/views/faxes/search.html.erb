@@ -1,6 +1,6 @@
 <ul class='nav nav-tabs'>
   <%= content_tag(:li, link_to('Heute ', faxes_path), class: ('active' if action_name == 'index')) %>
-  <%= content_tag(:li, link_to('Unzustellbar', undeliverable_faxes_path), class: ('active' if action_name == 'undeliverable')) %>
+  <%= content_tag(:li, link_to('Unzustellbar', aborted_faxes_path), class: ('active' if action_name == 'aborted')) %>
   <%= content_tag(:li, link_to('Suche', search_faxes_path), class: ('active' if action_name == 'search')) %>
 </ul>
 

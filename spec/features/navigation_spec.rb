@@ -10,12 +10,12 @@ feature 'navigation' do
     expect(app.faxes_page).to be_displayed
   end
 
-  scenario 'undeliverable faxes' do
+  scenario 'aborted faxes' do
     app = App.new
 
     visit '/'
-    click_link 'Unzustellbar'
+    click_link 'Abgebrochene Faxe'
 
-    expect(app.undeliverable_faxes_page).to be_displayed
+    expect(app.aborted_faxes_page).to be_displayed
   end
 end

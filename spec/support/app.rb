@@ -16,9 +16,9 @@ class FaxesPage < SitePrism::Page
   end
 end
 
-class UndeliverableFaxesPage < FaxesPage
-  set_url '/faxes/undeliverable'
-  set_url_matcher /faxes\/undeliverable\/?/
+class AbortedFaxesPage < FaxesPage
+  set_url '/faxes/aborted'
+  set_url_matcher /faxes\/aborted\/?/
 end
 
 class SearchFaxesPage < FaxesPage
@@ -31,7 +31,7 @@ class App
     FaxesPage.new
   end
 
-  def undeliverable_faxes_page
-    UndeliverableFaxesPage.new
+  def aborted_faxes_page
+    AbortedFaxesPage.new
   end
 end
