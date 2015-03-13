@@ -142,10 +142,6 @@ describe Fax do
     end
   end
 
-  describe '.deliver' do
-    it '...'
-  end
-
   describe '.check' do
     it 'updates active print jobs' do
       allow(PrintJob).to receive(:update_active)

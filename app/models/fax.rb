@@ -36,11 +36,6 @@ class Fax < ActiveRecord::Base
           last_week.end_of_week)
   end
 
-  # Deliver all deliverable faxes.
-  def self.deliver
-    #Deliverer.deliver #NOOP!
-  end
-
   # Update active print jobs.
   def self.check
     PrintJob.update_active
