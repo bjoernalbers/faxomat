@@ -317,6 +317,11 @@ describe Fax do
         create(:aborted_print_job, fax: fax)
         expect(fax).to be_aborted
       end
+
+      it 'by factory :aborted_fax' do
+        fax = create(:aborted_fax)
+        expect(fax).to be_aborted
+      end
     end
   end
 end

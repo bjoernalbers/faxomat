@@ -12,6 +12,8 @@ FactoryGirl.define do
   end
 
   factory :aborted_fax, parent: :fax do
-    #state { 'aborted' }
+    after(:create) do |fax, evaluator|
+      create(:aborted_print_job, fax: fax)
+    end
   end
 end
