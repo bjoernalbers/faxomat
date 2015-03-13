@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 feature 'navigation' do
-  scenario 'todays faxes' do
+  scenario 'active faxes' do
     app = App.new
 
     visit '/'
-    click_link 'Heute'
+    click_link 'Faxe in Versendung'
 
     expect(app.faxes_page).to be_displayed
   end

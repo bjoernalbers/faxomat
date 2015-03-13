@@ -292,6 +292,11 @@ describe Fax do
         create(:active_print_job, fax: fax)
         expect(fax).to be_active
       end
+
+      it 'by factory :active_fax' do
+        fax = create(:active_fax)
+        expect(fax).to be_active
+      end
     end
 
     context 'is completed' do
