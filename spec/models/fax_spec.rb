@@ -251,11 +251,6 @@ describe Fax do
     end
   end
 
-  it 'has no delivery attempts when initialized' do
-    fax = build(:fax)
-    expect(fax.delivery_attempts).to eq nil
-  end
-
   describe '#document' do
     it 'allows to attach documents' do
       filename = File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
