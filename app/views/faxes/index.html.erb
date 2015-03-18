@@ -1,6 +1,11 @@
 <ul class='nav nav-tabs'>
   <%= content_tag(:li, link_to('Faxe in Versendung', faxes_path), class: ('active' if action_name == 'index')) %>
-  <%= content_tag(:li, link_to('Abgebrochene Faxe', aborted_faxes_path), class: ('active' if action_name == 'aborted')) %>
+  <%= content_tag(:li, class: ('active' if action_name == 'aborted')) do %>
+    <%= link_to(aborted_faxes_path) do %>
+      <%= content_tag(:span, 'Abgebrochene Faxe') %>
+      <%= content_tag(:span, aborted_faxes_count, class: 'badge') %>
+    <% end %>
+  <% end %>
   <%= content_tag(:li, link_to('Suche', search_faxes_path), class: ('active' if action_name == 'search')) %>
 </ul>
 
