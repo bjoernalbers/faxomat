@@ -54,3 +54,5 @@ gem 'bootstrap-sass', '~> 3.1.1'
 gem 'cups', :git => 'https://github.com/m0wfo/cups'
 
 gem 'paperclip'
+
+gem 'rufus-scheduler', '~> 3.0'
