@@ -55,6 +55,56 @@ describe FaxesController do
     end
   end
 
+  describe 'DELETE #destroy' do
+    let(:fax) { double(:fax) }
+
+    before do
+      allow(Fax).to receive(:find)
+      allow(fax).to receive(:destroy)
+    end
+
+    def do_delete
+      delete :destroy, id: '42'
+    end
+
+    it 'loads fax' do
+      do_delete
+      expect(Fax).to have_received(:find).with('42')
+    end
+
+    context 'when fax present' do
+      before do
+        allow(Fax).to receive(:find).and_return(fax)
+      end
+
+      it 'destroys fax' do
+        do_delete
+        expect(fax).to have_received(:destroy)
+      end
+
+      it 'redirect to aborted faxes' do
+        do_delete
+        expect(response).to redirect_to(aborted_faxes_path)
+      end
+    end
+
+    context 'when fax missing' do
+      before do
+        allow(Fax).to receive(:find).and_return(nil)
+      end
+
+      it 'does not destroy fax' do
+        do_delete
+        expect(fax).not_to have_received(:destroy)
+      end
+
+      it 'redirect to aborted faxes' do
+        do_delete
+        expect(response).to redirect_to(aborted_faxes_path)
+      end
+    end
+  end
+
   describe 'PATCH #deliver' do
     let(:fax) { double(:fax) }
 

@@ -21,7 +21,8 @@
       <%= content_tag(:td, fax.status, class: 'status') %>
       <% if fax.aborted? %>
         <td>
-          <%= link_to 'Noch mal senden...', deliver_fax_path(fax), method: :patch %>
+          <%= link_to 'Noch mal senden...', deliver_fax_path(fax), method: :patch, class: 'btn btn-primary btn-xs' %>
+          <%= link_to 'löschen', fax_path(fax), method: :delete, class: 'btn btn-danger btn-xs', data: { confirm: 'Wirklich löschen?' } %>
         </td>
       <% end %>
     <% end %>

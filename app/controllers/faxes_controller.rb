@@ -27,6 +27,12 @@ class FaxesController < ApplicationController
     end
   end
 
+  def destroy
+    fax = Fax.find(params[:id])
+    fax.destroy if fax
+    redirect_to aborted_faxes_path
+  end
+
   def new
     @fax = Fax.new
   end

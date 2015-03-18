@@ -24,6 +24,7 @@ class Fax < ActiveRecord::Base
 
   before_save :assign_recipient
   before_save :set_status
+  before_destroy :check_if_aborted
 
   def self.updated_today
     where('updated_at >= ?', DateTime.current.beginning_of_day)
@@ -116,5 +117,12 @@ class Fax < ActiveRecord::Base
       when print_jobs.completed.present? then :completed
       else                                    :aborted
       end
+  end
+
+  def check_if_aborted
+    unless aborted?
+      self.errors[:base] << 'Can only delete aborted faxes.'
+      false
+    end
   end
 end

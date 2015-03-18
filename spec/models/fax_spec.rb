@@ -320,4 +320,35 @@ describe Fax do
       end
     end
   end
+
+  describe '#destroy' do
+    let(:message) { 'Can only delete aborted faxes.' }
+
+    it 'destroys aborted fax' do
+      fax = create(:aborted_fax)
+      fax.destroy
+      expect(fax).to be_destroyed
+    end
+
+    it 'does not destroy completed fax' do
+      fax = create(:completed_fax)
+      fax.destroy
+      expect(fax).not_to be_destroyed
+      expect(fax.errors[:base]).to include(message)
+    end
+    
+    it 'does not destroy active fax' do
+      fax = create(:active_fax)
+      fax.destroy
+      expect(fax).not_to be_destroyed
+      expect(fax.errors[:base]).to include(message)
+    end
+
+    it 'does not destroy unsend fax' do
+      fax = create(:fax)
+      fax.destroy
+      expect(fax).not_to be_destroyed
+      expect(fax.errors[:base]).to include(message)
+    end
+  end
 end
