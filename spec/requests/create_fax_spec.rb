@@ -13,6 +13,12 @@ describe 'Create Fax' do
     }
   end
 
+  before do
+    printer = double(:printer)
+    allow(Printer).to receive(:new).and_return(printer)
+    allow(printer).to receive(:print)
+  end
+
   context 'with valid params' do
     let(:params) do
       {
