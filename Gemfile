@@ -56,3 +56,6 @@ gem 'cups', :git => 'https://github.com/m0wfo/cups'
 gem 'paperclip'
 
 gem 'rufus-scheduler', '~> 3.0'
+
+gem 'lograge'
+gem 'rails_12factor'
