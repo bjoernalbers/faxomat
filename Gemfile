@@ -32,10 +32,6 @@ gem 'spring',        group: :development
 
 gem 'puma', '~> 2.11'
 
-# Use Capistrano for deployment
-gem 'capistrano-rails', group: :development
-gem 'capistrano', '~> 3.3.5'
-
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
