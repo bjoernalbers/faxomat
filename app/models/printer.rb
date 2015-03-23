@@ -3,8 +3,10 @@ class Printer
   attr_reader :printer_name, :dialout_prefix
 
   def initialize(opts = {})
-    @printer_name   = opts.fetch(:printer_name,   'Fax')
-    @dialout_prefix = opts.fetch(:dialout_prefix, 0)
+    @dialout_prefix =
+      opts.fetch(:dialout_prefix) { ENV.fetch('DIALOUT_PREFIX', nil) }
+    @printer_name =
+      opts.fetch(:printer_name)   { ENV.fetch('PRINTER_NAME', 'Fax') }
   end
 
   # Print (deliver) the fax.

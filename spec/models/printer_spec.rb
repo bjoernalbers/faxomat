@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Printer, :type => :model do
-  let(:printer) { Printer.new }
+  let(:printer) { Printer.new(printer_name: 'Fax') }
 
   describe '#print' do
     let(:fax) { create(:fax) }
@@ -19,10 +19,10 @@ RSpec.describe Printer, :type => :model do
     end
 
     it 'prints fax on CUPS fax printer' do
-      allow(printer).to receive(:dialout_prefix).and_return('5')
+      printer = Printer.new(dialout_prefix: 0)
       printer.print(fax)
       expect(Cups::PrintJob).to have_received(:new).
-        with(fax.path, printer.printer_name, {'phone' => '5'+fax.phone})
+        with(fax.path, printer.printer_name, {'phone' => '0' + fax.phone})
       expect(cups_job).to have_received(:print)
     end
 
@@ -78,18 +78,59 @@ RSpec.describe Printer, :type => :model do
     end
   end
 
-  describe '#printer_name' do
-    it 'defaults to "Fax"' do
-      expect(printer.printer_name).to eq 'Fax'
-    end
-  end
-
   describe '#dialout_prefix' do
-    it 'defaults to 0' do
-      expect(printer.dialout_prefix).to eq 0
+    context 'with option :dialout_prefix' do
+      let(:printer) { Printer.new(dialout_prefix: 7) }
+
+      it 'assigns from option' do
+        expect(printer.dialout_prefix).to eq 7
+      end
+    end
+
+    context 'without option :dialout_prefix' do
+      let(:printer) { Printer.new }
+
+      before do
+        allow(ENV).to receive(:fetch).and_return(8)
+      end
+
+      it 'assigns from environment' do
+        expect(printer.dialout_prefix).to eq 8
+      end
+
+      it 'fetches ENV["DIALOUT_PREFIX"] with default' do
+        printer.dialout_prefix
+        expect(ENV).to have_received(:fetch).with('DIALOUT_PREFIX', nil)
+      end
     end
   end
 
+  describe '#printer_name' do
+    context 'with option :printer_name' do
+      let(:printer) { Printer.new(printer_name: 'Chunky') }
+
+      it 'assigns from option' do
+        expect(printer.printer_name).to eq 'Chunky'
+      end
+    end
+
+    context 'without option :printer_name' do
+      let(:printer) { Printer.new }
+
+      before do
+        allow(ENV).to receive(:fetch).and_return('Bacon')
+      end
+
+      it 'assigns from environment' do
+        expect(printer.printer_name).to eq 'Bacon'
+      end
+
+      it 'fetches ENV["PRINTER_NAME"] with default' do
+        printer.printer_name
+        expect(ENV).to have_received(:fetch).with('PRINTER_NAME', 'Fax')
+      end
+    end
+  end
 
   describe '#cups_job_statuses' do
     before do
