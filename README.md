@@ -1,7 +1,7 @@
 # Faxomat - A Fax Machine with HTTP API
 
 Fax isn't going to be dead in the near future.
-It exists since the age of dinosaurs and will probably survice humans as well.
+It exists since the age of dinosaurs and will probably survive humans as well.
 But that doesn't mean that we can't automate the shit out of it, right?
 Faxomat turns a Mac + USB modem + phone line into a fax machine with a modern
 HTTP API.
