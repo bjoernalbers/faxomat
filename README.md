@@ -26,7 +26,9 @@ Sending a fax is easy as...
 
 ## Quickstart
 
-- Install git, foreman and bundler
+- Install XCode along with Command Line Developer Tools
+- Install [foreman](https://github.com/ddollar/foreman)
+- Install Bundler with `sudo gem install bundler`
 - Set up your USB-modem and name it "Fax" (extra points when you verify it
   by "printing" a test fax manually)
 - clone this repo and `cd` into it
