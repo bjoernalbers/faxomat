@@ -22,7 +22,8 @@ class AbortedFaxesPage < FaxesPage
 end
 
 class SearchFaxesPage < FaxesPage
-  set_url '/faxes/search{?q*}'
+  #set_url '/faxes/search{?q*}'
+  set_url '/faxes/search{?title*}'
   set_url_matcher /faxes\/search\/?/
 end
 

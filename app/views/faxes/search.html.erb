@@ -10,9 +10,9 @@ Empfängers (min. 4 Ziffern) in beliebiger Kombination.
 </p>
 
 <%= form_tag(search_faxes_path, method: :get) do %>
-  <%= label_tag(:q, 'Suche:') %>
-  <%= text_field_tag(:q, params[:q]) %>
-  <%= submit_tag('Los gehts!') %>
+  <%= label_tag(:title, 'Suche:') %>
+  <%= text_field_tag(:title, params[:title]) %>
+  <%= submit_tag('Los gehts!', name: nil) %>
 <% end %>
 
 <table>

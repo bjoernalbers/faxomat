@@ -43,7 +43,7 @@ class FaxesController < ApplicationController
   end
 
   def search
-    @faxes = faxes.search(params[:q])
+    @faxes = faxes.search(params)
   end
 
   def filter

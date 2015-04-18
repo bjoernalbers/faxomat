@@ -1,0 +1,18 @@
+<%= fax_report_header %>
+==================================================================
+<%= "Empfänger:\t#{params[:phone]}\n" if params[:phone].present? -%>
+<%= "Zeitraum:\t#{Time.zone.parse(params[:created_since]).to_s(:short)} - #{Time.zone.now.to_s(:short)}\n" if params[:created_since].present? -%>
+
+Sendedatum<%= "\t" %>Patient(in) / Faxtitel
+------------------------------------------------------------------
+<% @faxes.reorder(:created_at).each do |fax| %>
+<%= [fax.created_at.strftime('%d.%m.%Y'), fax.title].join("\t") %>
+<% end %>
+
+
+--
+Radiologische Gemeinschaftspraxis im Evangelischen Krankenhaus Lippstadt
+Wiedenbrücker Straße 33
+59555 Lippstadt
+Telefon: 02941 150 150
+Fax: 02941 150 15 11

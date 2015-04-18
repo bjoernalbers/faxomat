@@ -10,7 +10,7 @@ feature 'Search faxes' do
     other_fax = create(:fax, title: 'another boring one')
 
     page = SearchFaxesPage.new
-    page.load(q: 'sweet')
+    page.load(title: 'sweet')
     #page.load(q: '')
 
     expect(page).to have_fax(fax)

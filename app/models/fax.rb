@@ -42,18 +42,27 @@ class Fax < ActiveRecord::Base
     PrintJob.update_active
   end
 
-  def self.search(q)
-    query = Query.new(q)
-    results = joins(:recipient)
-    if query.blank?
-      results = none
-    else
-      results = results.merge(Recipient.by_phone(query.phone)) if query.phone
-      query.names.each do |name|
-        results = results.where('title LIKE ?', "%#{name}%")
-      end
+  def self.search(params)
+    result = joins(:recipient)
+
+    if params[:title].present?
+      result = result.where('title LIKE ?', "%#{params[:title]}%")
     end
-    results
+
+    if params[:phone].present?
+      result = result.merge(Recipient.by_phone(params[:phone]))
+    end
+
+    if params[:created_since].present?
+      range = Time.zone.parse(params[:created_since])..Time.zone.now
+      result = result.where(created_at: range)
+    end
+
+    if [:phone, :title].all? { |p| params[p].blank? }
+      result = none
+    end
+
+    result
   end
 
   # Deliver the fax.
