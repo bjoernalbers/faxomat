@@ -7,6 +7,18 @@ describe Fax do
     expect(fax.document.path).to_not be_nil
   end
 
+  describe '.count_by_status' do
+    it 'returns number of faxes by status' do
+      2.times { create(:active_fax) }
+      1.times { create(:aborted_fax) }
+      0.times { create(:completed_fax) }
+
+      expect(Fax.count_by_status[:active]).to eq 2
+      expect(Fax.count_by_status[:aborted]).to eq 1
+      expect(Fax.count_by_status[:completed]).to eq 0
+    end
+  end
+
   it 'does not store documents under a public available location' do
     File.open(Rails.root.join('spec', 'support', 'sample.pdf')) do |doc|
       fax.document = doc

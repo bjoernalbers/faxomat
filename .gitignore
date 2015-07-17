@@ -20,3 +20,6 @@
 
 # Ignore stored attachments.
 /storage
+
+# Ignore site-specific deployment configuration
+/config/deploy

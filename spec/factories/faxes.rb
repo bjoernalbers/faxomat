@@ -7,6 +7,7 @@ FactoryGirl.define do
     document_content_type { 'application/pdf' }
   end
 
+  # TODO: Fix this factory (status is nil)!
   factory :completed_fax, parent: :fax do
     #state { 'completed' }
   end

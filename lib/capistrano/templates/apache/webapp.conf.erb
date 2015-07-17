@@ -1,0 +1,11 @@
+DocumentRoot <%= current_path.join('public') %>
+<Directory <%= current_path.join('public') %>>
+	Allow from all
+	Options -MultiViews
+</Directory>
+<Proxy balancer://app>
+	BalancerMember http://127.0.0.1:3000
+</Proxy>
+ProxyPass /assets !
+ProxyPass / balancer://app/
+ProxyPassReverse / balancer://app/

@@ -37,6 +37,11 @@ class Fax < ActiveRecord::Base
           last_week.end_of_week)
   end
 
+  def self.count_by_status
+    counts = group(:status).count
+    Hash[Fax.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
+  end
+
   # Update active print jobs.
   def self.check
     PrintJob.update_active

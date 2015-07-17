@@ -35,6 +35,12 @@ gem 'puma', '~> 2.11'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+group :development do
+  # Use Capistrano for deployment
+  gem 'capistrano-rails', group: :development
+  gem 'capistrano', '~> 3.3.5'
+end
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
   gem 'faker', '~> 1.4'
