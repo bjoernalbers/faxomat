@@ -60,4 +60,3 @@ gem 'paperclip'
 gem 'rufus-scheduler', '~> 3.0'
 
 gem 'lograge'
-gem 'rails_12factor', group: [:development, :production]
