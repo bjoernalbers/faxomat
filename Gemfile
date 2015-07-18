@@ -30,7 +30,7 @@ gem 'spring',        group: :development
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'puma', '~> 2.11'
+gem 'unicorn'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
