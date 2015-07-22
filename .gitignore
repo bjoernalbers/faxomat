@@ -23,3 +23,5 @@
 
 # Ignore site-specific deployment configuration
 /config/deploy
+
+/.capistrano
