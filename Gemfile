@@ -31,6 +31,7 @@ gem 'spring',        group: :development
 # gem 'bcrypt', '~> 3.1.7'
 
 gem 'unicorn'
+gem 'dotenv-rails'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
