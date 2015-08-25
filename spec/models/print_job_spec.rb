@@ -41,8 +41,8 @@ RSpec.describe PrintJob, :type => :model do
 
   describe '#cups_job_status' do
     it 'can be present' do
-      print_job.cups_job_status = :chunky_bacon
-      expect(print_job.cups_job_status).to eq :chunky_bacon
+      print_job.cups_job_status = 'chunky_bacon'
+      expect(print_job.cups_job_status).to eq 'chunky_bacon'
     end
   end
 
