@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # In order know what is currently being delivered (or not)
 # As a user
 # I want to view faxes

@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-RSpec.describe Printer, :type => :model do
+describe Printer do
   let(:printer) { Printer.new(printer_name: 'Fax') }
 
   describe '#print' do

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # In order to find older faxes
 # As a user with maaaaaaaaannny faxes
 # I want to be able to search them

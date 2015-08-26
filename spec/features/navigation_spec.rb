@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 feature 'navigation' do
   scenario 'active faxes' do
     app = App.new

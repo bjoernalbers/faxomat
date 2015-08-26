@@ -1,6 +1,3 @@
-require 'spec_helper'
-
-
 describe 'GET /api/faxes' do
   let(:params)  { { } }
   let(:headers) { { 'Accept' => 'application/json' } }

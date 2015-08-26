@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get 'users/index'
+
+  #devise_for :users
+
+  resources :users, only: [:index]
+
   root 'faxes#index'
 
   namespace :api, defaults: { format: :json } do

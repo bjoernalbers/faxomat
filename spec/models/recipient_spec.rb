@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Recipient do
   it 'has a factory that builds valid models' do
     2.times { expect(create(:recipient)).to be_valid }

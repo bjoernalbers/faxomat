@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Fax do
   let(:fax) { build(:fax) }
 

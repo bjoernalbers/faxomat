@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # In order to clean faxes that can not be delivered
 # As a user
 # I want to delete aborted faxes.

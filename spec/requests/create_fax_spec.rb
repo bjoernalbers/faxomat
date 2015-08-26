@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'Create Fax' do
   let(:path) do
     File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')

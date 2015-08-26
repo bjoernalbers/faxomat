@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :print_job do
-    cups_job_id { Faker::Number.number(rand(5) + 1) } # 1 - 99999
+    cups_job_id { Faker::Number.number(6).to_i }
     cups_job_status nil
     fax
 

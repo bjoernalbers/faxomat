@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-RSpec.describe PrintJob, :type => :model do
+describe PrintJob do
   let(:print_job) { build(:print_job) }
 
   describe '.update_active' do

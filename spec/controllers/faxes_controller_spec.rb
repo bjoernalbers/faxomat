@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe FaxesController do
   describe 'GET index' do
     it 'assigns recipients faxes' do

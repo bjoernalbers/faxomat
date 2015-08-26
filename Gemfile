@@ -41,9 +41,10 @@ end
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
+  gem 'shoulda-matchers', '~> 2.8'
   gem 'faker', '~> 1.4'
   gem 'capybara', '~> 2.4'
-  gem 'database_cleaner', '~> 1.3'
+  gem 'database_cleaner', '~> 1.4'
   gem 'factory_girl_rails', '~> 4.5'
   gem 'site_prism', '~> 2.6'
   gem 'timecop', '~> 0.7'
@@ -67,3 +68,5 @@ gem 'paperclip'
 gem 'rufus-scheduler', '~> 3.0'
 
 gem 'lograge'
+
+gem 'devise', '~> 3.5'

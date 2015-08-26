@@ -11,38 +11,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150313132507) do
+ActiveRecord::Schema.define(version: 20150826111252) do
 
-  create_table "faxes", force: true do |t|
-    t.integer  "recipient_id",          null: false
+  create_table "faxes", force: :cascade do |t|
+    t.integer  "recipient_id",                      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "title",                 null: false
-    t.string   "document_file_name"
-    t.string   "document_content_type"
+    t.string   "title",                 limit: 255, null: false
+    t.string   "document_file_name",    limit: 255
+    t.string   "document_content_type", limit: 255
     t.integer  "document_file_size"
     t.datetime "document_updated_at"
     t.integer  "status"
   end
 
-  create_table "print_jobs", force: true do |t|
-    t.integer  "cups_job_id",                 null: false
-    t.string   "cups_job_status"
-    t.integer  "fax_id",                      null: false
+  create_table "print_jobs", force: :cascade do |t|
+    t.integer  "cups_job_id",                             null: false
+    t.string   "cups_job_status", limit: 255
+    t.integer  "fax_id",                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status",          default: 0, null: false
+    t.integer  "status",                      default: 0, null: false
   end
 
   add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
   add_index "print_jobs", ["fax_id"], name: "index_print_jobs_on_fax_id"
 
-  create_table "recipients", force: true do |t|
-    t.string   "phone",      null: false
+  create_table "recipients", force: :cascade do |t|
+    t.string   "phone",      limit: 255, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "recipients", ["phone"], name: "index_recipients_on_phone", unique: true
+
+  create_table "users", force: :cascade do |t|
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "title"
+    t.string   "username",            default: "", null: false
+    t.string   "encrypted_password",  default: "", null: false
+    t.datetime "remember_created_at"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "users", ["username"], name: "index_users_on_username", unique: true
 
 end
