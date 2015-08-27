@@ -43,24 +43,24 @@ describe Fax do
     end
   end
 
-  context 'without recipient' do
+  context 'without fax_number' do
     let(:phone) { '01230123' }
-    let(:fax) { build(:fax, recipient: nil, phone: phone) }
+    let(:fax) { build(:fax, fax_number: nil, phone: phone) }
 
-    it 'creates and assigns a new recipient by phone' do
-      expect{fax.save}.to change(Recipient, :count).by 1
-      expect(fax.recipient).to eq Recipient.find_by(phone: phone)
+    it 'creates and assigns a new fax_number by phone' do
+      expect{fax.save}.to change(FaxNumber, :count).by 1
+      expect(fax.fax_number).to eq FaxNumber.find_by(phone: phone)
     end
 
-    it 'finds and assigns an existing recipient by phone' do
-      create(:recipient, phone: phone)
-      expect{fax.save}.to change(Recipient, :count).by 0
-      expect(fax.recipient).to eq Recipient.find_by(phone: phone)
+    it 'finds and assigns an existing fax_number by phone' do
+      create(:fax_number, phone: phone)
+      expect{fax.save}.to change(FaxNumber, :count).by 0
+      expect(fax.fax_number).to eq FaxNumber.find_by(phone: phone)
     end
   end
 
   it 'validates the presence of phone' do
-    fax = build(:fax, recipient: nil, phone: nil)
+    fax = build(:fax, fax_number: nil, phone: nil)
     expect(fax).to be_invalid
     expect(fax.errors[:phone]).to_not be_empty
   end
@@ -96,8 +96,8 @@ describe Fax do
     expect(fax.errors[:phone]).to include('has no area code')
   end
 
-  context 'without a recipient' do
-    let(:fax) { build(:fax, recipient: nil) }
+  context 'without a fax_number' do
+    let(:fax) { build(:fax, fax_number: nil) }
 
     it 'can not be saved in the database' do
       expect { fax.save!(validate: false) }.to raise_error
@@ -210,18 +210,18 @@ describe Fax do
     let(:phone) { '01234754' }
 
     it 'returns @phone when set' do
-      fax = build(:fax, phone: phone, recipient: nil)
+      fax = build(:fax, phone: phone, fax_number: nil)
       expect(fax.phone).to eq phone
     end
 
-    it 'returns recipient.phone when @phone is not set' do
-      recipient = build(:recipient, phone: '09823121')
-      fax = build(:fax, phone: nil, recipient: recipient)
-      expect(fax.phone).to eq recipient.phone
+    it 'returns fax_number.phone when @phone is not set' do
+      fax_number = build(:fax_number, phone: '09823121')
+      fax = build(:fax, phone: nil, fax_number: fax_number)
+      expect(fax.phone).to eq fax_number.phone
     end
 
-    it 'returns nil when @phone and recipient are not set' do
-      fax = build(:fax, phone: nil, recipient: nil)
+    it 'returns nil when @phone and fax_number are not set' do
+      fax = build(:fax, phone: nil, fax_number: nil)
       expect(fax.phone).to be_nil
     end
   end

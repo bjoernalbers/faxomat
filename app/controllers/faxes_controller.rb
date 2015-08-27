@@ -6,7 +6,7 @@ class FaxesController < ApplicationController
   end
 
   def show
-    fax = Fax.find(params[:id]) # TODO: only render faxes for current user/recipient!
+    fax = Fax.find(params[:id])
     send_file fax.document.path,
       type: fax.document.content_type,
       disposition: 'inline'
@@ -51,8 +51,8 @@ class FaxesController < ApplicationController
 
     # by phone
     if params[:phone]
-      if recipient = Recipient.find_by(phone: params[:phone])
-        @faxes = recipient.faxes
+      if fax_number = FaxNumber.find_by(phone: params[:phone])
+        @faxes = fax_number.faxes
       else
         @faxes = faxes.none
       end
@@ -82,8 +82,8 @@ class FaxesController < ApplicationController
   end
 
   def faxes
-    if params[:recipient_id]
-      Recipient.find(params[:recipient_id]).faxes
+    if params[:fax_number_id]
+      FaxNumber.find(params[:fax_number_id]).faxes
     else
       Fax
     end.order('updated_at DESC')

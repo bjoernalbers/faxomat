@@ -1,10 +1,10 @@
-class Recipient < ActiveRecord::Base
+class FaxNumber < ActiveRecord::Base
   MINIMUM_PHONE_LENGTH = 8
   AREA_CODE_REGEX = %r{\A0[1-9]}
 
   has_many :faxes
 
-  before_validation :clean_phone
+  before_validation :strip_nondigits
 
   validates :phone,
     presence: true,
@@ -13,13 +13,16 @@ class Recipient < ActiveRecord::Base
     format: {with: AREA_CODE_REGEX, message: 'has no area code'}
 
   def self.by_phone(phone)
-    where('recipients.phone LIKE ?', "%#{phone}%")
+    where('fax_numbers.phone LIKE ?', "%#{phone}%")
+  end
+
+  def to_s
+    phone
   end
 
   private
 
-  # Strip non-digits from phone.
-  def clean_phone
+  def strip_nondigits
     self.phone = self.phone.gsub(/[^0-9]/, '') if self.phone
   end
 end

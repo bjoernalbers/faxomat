@@ -11,10 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150826111252) do
+ActiveRecord::Schema.define(version: 20150827122159) do
+
+  create_table "fax_numbers", force: :cascade do |t|
+    t.string   "phone",      limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "fax_numbers", ["phone"], name: "index_fax_numbers_on_phone", unique: true
 
   create_table "faxes", force: :cascade do |t|
-    t.integer  "recipient_id",                      null: false
+    t.integer  "fax_number_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "title",                 limit: 255, null: false
@@ -36,14 +44,6 @@ ActiveRecord::Schema.define(version: 20150826111252) do
 
   add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
   add_index "print_jobs", ["fax_id"], name: "index_print_jobs_on_fax_id"
-
-  create_table "recipients", force: :cascade do |t|
-    t.string   "phone",      limit: 255, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "recipients", ["phone"], name: "index_recipients_on_phone", unique: true
 
   create_table "users", force: :cascade do |t|
     t.string   "first_name"

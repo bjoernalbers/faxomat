@@ -1,19 +1,18 @@
 describe FaxesController do
   describe 'GET index' do
-    it 'assigns recipients faxes' do
+    it 'assigns faxes by fax number' do
       skip
-      recipient = create(:recipient)
-      fax = create(:fax, recipient: recipient)
-      get :index, recipient_id: recipient
+      fax_number = create(:fax_number)
+      fax = create(:fax, fax_number: fax_number)
+      get :index, fax_number_id: fax_number
       expect(assigns(:faxes)).to eq [fax]
     end
 
-    it 'does not assign faxes from other recipients' do
-      skip
-      recipient = create(:recipient)
-      other_recipient = create(:recipient)
-      fax = create(:fax, recipient: other_recipient)
-      get :index, recipient_id: recipient
+    it 'does not assign faxes to other fax numbers' do
+      fax_number = create(:fax_number)
+      other_fax_number = create(:fax_number)
+      fax = create(:fax, fax_number: other_fax_number)
+      get :index, fax_number_id: fax_number
       expect(assigns(:faxes)).to_not include fax
     end
 

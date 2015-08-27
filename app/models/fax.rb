@@ -4,7 +4,7 @@ class Fax < ActiveRecord::Base
 
   attr_writer :phone
 
-  belongs_to :recipient
+  belongs_to :fax_number
   has_many :print_jobs, dependent: :destroy
 
   has_attached_file :document,
@@ -19,10 +19,10 @@ class Fax < ActiveRecord::Base
 
   validates :phone,
     presence: true,
-    length: {minimum: Recipient::MINIMUM_PHONE_LENGTH},
-    format: {with: Recipient::AREA_CODE_REGEX, message: 'has no area code'}
+    length: {minimum: FaxNumber::MINIMUM_PHONE_LENGTH},
+    format: {with: FaxNumber::AREA_CODE_REGEX, message: 'has no area code'}
 
-  before_save :assign_recipient
+  before_save :assign_fax_number
   before_save :set_status
   before_destroy :check_if_aborted
 
@@ -48,14 +48,14 @@ class Fax < ActiveRecord::Base
   end
 
   def self.search(params)
-    result = joins(:recipient)
+    result = joins(:fax_number)
 
     if params[:title].present?
       result = result.where('title LIKE ?', "%#{params[:title]}%")
     end
 
     if params[:phone].present?
-      result = result.merge(Recipient.by_phone(params[:phone]))
+      result = result.merge(FaxNumber.by_phone(params[:phone]))
     end
 
     if params[:created_since].present?
@@ -76,7 +76,7 @@ class Fax < ActiveRecord::Base
   end
 
   def phone
-    @phone ? @phone.gsub(/[^0-9]/, '') : recipient.try(:phone)
+    @phone ? @phone.gsub(/[^0-9]/, '') : fax_number.try(:phone)
   end
 
   def to_s
@@ -119,8 +119,8 @@ class Fax < ActiveRecord::Base
 
   private
 
-  def assign_recipient
-    self.recipient = Recipient.find_or_create_by!(phone: phone)
+  def assign_fax_number
+    self.fax_number = FaxNumber.find_or_create_by!(phone: phone)
   end
 
   def set_status

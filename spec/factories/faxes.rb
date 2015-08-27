@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :fax do
-    recipient
+    fax_number
     title { 'hello' }
     document_file_name { Rails.root.join('spec', 'support', 'sample.pdf').to_s }
     document_file_size { 8421 }
