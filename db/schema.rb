@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827122159) do
+ActiveRecord::Schema.define(version: 20150828100831) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -32,6 +32,20 @@ ActiveRecord::Schema.define(version: 20150827122159) do
     t.datetime "document_updated_at"
     t.integer  "status"
   end
+
+  create_table "patients", force: :cascade do |t|
+    t.string   "first_name",     null: false
+    t.string   "last_name",      null: false
+    t.datetime "date_of_birth",  null: false
+    t.string   "title"
+    t.string   "suffix"
+    t.integer  "sex"
+    t.string   "patient_number", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "patients", ["patient_number"], name: "index_patients_on_patient_number", unique: true
 
   create_table "print_jobs", force: :cascade do |t|
     t.integer  "cups_job_id",                             null: false
