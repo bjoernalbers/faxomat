@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     resources :faxes, only: [:index]
+    resources :reports, only: [:create, :show]
   end
 
   resources :faxes, except: [:edit, :update] do

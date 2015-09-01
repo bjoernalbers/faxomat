@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Patient do
   let(:patient) { build(:patient) }
 
