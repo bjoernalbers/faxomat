@@ -1,10 +1,4 @@
 describe 'POST /api/reports' do
-  let(:user) { build(:user) }
-  let(:header) do
-    { 'Accept'       => nil, # Report API should return JSON by default.
-      'Content-Type' => 'application/json' }
-  end
-
   def do_post
     post '/api/reports', params, header
   end
@@ -13,9 +7,16 @@ describe 'POST /api/reports' do
     @body ||= JSON.parse(response.body, symbolize_names: true)
   end
 
+  let(:user) { create(:user) }
+
+  let(:header) do
+    { 'Accept'       => nil, # Report API should return JSON by default.
+      'Content-Type' => 'application/json' }
+  end
+
   context 'with valid params' do
     let(:params) do
-      { subject: Faker::Lorem.sentence,
+      { subject: Faker::Lorem.sentence,
         content: Faker::Lorem.sentences.join("\n"),
         username: user.username }.to_json
     end
@@ -26,7 +27,6 @@ describe 'POST /api/reports' do
 
     it 'returns HTTP status 201' do
       do_post
-      expect(response.body).to eq 'foo'#debug
       expect(response.status).to eq 201
     end
 
@@ -50,7 +50,7 @@ describe 'POST /api/reports' do
 
   context 'with invalid params' do
     let(:params) do
-      { subject: Faker::Lorem.sentence,
+      { subject: Faker::Lorem.sentence,
         content: Faker::Lorem.sentences.join("\n"),
         username: nil }.to_json
     end
