@@ -2,8 +2,21 @@ module API
   describe Report do
     let(:report) { Report.new }
 
+    it 'has valid factory' do
+      report = build(:api_report)
+      expect(report).to be_valid
+    end
+
     # Required attributes
-    [ :subject, :content, :username ].each do |attr|
+    [
+      :subject,
+      :content,
+      :username,
+      :patient_number,
+      :patient_first_name,
+      :patient_last_name,
+      :patient_date_of_birth
+    ].each do |attr|
       it { expect(report).to validate_presence_of(attr) }
     end
 
@@ -14,8 +27,7 @@ module API
     end
 
     it 'saves report' do
-      user = create(:user)
-      report = Report.new(subject: 'test', content: 'some stuff', username: user.username)
+      report = build(:api_report)
       expect{report.save}.to change(::Report, :count).by(1)
     end
 

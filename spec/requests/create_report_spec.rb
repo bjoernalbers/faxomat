@@ -16,9 +16,8 @@ describe 'POST /api/reports' do
 
   context 'with valid params' do
     let(:params) do
-      { subject: Faker::Lorem.sentence,
-        content: Faker::Lorem.sentences.join("\n"),
-        username: user.username }.to_json
+      username = create(:user).username
+      attributes_for(:api_report).merge(username: username).to_json
     end
 
     it 'creates report in database' do
@@ -50,9 +49,7 @@ describe 'POST /api/reports' do
 
   context 'with invalid params' do
     let(:params) do
-      { subject: Faker::Lorem.sentence,
-        content: Faker::Lorem.sentences.join("\n"),
-        username: nil }.to_json
+      attributes_for(:api_report).to_json
     end
 
     it 'creates no report' do

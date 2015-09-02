@@ -1,7 +1,15 @@
 module API
   class ReportsController < ApplicationController
     def self.report_attributes
-      [:subject, :content, :username]
+      [
+        :subject,
+        :content,
+        :username,
+        :patient_number,
+        :patient_first_name,
+        :patient_last_name,
+        :patient_date_of_birth
+      ]
     end
 
     skip_before_action :verify_authenticity_token, only: [:create]

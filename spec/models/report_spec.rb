@@ -1,10 +1,13 @@
 describe Report do
   let(:report) { build(:report) }
 
-  it { expect(report).to belong_to(:user) }
+  # Associations
+  [ :user, :patient ].each do |association|
+    it { expect(report).to belong_to(association) }
+  end
 
   # Required attributes
-  [ :subject, :content, :user ].each do |attr|
-    it { expect(report).to validate_presence_of(attr) }
+  [ :subject, :content, :user, :patient ].each do |attribute|
+    it { expect(report).to validate_presence_of(attribute) }
   end
 end
