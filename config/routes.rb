@@ -7,8 +7,16 @@ Rails.application.routes.draw do
 
   root 'faxes#index'
 
-  namespace :api, defaults: { format: :json } do
-    resources :faxes, only: [:index]
+  resources :reports, only: [:show] do
+    put 'approve', on: :member
+  end
+
+  #namespace :api, defaults: { format: :json } do
+  #  resources :faxes, only: [:index]
+  #  resources :reports, only: [:create, :show]
+  #end
+  namespace :api do
+    resources :faxes, only: [:index], defaults: { format: :json }
     resources :reports, only: [:create, :show]
   end
 

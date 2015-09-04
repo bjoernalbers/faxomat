@@ -3,8 +3,8 @@ describe 'POST /api/reports' do
     post '/api/reports', params, header
   end
 
-  def body
-    @body ||= JSON.parse(response.body, symbolize_names: true)
+  def json
+    @json ||= JSON.parse(response.body, symbolize_names: true)
   end
 
   let(:user) { create(:user) }
@@ -35,10 +35,9 @@ describe 'POST /api/reports' do
     end
 
     it 'returns report id' do
-      pending 'add method to return pdf_url!'
       do_post
-      expect(body[:id]).to eq Report.last.id
-      expect(body[:pdf_url]).to eq pdf_report_url(Report.last)
+      expect(json[:id]).to eq Report.last.id
+      expect(json[:pdf_url]).to eq api_report_url(Report.last, format: :pdf)
     end
 
     it 'includes resource URL in location header' do
@@ -68,8 +67,8 @@ describe 'POST /api/reports' do
 
     it 'returns array of errors' do
       do_post
-      expect(body[:errors]).to be_present
-      expect(body[:errors]).to be_a(Array)
+      expect(json[:errors]).to be_present
+      expect(json[:errors]).to be_a(Array)
     end
   end
 end

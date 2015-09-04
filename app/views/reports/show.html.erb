@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h3>Patient</h3>
+<p>
+<% p = @report.patient %>
+<%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %>
+</p>
+
+<h3>Betreff</h3>
+<p>
+  <%= @report.subject %>
+</p>
+
+<h3>Inhalt</h3>
+<p>
+  <%= @report.content %>
+</p>
+
+<h3>Status</h3>
+<p>
+  <%= @report.status %>
+</p>
+
+<%= link_to 'freigeben', approve_report_path(@report), method: :put if @report.pending? %>
+
+<%# link_to 'Edit', edit_report_path(@report) %> 
+<%# link_to 'Back', reports_path %>

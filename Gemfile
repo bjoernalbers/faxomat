@@ -57,6 +57,8 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  gem 'pdf-inspector', '~> 1.2'
 end
 
 gem 'bootstrap-sass', '~> 3.1.1'
@@ -70,3 +72,5 @@ gem 'rufus-scheduler', '~> 3.0'
 gem 'lograge'
 
 gem 'devise', '~> 3.5'
+
+gem 'prawn', '~> 2.0'
