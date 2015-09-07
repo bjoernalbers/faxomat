@@ -72,5 +72,5 @@ gem 'rufus-scheduler', '~> 3.0'
 gem 'lograge'
 
 gem 'devise', '~> 3.5'
-
 gem 'prawn', '~> 2.0'
+gem 'rails-i18n', '~> 4.0'
