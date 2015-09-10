@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903081705) do
+ActiveRecord::Schema.define(version: 20150910112549) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -44,8 +44,6 @@ ActiveRecord::Schema.define(version: 20150903081705) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
-
-  add_index "patients", ["patient_number"], name: "index_patients_on_patient_number", unique: true
 
   create_table "print_jobs", force: :cascade do |t|
     t.integer  "cups_job_id",                             null: false

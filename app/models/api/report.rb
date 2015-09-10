@@ -55,9 +55,8 @@ module API
       report.id
     end
 
-    # TODO: Handle patient with existing patient number!
     def patient
-      @patient ||= Patient.create(
+      @patient ||= Patient.find_or_create_by(
         patient_number: patient_number,
         first_name:     patient_first_name,
         last_name:      patient_last_name,

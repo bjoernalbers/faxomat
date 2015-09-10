@@ -6,9 +6,6 @@ describe Patient do
     it { expect(patient).to validate_presence_of(attr) }
   end
 
-  # Unique attributes
-  it { expect(patient).to validate_uniqueness_of(:patient_number) }
-
   # Optional attributes
   [ :title, :suffix, :sex ].each do |attr|
     it { expect(patient).not_to validate_presence_of(attr) }

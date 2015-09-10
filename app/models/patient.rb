@@ -6,8 +6,6 @@ class Patient < ActiveRecord::Base
     :date_of_birth,
     :patient_number
 
-  validates_uniqueness_of :patient_number
-
   before_save :strip_patient_number
 
   private
