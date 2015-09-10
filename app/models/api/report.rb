@@ -8,7 +8,10 @@ module API
       :patient_number,
       :patient_first_name,
       :patient_last_name,
-      :patient_date_of_birth
+      :patient_date_of_birth,
+      :patient_sex,
+      :patient_title,
+      :patient_suffix
 
     attr_reader :report
 
@@ -21,6 +24,15 @@ module API
       :patient_date_of_birth
 
     validate :validate_existence_of_username
+
+    validates_format_of :patient_sex, with: /\A(m|w|u)\z/i, allow_blank: true
+
+    def self.value_to_gender(sex)
+      case sex
+      when /^m$/i     then :male
+      when /^(w|f)$/i then :female
+      end
+    end
 
     def save
       if valid?
@@ -43,21 +55,24 @@ module API
       report.id
     end
 
-    private
-
-    def validate_existence_of_username
-      unless user
-        errors.add :username, 'does not exist'
-      end
-    end
-
     # TODO: Handle patient with existing patient number!
     def patient
       @patient ||= Patient.create(
         patient_number: patient_number,
         first_name:     patient_first_name,
         last_name:      patient_last_name,
-        date_of_birth:  patient_date_of_birth)
+        date_of_birth:  patient_date_of_birth,
+        sex:            self.class.value_to_gender(patient_sex),
+        title:          patient_title,
+        suffix:         patient_suffix)
+    end
+
+    private
+
+    def validate_existence_of_username
+      unless user
+        errors.add :username, 'does not exist'
+      end
     end
 
     def user
