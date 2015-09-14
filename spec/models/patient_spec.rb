@@ -36,4 +36,20 @@ describe Patient do
       expect(patient.patient_number).to eq '42'
     end
   end
+
+  describe '#display_name' do
+    it 'returns full name and date of birth' do
+      patient = build(:patient,
+                      first_name: 'Chunky',
+                      last_name: 'Bacon',
+                      date_of_birth: '1970-1-1')
+      expect(patient.display_name).to eq 'Bacon, Chunky (* 1.1.1970)'
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns display name' do
+      expect(patient.to_s).to eq patient.display_name
+    end
+  end
 end

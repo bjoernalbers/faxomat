@@ -5,4 +5,8 @@ class Report < ActiveRecord::Base
   belongs_to :patient, required: true
 
   validates_presence_of :subject, :content
+
+  def title
+    patient.display_name
+  end
 end

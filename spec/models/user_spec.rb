@@ -7,6 +7,8 @@ describe User do
   it { expect(user).not_to validate_presence_of(:last_name) }
   it { expect(user).not_to validate_presence_of(:title) }
 
+  it { expect(user).to have_many(:reports) }
+
   describe '#name' do
     context 'with first name, last name and title' do
       let(:user) { build(:user,

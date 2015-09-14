@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
   get 'users/index'
 
-  #devise_for :users
+  devise_for :users
 
   resources :users, only: [:index]
 
   root 'faxes#index'
 
-  resources :reports, only: [:show] do
+  resources :reports, only: [:index, :show] do
     put 'approve', on: :member
   end
 

@@ -2,14 +2,20 @@
 # I want to approve reports
 # In order to avoid that pending reports gets accidentially send.
 
+include Warden::Test::Helpers
+Warden.test_mode!
+
 feature 'Approve Report' do
   scenario 'happy path' do
+    user = create(:user)
     patient = create(:patient,
                      first_name:    'Chuck',
                      last_name:     'Norris',
                      date_of_birth: '1940-03-10')
-    report = create(:report, patient: patient)
+    report = create(:report, user: user, patient: patient)
     expect(report).to be_pending
+
+    login_as user, scope: :user
 
     visit report_url(report)
     expect(page).to have_content 'Norris, Chuck (* 10.03.1940)'

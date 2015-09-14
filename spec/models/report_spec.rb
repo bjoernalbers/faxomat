@@ -26,4 +26,10 @@ describe Report do
       expect(report).to be_approved
     end
   end
+
+  describe '#title' do
+    it 'returns patient display name' do
+      expect(report.title).to eq report.patient.display_name
+    end
+  end
 end

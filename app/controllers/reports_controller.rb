@@ -1,4 +1,11 @@
 class ReportsController < ApplicationController
+  before_action :authenticate_user!
+
+  def index
+    # TODO: Test that only pending reports get displayed!
+    @reports = current_user.reports.pending
+  end
+
   def show
     @report = Report.find(params[:id])
   end
@@ -6,6 +13,7 @@ class ReportsController < ApplicationController
   def approve
     @report = Report.find(params[:id])
     @report.approved!
-    redirect_to @report
+    # TODO: Test redirection!
+    redirect_to reports_path, notice: "Arztbrief erfolgreich vidiert: #{@report.title}"
   end
 end

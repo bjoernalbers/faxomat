@@ -8,6 +8,14 @@ class Patient < ActiveRecord::Base
 
   before_save :strip_patient_number
 
+  def display_name
+    "#{last_name}, #{first_name} (* #{date_of_birth.strftime('%-d.%-m.%Y')})"
+  end
+
+  def to_s
+    display_name
+  end
+
   private
 
   def strip_patient_number

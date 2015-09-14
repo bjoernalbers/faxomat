@@ -1,0 +1,10 @@
+<h1>Arztbriefe</h1>
+
+<table>
+  <% @reports.each do |report| %>
+    <tr>
+      <td><%= report.id %></td>
+      <td><%= link_to report.title, report_path(report) %></td>
+    </tr>
+  <% end %>
+</table>
