@@ -91,6 +91,40 @@ module API
         expect(patient.title).to eq          'Mr.'
         expect(patient.suffix).to eq         "(yes, it's him!)"
       end
+
+      it 'creates recipient' do
+        report = build(:api_report,
+                       recipient_last_name:  'House',
+                       recipient_first_name: 'Gregory',
+                       recipient_sex:        'm',
+                       recipient_title:      'Dr.',
+                       recipient_suffix:     'MD',
+                       recipient_address:    'Sesamstraße 42',
+                       recipient_zip:        '98765',
+                       recipient_city:       'Hollywood')
+        report.save!
+        recipient = report.recipient
+
+        expect(recipient).to be_persisted
+        expect(recipient.last_name).to eq  'House'
+        expect(recipient.first_name).to eq 'Gregory'
+        expect(recipient.title).to eq      'Dr.'
+        expect(recipient.suffix).to eq     'MD'
+        expect(recipient.address).to eq    'Sesamstraße 42'
+        expect(recipient.zip).to eq        '98765'
+        expect(recipient.city).to eq       'Hollywood'
+        expect(recipient).to               be_male
+      end
+
+      it 'creates fax number' do
+        report = build(:api_report,
+                       recipient_fax_number: '0123456789')
+        report.save!
+        fax_number = report.fax_number
+
+        expect(fax_number).to be_persisted
+        expect(fax_number.fax_number).to eq '0123456789'
+      end
     end
   end
 end

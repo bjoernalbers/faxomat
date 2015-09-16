@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150910112549) do
+ActiveRecord::Schema.define(version: 20150915113242) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -57,14 +57,29 @@ ActiveRecord::Schema.define(version: 20150910112549) do
   add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
   add_index "print_jobs", ["fax_id"], name: "index_print_jobs_on_fax_id"
 
+  create_table "recipients", force: :cascade do |t|
+    t.string   "first_name"
+    t.string   "last_name",     null: false
+    t.string   "title"
+    t.string   "suffix"
+    t.integer  "sex"
+    t.string   "address"
+    t.string   "zip"
+    t.string   "city"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "fax_number_id"
+  end
+
   create_table "reports", force: :cascade do |t|
-    t.string   "subject",                null: false
-    t.text     "content",                null: false
-    t.integer  "user_id",                null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "patient_id",             null: false
-    t.integer  "status",     default: 0, null: false
+    t.string   "subject",                  null: false
+    t.text     "content",                  null: false
+    t.integer  "user_id",                  null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.integer  "patient_id",               null: false
+    t.integer  "status",       default: 0, null: false
+    t.integer  "recipient_id",             null: false
   end
 
   add_index "reports", ["user_id"], name: "index_reports_on_user_id"

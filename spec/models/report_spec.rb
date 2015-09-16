@@ -2,12 +2,12 @@ describe Report do
   let(:report) { build(:report) }
 
   # Associations
-  [ :user, :patient ].each do |association|
+  [ :user, :patient, :recipient ].each do |association|
     it { expect(report).to belong_to(association) }
   end
 
   # Required attributes
-  [ :subject, :content, :user, :patient ].each do |attribute|
+  [ :subject, :content, :user, :patient, :recipient ].each do |attribute|
     it { expect(report).to validate_presence_of(attribute) }
   end
 

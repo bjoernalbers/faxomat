@@ -10,7 +10,16 @@ module API
         :patient_number,
         :patient_first_name,
         :patient_last_name,
-        :patient_date_of_birth
+        :patient_date_of_birth,
+        :recipient_last_name,
+        :recipient_first_name,
+        :recipient_title,
+        :recipient_suffix,
+        :recipient_sex,
+        :recipient_address,
+        :recipient_zip,
+        :recipient_city,
+        :recipinet_fax_number
       ]
     end
 

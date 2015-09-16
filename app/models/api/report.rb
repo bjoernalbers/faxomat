@@ -11,7 +11,16 @@ module API
       :patient_date_of_birth,
       :patient_sex,
       :patient_title,
-      :patient_suffix
+      :patient_suffix,
+      :recipient_last_name,
+      :recipient_first_name,
+      :recipient_sex,
+      :recipient_title,
+      :recipient_suffix,
+      :recipient_address,
+      :recipient_zip,
+      :recipient_city,
+      :recipient_fax_number
 
     attr_reader :report
 
@@ -39,7 +48,8 @@ module API
         @report ||= ::Report.new(subject: subject,
                                  content: content,
                                  patient_id: patient.id,
-                                 user_id: user.id)
+                                 user_id: user.id,
+                                 recipient_id: recipient.id)
         report.save!
         true
       else
@@ -64,6 +74,24 @@ module API
         sex:            self.class.value_to_gender(patient_sex),
         title:          patient_title,
         suffix:         patient_suffix)
+    end
+
+    def recipient
+      @recipient ||= Recipient.find_or_create_by(
+        last_name:     recipient_last_name,
+        first_name:    recipient_first_name,
+        sex:           self.class.value_to_gender(recipient_sex),
+        title:         recipient_title,
+        suffix:        recipient_suffix,
+        address:       recipient_address,
+        zip:           recipient_zip,
+        city:          recipient_city,
+        fax_number_id: fax_number.id)
+    end
+
+    def fax_number
+      @fax_number ||= FaxNumber.find_or_create_by(
+        phone: recipient_fax_number)
     end
 
     private

@@ -10,6 +10,14 @@ describe FaxNumber do
     end
   end
 
+  # TODO: Replace 'phone' by 'fax_number' completely!
+  describe '#fax_number' do
+    it 'returns fax number' do
+      fax_number = build(:fax_number)
+      expect(fax_number.fax_number).to eq fax_number.phone
+    end
+  end
+
   context 'without phone' do
     let(:fax_number) { build(:fax_number, phone: nil) }
 

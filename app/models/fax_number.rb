@@ -20,6 +20,10 @@ class FaxNumber < ActiveRecord::Base
     phone
   end
 
+  def fax_number
+    phone
+  end
+
   private
 
   def strip_nondigits
