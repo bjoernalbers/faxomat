@@ -43,9 +43,9 @@ module API
       respond_to do |format|
         format.json { render :show, location: api_report_url(@report) }
         format.pdf  do
-          pdf = ReportPdf.new(@report)
+          pdf = ReportPdf.new(ReportPresenter.new(@report, view_context))
           #TODO: Replace hard-coded filename!
-          send_data pdf.render, filename: 'foo.pdf', type: "application/pdf"
+          send_data pdf.render, filename: 'foo.pdf', type: 'application/pdf'
         end
 
       end

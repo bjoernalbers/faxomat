@@ -21,7 +21,8 @@
   <%= @report.status %>
 </p>
 
-<%= link_to 'freigeben', approve_report_path(@report), method: :put if @report.pending? %>
+<%= link_to 'Druckvorschau', report_path(@report, format: :pdf), class: 'btn btn-default' %>
+<%= link_to 'freigeben', approve_report_path(@report), method: :put, class: 'btn btn-primary' if @report.pending? %>
 
 <%# link_to 'Edit', edit_report_path(@report) %> 
 <%# link_to 'Back', reports_path %>

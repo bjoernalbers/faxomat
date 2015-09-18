@@ -1,5 +1,5 @@
 class Report < ActiveRecord::Base
-  enum status: { pending: 0, approved: 1 }
+  enum status: { pending: 0, approved: 1, canceled: 2 }
 
   belongs_to :user, required: true
   belongs_to :patient, required: true

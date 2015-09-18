@@ -21,9 +21,14 @@ describe Report do
       expect(report).to be_pending
     end
 
-    it 'accepts 0 as approved' do
+    it 'accepts 1 as approved' do
       report.status = 1
       expect(report).to be_approved
+    end
+
+    it 'accepts 2 as canceled' do
+      report.status = 2
+      expect(report).to be_canceled
     end
   end
 

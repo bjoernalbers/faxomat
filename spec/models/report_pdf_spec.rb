@@ -1,6 +1,13 @@
 describe ReportPdf do
-  let(:report)     { build(:report) }
+  include ActionView::TestCase::Behavior # Makes `view` available for presenter.
+
+  #let(:report)     { build(:report) }
+  let(:report) { ReportPresenter.new(build(:report), view) }
   let(:report_pdf) { ReportPdf.new(report) }
+
+  def report_pdf_strings
+    PDF::Inspector::Text.analyze(report_pdf.render).strings
+  end
 
   describe '#render' do
     it 'returns PDF as string' do
@@ -8,21 +15,35 @@ describe ReportPdf do
     end
 
     it 'includes subject' do
-      rendered_pdf = report_pdf.render
-      text_analysis = PDF::Inspector::Text.analyze(rendered_pdf)
-      expect(text_analysis.strings).to include(report.subject)
+      expect(report_pdf_strings).to include(report.subject)
     end
 
     it 'includes content' do
-      report.content = 'chunky bacon'
-      rendered_pdf = report_pdf.render
-      text_analysis = PDF::Inspector::Text.analyze(rendered_pdf)
-      expect(text_analysis.strings).to include('chunky bacon')
+      allow(report).to receive(:content).and_return('chunky bacon')
+      expect(report_pdf_strings).to include('chunky bacon')
     end
 
-    it 'includes patient'
+    it 'includes patient name' do
+      allow(report).to receive(:patient_name).and_return('Norris, Chuck (* 10.3.1940)')
+      expect(report_pdf_strings).to include('Norris, Chuck (* 10.3.1940)')
+    end
 
-    it 'includes name of doctor'
+    it 'includes physician name' do
+      allow(report).to receive(:physician_name).and_return('Dr. House')
+      expect(report_pdf_strings).to include('Dr. House')
+    end
+
+    it 'includes recipient address'
+
+    it 'includes salutation' do
+      allow(report).to receive(:salutation).and_return('Hallihallo Dr. Hibbert,')
+      expect(report_pdf_strings).to include('Hallihallo Dr. Hibbert,')
+    end
+
+    it 'includes report date' do
+      allow(report).to receive(:report_date).and_return('1. Mai 1970')
+      expect(report_pdf_strings).to include('1. Mai 1970')
+    end
 
     context 'with pending report' do
       it 'includes watermark'

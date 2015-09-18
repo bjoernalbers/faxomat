@@ -85,16 +85,14 @@ class ReportPdf
         #valign: :top
     end
 
-      #move_down font.height * 0.5
     stroke_horizontal_rule
       move_down font.height * 0.5
 
-    #text ['Tel: 02941 15015-0', 'Fax: 02941 15015-11'].join(" \u00b7 "),
     text ['Tel: 02941 15015-0', 'Fax: 02941 15015-11', 'Email: info@radiologie-lippstadt.de', 'Web: www.radiologie-lippstadt.de'].join(" \u00b7 "),
       align: :center,
       size: 9.pt
 
-    # Rücksendeangaben
+    # Return address
     bounding_box [0, bounds.absolute_top - 45.mm], width: 80.mm do
       text ['Radiol. GP im EVK', 'Wiedenbrücker Str. 33', '59555 Lippstadt'].join(" \u00b7 "),
         align: :center,
@@ -103,44 +101,37 @@ class ReportPdf
       stroke_horizontal_rule
     end
 
-    # Recipient ... # TODO: Replace hard-coded value!
     bounding_box [0, bounds.absolute_top - (45.mm + 18.mm)], width: 80.mm, height: 27.mm do
-      text %{Herrn
-        Dr. No
-        Internist / Sadist
-        Hongkongweg 42
-        59555 Lippstadt
-        GERMANY},
+      text report.recipient_address.join("\n"),
         align: :left,
         size: 10.pt
     end
 
     bounding_box [100.mm, bounds.absolute_top - 50.mm], width: 75.mm, height: 40.mm do
       text %{Befundender Arzt:}, style: :bold, size: 10.pt
-      text %{Dr. Snuggles}, size: 10.pt # TODO: Replace hard-coded value!
+      text report.physician_name, size: 10.pt
 
       move_down font.height
 
       text %{Patient:}, style: :bold, size: 10.pt
-      text %{James Bond, geb. 20. November 1920}, size: 10.pt
+      text report.patient_name, size: 10.pt
 
       move_down font.height
 
       text %{Datum:}, style: :bold, size: 10.pt
-      text %{12. Mai 2015}, size: 10.pt
+      #text %{12. Mai 2015}, size: 10.pt
+      text report.report_date, size: 10.pt
     end
 
     move_down 8.5.mm
 
     # TODO: Der restliche text sollte auch in eine Bounding box, oder?
 
-    # Subject
     text report.subject, style: :bold
 
     move_down font.height * 2
 
-    # Salutation
-    text %{Sehr geehrter Herr Dr. No,} # TODO: Replace hard-coded value!
+    text report.salutation
 
     move_down font.height
 
@@ -154,7 +145,6 @@ class ReportPdf
     # Image of signature
     #image 'unterschrift.png'
 
-    # Name of reporting physician
-    text %{Dr. Snuggles} # TODO: Replace hard-coded value!
+    text report.physician_name
   end
 end

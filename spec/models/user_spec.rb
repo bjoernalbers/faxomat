@@ -9,6 +9,16 @@ describe User do
 
   it { expect(user).to have_many(:reports) }
 
+  describe '#full_name' do
+    it 'joins title, first and last name' do
+      user = build(:user,
+                   title:      'Dr.',
+                   first_name: 'Julius M.',
+                   last_name:  'Hibbert')
+      expect(user.full_name).to eq 'Dr. Julius M. Hibbert'
+    end
+  end
+
   describe '#name' do
     context 'with first name, last name and title' do
       let(:user) { build(:user,

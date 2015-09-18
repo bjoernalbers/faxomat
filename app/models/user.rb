@@ -15,8 +15,6 @@ class User < ActiveRecord::Base
     full_name.present? ? full_name : username
   end
 
-  private
-
   def full_name
     [title, first_name, last_name].compact.join(' ')
   end
