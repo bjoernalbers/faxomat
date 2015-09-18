@@ -21,23 +21,24 @@ class ReportPdf
 
   # TODO: Split report generation into smaller pieces!
   def build_report
-    create_stamp("stamp") do
-      fill_color "cc0000"
-      text_box 'ENTWURF',
-        :size   => 2.cm,
-        :width  => bounds.width,
-        :height => bounds.height,
-        :align  => :center,
-        :valign => :center,
-        :at     => [0, bounds.height],
-        :rotate => -45,
-        :rotate_around => :center
-    end
+    if report.watermark
+      create_stamp("stamp") do
+        fill_color "cc0000"
+        text_box report.watermark,
+          :size   => 2.cm,
+          :width  => bounds.width,
+          :height => bounds.height,
+          :align  => :center,
+          :valign => :center,
+          :at     => [0, bounds.height],
+          :rotate => -45,
+          :rotate_around => :center
+      end
 
-    repeat(:all) do
-      stamp("stamp")
+      repeat(:all) do
+        stamp("stamp")
+      end
     end
-
 
     #bounding_box [80.mm, bounds.absolute_top - 10.mm], width: 100.mm, height: 35.mm do
     bounding_box [0, bounds.absolute_top - 10.mm], width: 80.mm, height: 35.mm do
