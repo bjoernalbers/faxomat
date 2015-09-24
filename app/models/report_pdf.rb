@@ -78,12 +78,12 @@ class ReportPdf
       #style: :bold,
       size: 12
 
+    # Logo
     bounding_box [145.mm, bounds.absolute_top - 10.mm], width: 25.mm, height: 25.mm do
-    #bounding_box [0, bounds.absolute_top - 10.mm], width: 25.mm, height: 25.mm do
-      #image 'logo.png',
-        #width: 25.mm
-        #align: :center,
-        #valign: :top
+      image Rails.root.join('app', 'assets', 'images', 'logo.png'),
+        width: 25.mm,
+        align: :center,
+        valign: :top
     end
 
     stroke_horizontal_rule
