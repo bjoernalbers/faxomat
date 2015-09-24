@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     put 'approve', on: :member
   end
 
+  resources :attendances, only: [:new]
+
   #namespace :api, defaults: { format: :json } do
   #  resources :faxes, only: [:index]
   #  resources :reports, only: [:create, :show]
