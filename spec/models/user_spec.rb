@@ -9,6 +9,22 @@ describe User do
 
   it { expect(user).to have_many(:reports) }
 
+  it { expect(user).to have_attached_file(:signature) }
+  it { expect(user).to validate_attachment_content_type(:signature).
+        allowing('image/png', 'image/jpg', 'image/jpeg').
+        rejecting('image/tiff', 'text/plain', 'image/gif', 'text/xml') }
+  it { expect(user).to validate_attachment_size(:signature).
+                   less_than(30.kilobytes) }
+
+  # TODO: Fix this!
+  it 'does not store signatures under a public available location' do
+    File.open(Rails.root.join('spec', 'support', 'signature.png')) do |img|
+      user.signature = img
+      user.save!
+    end
+    expect(user.signature.path).to_not match /public/i
+  end
+
   describe '#full_name' do
     it 'joins title, first and last name' do
       user = build(:user,
@@ -51,6 +67,30 @@ describe User do
 
       it 'returns username' do
         expect(user.name).to eq 'chucknorris'
+      end
+    end
+  end
+
+  describe '#signature_path' do
+    context 'with signature' do
+      before do
+        allow(user).to receive(:signature).
+          and_return double(present?: true, path: 'chunky/bacon.png')
+      end
+
+      it 'returns signature path' do
+        expect(user.signature_path).to eq 'chunky/bacon.png'
+      end
+    end
+
+    context 'without signature' do
+      before do
+        allow(user).to receive(:signature).
+          and_return double(present?: false)
+      end
+
+      it 'returns nil' do
+        expect(user.signature_path).to be nil
       end
     end
   end

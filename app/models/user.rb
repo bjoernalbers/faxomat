@@ -10,6 +10,12 @@ class User < ActiveRecord::Base
   # :trackable, :recoverable, :validatable
   devise :database_authenticatable, :registerable, :rememberable
 
+  has_attached_file :signature,
+    path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
+  validates_attachment :signature,
+    content_type: { content_type: %w(image/jpg image/jpeg image/png) },
+    size:         { in: 0..30.kilobytes }
+
   # Return display name.
   def name
     full_name.present? ? full_name : username
@@ -17,5 +23,9 @@ class User < ActiveRecord::Base
 
   def full_name
     [title, first_name, last_name].compact.join(' ')
+  end
+
+  def signature_path
+    signature.path if signature.present?
   end
 end

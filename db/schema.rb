@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150915113242) do
+ActiveRecord::Schema.define(version: 20150924094732) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -88,11 +88,15 @@ ActiveRecord::Schema.define(version: 20150915113242) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "title"
-    t.string   "username",            default: "", null: false
-    t.string   "encrypted_password",  default: "", null: false
+    t.string   "username",               default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
     t.datetime "remember_created_at"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "signature_file_name"
+    t.string   "signature_content_type"
+    t.integer  "signature_file_size"
+    t.datetime "signature_updated_at"
   end
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true

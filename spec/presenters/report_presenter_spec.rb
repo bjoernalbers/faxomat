@@ -76,8 +76,12 @@ describe ReportPresenter do
     end
   end
 
-  describe '#physician_signature' do
-    it 'returns image path'
+  describe '#signature_path' do
+    it 'returns path to user signature' do
+      allow(presenter).to receive(:user).
+        and_return double(signature_path: 'fancy_signature.png')
+      expect(presenter.signature_path).to eq 'fancy_signature.png'
+    end
   end
 
   describe '#watermark' do
@@ -94,6 +98,18 @@ describe ReportPresenter do
     it 'with canceled report' do
       report.canceled!
       expect(presenter.watermark).to eq 'STORNIERT'
+    end
+  end
+
+  describe '#include_signature?' do
+    it 'is true with report approval' do
+      allow(report).to receive(:approved?).and_return(true)
+      expect(presenter.include_signature?).to be true
+    end
+
+    it 'is false without report approval' do
+      allow(report).to receive(:approved?).and_return(false)
+      expect(presenter.include_signature?).to be false
     end
   end
 end

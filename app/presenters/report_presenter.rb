@@ -40,14 +40,19 @@ class ReportPresenter
     user.full_name
   end
 
-  #def physician_signature
-  #end
-
   def watermark
     if report.pending?
       'ENTWURF'
     elsif report.canceled?
       'STORNIERT'
     end
+  end
+
+  def include_signature?
+    report.approved?
+  end
+
+  def signature_path
+    user.signature_path
   end
 end

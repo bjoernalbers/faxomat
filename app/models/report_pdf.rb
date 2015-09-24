@@ -143,9 +143,10 @@ class ReportPdf
 
     text %{Mit freundlichen Grüßen}
 
-    # Image of signature
-    #image 'unterschrift.png'
-
-    text report.physician_name
+    # TODO: Test this!
+    if report.include_signature?
+      image report.signature_path if report.signature_path.present?
+      text report.physician_name
+    end
   end
 end
