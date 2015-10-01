@@ -1,0 +1,12 @@
+de:
+  activerecord:
+    attributes:
+      report:
+        subject: Betreff
+        examination: Untersuchung
+        anamnesis: Anamnese
+        diagnosis: Diagnose
+        findings: Befund
+        evaluation: Beurteilung
+        procedure: Methode
+        clinic: Klinik

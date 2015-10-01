@@ -5,7 +5,10 @@ class Report < ActiveRecord::Base
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
 
-  validates_presence_of :subject, :content
+  validates_presence_of :subject,
+    :anamnesis,
+    :evaluation,
+    :procedure
 
   def title
     patient.display_name

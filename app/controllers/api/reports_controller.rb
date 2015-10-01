@@ -5,7 +5,13 @@ module API
     def self.report_attributes
       [
         :subject,
-        :content,
+        :examination,
+        :anamnesis,
+        :diagnosis,
+        :findings,
+        :evaluation,
+        :procedure,
+        :clinic,
         :username,
         :patient_number,
         :patient_first_name,

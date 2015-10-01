@@ -3,7 +3,6 @@ module API
     include ActiveModel::Model
 
     attr_accessor :subject,
-      :content,
       :username,
       :patient_number,
       :patient_first_name,
@@ -20,17 +19,26 @@ module API
       :recipient_address,
       :recipient_zip,
       :recipient_city,
-      :recipient_fax_number
+      :recipient_fax_number,
+      :examination,
+      :anamnesis,
+      :diagnosis,
+      :findings,
+      :evaluation,
+      :procedure,
+      :clinic
 
     attr_reader :report
 
     validates_presence_of :subject,
-      :content,
       :username,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
-      :patient_date_of_birth
+      :patient_date_of_birth,
+      :anamnesis,
+      :evaluation,
+      :procedure
 
     validate :validate_existence_of_username
 
@@ -46,10 +54,16 @@ module API
     def save
       if valid?
         @report ||= ::Report.new(subject: subject,
-                                 content: content,
                                  patient_id: patient.id,
                                  user_id: user.id,
-                                 recipient_id: recipient.id)
+                                 recipient_id: recipient.id,
+                                 examination: examination,
+                                 anamnesis: anamnesis,
+                                 diagnosis: diagnosis,
+                                 findings: findings,
+                                 evaluation: evaluation,
+                                 procedure: procedure,
+                                 clinic: clinic)
         report.save!
         true
       else

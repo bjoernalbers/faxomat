@@ -6,15 +6,16 @@
 <%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %>
 </p>
 
-<h3>Betreff</h3>
-<p>
-  <%= @report.subject %>
-</p>
-
-<h3>Inhalt</h3>
-<p>
-  <%= @report.content %>
-</p>
+<% %i(subject examination anamnesis diagnosis findings evaluation procedure clinic).each do |method| %>
+  <% if @report.send(method).present? %>
+    <h3>
+      <%= @report.class.human_attribute_name(method) %>
+    </h3>
+    <p>
+      <%= @report.send(method) %>
+    </p>
+  <% end %>
+<% end %>
 
 <h3>Status</h3>
 <p>

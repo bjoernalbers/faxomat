@@ -23,7 +23,26 @@ feature 'View Reports' do
 
     click_link report.title
 
-    expect(page).to have_content(report.content)
+    expect(page).to have_content('Betreff')
+    expect(page).to have_content(report.subject)
+
+    expect(page).to have_content('Untersuchung')
+    expect(page).to have_content(report.examination)
+
+    expect(page).to have_content('Anamnese')
+    expect(page).to have_content(report.anamnesis)
+
+    expect(page).to have_content('Diagnose')
+    expect(page).to have_content(report.diagnosis)
+
+    expect(page).to have_content('Befund')
+    expect(page).to have_content(report.findings)
+
+    expect(page).to have_content('Beurteilung')
+    expect(page).to have_content(report.evaluation)
+
+    expect(page).to have_content('Methode')
+    expect(page).to have_content(report.procedure)
 
     # go back
     #

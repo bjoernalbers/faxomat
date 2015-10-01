@@ -10,12 +10,14 @@ module API
     # Required attributes
     [
       :subject,
-      :content,
       :username,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
-      :patient_date_of_birth
+      :patient_date_of_birth,
+      :anamnesis,
+      :evaluation,
+      :procedure
     ].each do |attr|
       it { expect(report).to validate_presence_of(attr) }
     end

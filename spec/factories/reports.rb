@@ -1,7 +1,13 @@
 FactoryGirl.define do
   factory :report do
     subject { Faker::Lorem.sentence }
-    content { Faker::Lorem.sentences.join("\n") }
+    examination { Faker::Lorem.sentences.join("\n") }
+    anamnesis { Faker::Lorem.sentences.join("\n") }
+    diagnosis { Faker::Lorem.sentences.join("\n") }
+    findings { Faker::Lorem.sentences.join("\n") }
+    evaluation { Faker::Lorem.sentences.join("\n") }
+    procedure { Faker::Lorem.sentences.join("\n") }
+    clinic { Faker::Lorem.sentences.join("\n") }
     user
     patient
     recipient
@@ -9,7 +15,13 @@ FactoryGirl.define do
 
   factory :api_report, class: API::Report do
     subject               { Faker::Lorem.sentence }
-    content               { Faker::Lorem.sentences.join("\n") }
+    examination           { Faker::Lorem.sentences.join("\n") }
+    anamnesis             { Faker::Lorem.sentences.join("\n") }
+    diagnosis             { Faker::Lorem.sentences.join("\n") }
+    findings              { Faker::Lorem.sentences.join("\n") }
+    evaluation            { Faker::Lorem.sentences.join("\n") }
+    procedure             { Faker::Lorem.sentences.join("\n") }
+    clinic                { Faker::Lorem.sentences.join("\n") }
     patient_number        { Faker::Number.number(6) }
     patient_first_name    { Faker::Name.first_name }
     patient_last_name     { Faker::Name.last_name }

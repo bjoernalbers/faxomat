@@ -5,7 +5,13 @@ class ReportPresenter
   delegate :recipient, to: :report
   delegate :user, to: :report
   delegate :subject, to: :report
-  delegate :content, to: :report
+  delegate :examination, to: :report
+  delegate :anamnesis, to: :report
+  delegate :diagnosis, to: :report
+  delegate :findings, to: :report
+  delegate :evaluation, to: :report
+  delegate :procedure, to: :report
+  delegate :clinic, to: :report
 
   def initialize(report, template)
     @report = report

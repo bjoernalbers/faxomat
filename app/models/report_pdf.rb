@@ -136,8 +136,13 @@ class ReportPdf
 
     move_down font.height
 
-    # Content
-    text report.content
+    %i(subject examination anamnesis diagnosis findings evaluation procedure clinic).each do |method|
+      if @report.send(method).present?
+        text Report.human_attribute_name(method) + ':', style: :bold
+        text @report.send(method)
+        move_down font.height
+      end
+    end
 
     move_down font.height
 

@@ -54,11 +54,19 @@ describe ReportPresenter do
     end
   end
 
-  describe '#content' do
-    it 'returns report content' do
-      allow(presenter).to receive(:report).
-        and_return double(content: 'no worries, all is fine')
-      expect(presenter.content).to eq 'no worries, all is fine'
+  [
+    :examination,
+    :anamnesis,
+    :diagnosis,
+    :findings,
+    :evaluation,
+    :procedure,
+    :clinic
+  ].each do |method|
+    describe "##{method}" do
+      it "returns report #{method}" do
+        expect(presenter.send(method)).to eq report.send(method)
+      end
     end
   end
 

@@ -7,7 +7,15 @@ describe Report do
   end
 
   # Required attributes
-  [ :subject, :content, :user, :patient, :recipient ].each do |attribute|
+  [
+    :subject,
+    :user,
+    :patient,
+    :recipient,
+    :anamnesis,
+    :evaluation,
+    :procedure
+  ].each do |attribute|
     it { expect(report).to validate_presence_of(attribute) }
   end
 

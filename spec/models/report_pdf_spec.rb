@@ -18,11 +18,6 @@ describe ReportPdf do
       expect(report_pdf_strings).to include(report.subject)
     end
 
-    it 'includes content' do
-      allow(report).to receive(:content).and_return('chunky bacon')
-      expect(report_pdf_strings).to include('chunky bacon')
-    end
-
     it 'includes patient name' do
       allow(report).to receive(:patient_name).and_return('Norris, Chuck (* 10.3.1940)')
       expect(report_pdf_strings).to include('Norris, Chuck (* 10.3.1940)')
@@ -43,6 +38,13 @@ describe ReportPdf do
     it 'includes report date' do
       allow(report).to receive(:report_date).and_return('1. Mai 1970')
       expect(report_pdf_strings).to include('1. Mai 1970')
+    end
+
+    %i(examination anamnesis diagnosis findings evaluation procedure clinic).each do |method|
+      it "includes report #{method}" do
+        expect(report_pdf_strings).to include(Report.human_attribute_name(method))
+        expect(report_pdf_strings.join(' ')).to include(report.send(method).gsub("\n", ' '))
+      end
     end
 
     context 'with pending report' do
