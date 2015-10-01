@@ -1,14 +1,5 @@
 require 'prawn/measurement_extensions'
 
-# TODO: Render by default in DIN A4!
-#opts = {
-#  page_size: 'A4',
-#  page_layout: :portrait,
-#  left_margin: 25.mm,
-##  right_margin: 20.mm,
-#  background_color: 'FFFFFF',
-#}
-
 class ReportPdf
   include Prawn::View
 
@@ -16,6 +7,16 @@ class ReportPdf
 
   def initialize(report)
     @report = report
+
+    # NOTE: This sets the default page size and stuff.
+    # See: https://github.com/prawnpdf/prawn/issues/802
+    @document = Prawn::Document.new(
+      page_size: 'A4',
+      page_layout: :portrait,
+      left_margin: 25.mm,
+      right_margin: 20.mm,
+      background_color: 'FFFFFF')
+
     build_report
   end
 
