@@ -42,7 +42,7 @@ describe ReportPdf do
 
     %i(examination anamnesis diagnosis findings evaluation procedure clinic).each do |method|
       it "includes report #{method}" do
-        expect(report_pdf_strings).to include(Report.human_attribute_name(method))
+        expect(report_pdf_strings).to include(Report.human_attribute_name(method) + ':')
         expect(report_pdf_strings.join(' ')).to include(report.send(method).gsub("\n", ' '))
       end
     end
