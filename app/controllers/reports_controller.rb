@@ -22,7 +22,7 @@ class ReportsController < ApplicationController
   def approve
     @report = Report.find(params[:id])
     @report.approved!
-    @report.deliver_as_fax
+    @report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Test this!
     # TODO: Test redirection!
     redirect_to reports_path, notice: "Arztbrief erfolgreich vidiert: #{@report.title}"
   end
