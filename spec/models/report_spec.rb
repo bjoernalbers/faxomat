@@ -45,4 +45,12 @@ describe Report do
       expect(report.title).to eq report.patient.display_name
     end
   end
+
+  describe '#deliver_as_fax' do
+    it 'delivers itself as fax' do
+      allow(ReportFaxer).to receive(:deliver)
+      report.deliver_as_fax
+      expect(ReportFaxer).to have_received(:deliver).with(report)
+    end
+  end
 end

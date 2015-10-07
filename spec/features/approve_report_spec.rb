@@ -6,6 +6,11 @@ include Warden::Test::Helpers
 Warden.test_mode!
 
 feature 'Approve Report' do
+  before do
+    # Disable fax delivery!
+    allow_any_instance_of(Report).to receive(:deliver_as_fax)
+  end
+
   scenario 'happy path' do
     user = create(:user)
     patient = create(:patient,

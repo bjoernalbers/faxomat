@@ -13,4 +13,8 @@ class Report < ActiveRecord::Base
   def title
     patient.display_name
   end
+
+  def deliver_as_fax
+    ReportFaxer.deliver(self)
+  end
 end

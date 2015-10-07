@@ -55,4 +55,12 @@ describe Recipient do
       expect{ recipient.sex = 2 }.to raise_error(ArgumentError)
     end
   end
+
+  describe '#fax_number_string' do
+    it 'returns fax number as string' do
+      allow(recipient).to receive(:fax_number).
+        and_return double(to_s: '0123456789')
+      expect(recipient.fax_number_string).to eq '0123456789'
+    end
+  end
 end

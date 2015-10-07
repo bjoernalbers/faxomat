@@ -13,6 +13,10 @@ class Recipient < ActiveRecord::Base
     [ full_name, suffix, address, zip_with_city ]
   end
 
+  def fax_number_string
+    fax_number.to_s
+  end
+
   private
 
   def zip_with_city
