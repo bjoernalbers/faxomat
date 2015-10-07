@@ -101,4 +101,12 @@ describe ReportFaxer do
       expect(content).to eq '%PDF'
     end
   end
+
+  describe '#report_approved?' do
+    it 'checks if report is approved' do
+      allow(report).to receive(:approved?).and_return(:absolutely)
+      expect(report_faxer.send(:report_approved?)).to eq :absolutely
+      expect(report).to have_received(:approved?)
+    end
+  end
 end

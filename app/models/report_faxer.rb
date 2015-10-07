@@ -54,5 +54,6 @@ class ReportFaxer
   end
 
   def report_approved?
+    report.approved?
   end
 end
