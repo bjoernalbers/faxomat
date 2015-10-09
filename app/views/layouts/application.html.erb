@@ -11,15 +11,28 @@
   <div class='container'>
     <nav class='navbar navbar-default'>
       <div id='navbar' class='navbar-collapse collapse'>
-        <ul class='nav navbar-nav navbar-right'>
-          <li>
-            <% if user_signed_in? %>
+        <% if user_signed_in? %>
+          <ul class='nav navbar-nav navbar-left'>
+            <li>
+              <%= link_to 'Faxe', faxes_path %>
+            </li>
+            <li>
+              <%= link_to 'Arztbriefe', reports_path %>
+            </li>
+          </ul>
+
+          <ul class='nav navbar-nav navbar-right'>
+            <li>
               <%= link_to "#{current_user.username} abmelden", destroy_user_session_path, method: :delete %>
-            <% else %>
+            </li>
+          </ul>
+        <% else %>
+          <ul class='nav navbar-nav navbar-right'>
+            <li>
               <%= link_to 'Anmelden', new_user_session_path %>
-            <% end %>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        <% end %>
       </div>
     </nav>
 
