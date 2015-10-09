@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
 
   def index
     # TODO: Test that only pending reports get displayed!
-    @reports = current_user.reports.pending
+    @reports = reports
   end
 
   def show
@@ -25,5 +25,15 @@ class ReportsController < ApplicationController
     @report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Test this!
     # TODO: Test redirection!
     redirect_to reports_path, notice: "Arztbrief erfolgreich vidiert: #{@report.title}"
+  end
+
+  private
+
+  def reports
+    if params[:pending] == 'false'
+      current_user.reports.approved
+    else
+      current_user.reports.pending
+    end
   end
 end
