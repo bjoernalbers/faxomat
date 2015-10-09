@@ -1,10 +1,18 @@
 <h1>Arztbriefe</h1>
 
 <table>
-  <% @reports.each do |report| %>
+  <thead>
     <tr>
-      <td><%= report.id %></td>
-      <td><%= link_to report.title, report_path(report) %></td>
+      <td>Erstellt</td>
+      <td>Arztbrief</td>
     </tr>
-  <% end %>
+  </thead>
+  <tbody>
+    <% @reports.each do |report| %>
+      <tr>
+        <td><%= l(report.created_at, format: :short) %></td>
+        <td><%= link_to report.title, report_path(report) %></td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
