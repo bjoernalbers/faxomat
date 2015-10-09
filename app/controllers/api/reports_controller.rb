@@ -25,7 +25,7 @@ module API
         :recipient_address,
         :recipient_zip,
         :recipient_city,
-        :recipinet_fax_number
+        :recipient_fax_number
       ]
     end
 

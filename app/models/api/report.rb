@@ -36,6 +36,7 @@ module API
       :patient_first_name,
       :patient_last_name,
       :patient_date_of_birth,
+      :recipient_fax_number,
       :anamnesis,
       :evaluation,
       :procedure
