@@ -23,7 +23,10 @@
 
           <ul class='nav navbar-nav navbar-right'>
             <li>
-              <%= link_to "#{current_user.username} abmelden", destroy_user_session_path, method: :delete %>
+              <%= link_to current_user.username, edit_user_registration_path(current_user) %>
+            </li>
+            <li>
+              <%= link_to 'Abmelden', destroy_user_session_path, method: :delete %>
             </li>
           </ul>
         <% else %>

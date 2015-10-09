@@ -18,7 +18,7 @@ feature 'Authentication' do
 
     expect(page).to have_content 'Arztbriefe'
 
-    click_link 'why abmelden'
+    click_link 'Abmelden'
 
     expect(page).not_to have_content 'Arztbriefe'
   end
