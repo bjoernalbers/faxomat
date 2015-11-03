@@ -29,7 +29,7 @@ feature 'View Reports' do
     expect(page).to have_content('Untersuchung')
     expect(page).to have_content(report.examination)
 
-    expect(page).to have_content('Anamnese')
+    expect(page).to have_content('Indikation')
     expect(page).to have_content(report.anamnesis)
 
     expect(page).to have_content('Diagnose')

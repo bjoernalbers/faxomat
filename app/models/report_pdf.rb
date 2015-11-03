@@ -87,12 +87,13 @@ class ReportPdf
         valign: :top
     end
 
-    stroke_horizontal_rule
-      move_down font.height * 0.5
+    move_down font.height * 0.5
 
-    text ['Tel: 02941 15015-0', 'Fax: 02941 15015-11', 'Email: info@radiologie-lippstadt.de', 'Web: www.radiologie-lippstadt.de'].join(" \u00b7 "),
+    text ['Tel: 02941 15015-0', 'Fax: 02941 15015-11', 'E-Mail: info@radiologie-lippstadt.de', 'Web: www.radiologie-lippstadt.de'].join(" \u00b7 "),
       align: :center,
       size: 9.pt
+
+    stroke_horizontal_rule
 
     # Return address
     bounding_box [0, bounds.absolute_top - 45.mm], width: 80.mm do
@@ -129,30 +130,34 @@ class ReportPdf
 
     # TODO: Der restliche text sollte auch in eine Bounding box, oder?
 
-    text report.subject, style: :bold
+    text report.subject, style: :bold, size: 11.pt
 
     move_down font.height * 2
 
-    text report.salutation
+    text report.salutation, size: 11.pt
 
     move_down font.height
 
-    %i(subject examination anamnesis diagnosis findings evaluation procedure clinic).each do |method|
+    text "vielen Dank für die freundliche Überweisung Ihres Patienten #{report.patient_name}.", size: 11.pt
+
+    move_down font.height
+
+    %i(examination anamnesis procedure clinic findings evaluation).each do |method|
       if @report.send(method).present?
-        text Report.human_attribute_name(method) + ':', style: :bold
-        text @report.send(method)
+        text Report.human_attribute_name(method) + ':', style: :bold, size: 11.pt
+        text @report.send(method), size: 11.pt
         move_down font.height
       end
     end
 
     move_down font.height
 
-    text %{Mit freundlichen Grüßen}
+    text %{Mit freundlichen Grüßen}, size: 11.pt
 
     # TODO: Test this!
     if report.include_signature?
-      image report.signature_path if report.signature_path.present?
-      text report.physician_name
+      image report.signature_path, height: 4*font.height if report.signature_path.present?
+      text report.physician_name, size: 11.pt
     end
   end
 end
