@@ -21,7 +21,7 @@ module API
         :recipient_first_name,
         :recipient_title,
         :recipient_suffix,
-        :recipient_sex,
+        :recipient_salutation,
         :recipient_address,
         :recipient_zip,
         :recipient_city,

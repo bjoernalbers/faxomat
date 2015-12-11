@@ -31,7 +31,7 @@ class ReportPresenter
   end
 
   def salutation
-    'Sehr geehrte Kollegen,'
+    recipient.salutation || 'Sehr geehrte Kollegen,'
   end
 
   def report_date

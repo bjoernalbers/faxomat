@@ -99,7 +99,7 @@ module API
         report = build(:api_report,
                        recipient_last_name:  'House',
                        recipient_first_name: 'Gregory',
-                       recipient_sex:        'm',
+                       recipient_salutation: 'Hallihallo,',
                        recipient_title:      'Dr.',
                        recipient_suffix:     'MD',
                        recipient_address:    'Sesamstraße 42',
@@ -116,7 +116,7 @@ module API
         expect(recipient.address).to eq    'Sesamstraße 42'
         expect(recipient.zip).to eq        '98765'
         expect(recipient.city).to eq       'Hollywood'
-        expect(recipient).to               be_male
+        expect(recipient.salutation).to eq 'Hallihallo,'
       end
 
       it 'creates fax number' do

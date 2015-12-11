@@ -13,7 +13,7 @@ module API
       :patient_suffix,
       :recipient_last_name,
       :recipient_first_name,
-      :recipient_sex,
+      :recipient_salutation,
       :recipient_title,
       :recipient_suffix,
       :recipient_address,
@@ -95,7 +95,7 @@ module API
       @recipient ||= Recipient.find_or_create_by(
         last_name:     recipient_last_name,
         first_name:    recipient_first_name,
-        sex:           self.class.value_to_gender(recipient_sex),
+        salutation:    recipient_salutation,
         title:         recipient_title,
         suffix:        recipient_suffix,
         address:       recipient_address,

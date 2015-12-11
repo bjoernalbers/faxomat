@@ -14,6 +14,7 @@ FactoryGirl.define do
   end
 
   factory :api_report, class: API::Report do
+    recipient_salutation  { ['Hallo,', 'Moin,', 'Hi,', nil].sample }
     subject               { Faker::Lorem.sentence }
     examination           { Faker::Lorem.sentences.join("\n") }
     anamnesis             { Faker::Lorem.sentences.join("\n") }

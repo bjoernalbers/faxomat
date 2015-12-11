@@ -27,8 +27,26 @@ describe ReportPresenter do
   end
 
   describe '#recipient_salutation' do
-    it 'returns default salutation' do
-      expect(presenter.salutation).to eq 'Sehr geehrte Kollegen,'
+    context 'when missing' do
+      before do
+        allow(presenter).to receive(:recipient).
+          and_return double(salutation: nil)
+      end
+
+      it 'returns default salutation' do
+        expect(presenter.salutation).to eq 'Sehr geehrte Kollegen,'
+      end
+    end
+
+    context 'when present' do
+      before do
+        allow(presenter).to receive(:recipient).
+          and_return double(salutation: 'Hallo Leute,')
+      end
+
+      it 'returns recipient salutation' do
+        expect(presenter.salutation).to eq 'Hallo Leute,'
+      end
     end
   end
 
