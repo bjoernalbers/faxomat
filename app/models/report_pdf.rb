@@ -22,6 +22,8 @@ class ReportPdf
 
   # TODO: Split report generation into smaller pieces!
   def build_report
+    set_default_font
+
     if report.watermark
       create_stamp("stamp") do
         fill_color "cc0000"
@@ -45,7 +47,7 @@ class ReportPdf
     bounding_box [0, bounds.absolute_top - 10.mm], width: 80.mm, height: 35.mm do
       #stroke_bounds
       text %{Radiologische Gemeinschaftspraxis},
-        size: 14
+        size: 10, style: :bold
       text %{im Evangelischen Krankenhaus Lippstadt},
         align: :left,
         size: 10
@@ -56,11 +58,13 @@ class ReportPdf
 
       move_down font.height * 0.5
 
-      text ['Offenes Hochfeld-MRT',
+      text [
+        'Offenes Hochfeld-MRT',
         'Mehrzeilen-Spiral-CT',
         'Digitale 3D-Mammographie',
         'Digitales Röntgen / Sonographie',
-        'Digitale Subtraktionsangiographie (DSA)'].join(" \u00b7 "), size: 8.pt, align: :left
+        'Digitale Subtraktionsangiographie (DSA)'
+      ].join(" \u00b7 "), size: 8.pt, align: :left
 
     end
 
@@ -89,17 +93,22 @@ class ReportPdf
 
     move_down font.height * 0.5
 
-    text ['Tel: 02941 15015-0', 'Fax: 02941 15015-11', 'E-Mail: info@radiologie-lippstadt.de', 'Web: www.radiologie-lippstadt.de'].join(" \u00b7 "),
-      align: :center,
-      size: 9.pt
+    text [
+      'Tel: 02941 15015-0',
+      'Fax: 02941 15015-11',
+      'info@radiologie-lippstadt.de',
+      'www.radiologie-lippstadt.de'
+    ].join(" \u00b7 "), align: :center, size: 9.pt
 
     stroke_horizontal_rule
 
     # Return address
     bounding_box [0, bounds.absolute_top - 45.mm], width: 80.mm do
-      text ['Radiol. GP im EVK', 'Wiedenbrücker Str. 33', '59555 Lippstadt'].join(" \u00b7 "),
-        align: :center,
-        size: 8.pt
+      text [
+        'Radiol. GP im EVK',
+        'Wiedenbrücker Str. 33',
+        '59555 LP'
+      ].join(" \u00b7 "), align: :center, size: 8.pt
       line_width 0.5.pt
       stroke_horizontal_rule
     end
@@ -159,5 +168,17 @@ class ReportPdf
       image report.signature_path, height: 4*font.height if report.signature_path.present?
       text report.physician_name, size: 11.pt
     end
+  end
+
+  private
+
+  def set_default_font
+    font_families.update 'DejaVuSans' => {
+      normal:      Rails.root + 'app/fonts/dejavu-sans/DejaVuSans.ttf',
+      italic:      Rails.root + 'app/fonts/dejavu-sans/DejaVuSans-Oblique.ttf',
+      bold:        Rails.root + 'app/fonts/dejavu-sans/DejaVuSans-Bold.ttf',
+      bold_italic: Rails.root + 'app/fonts/dejavu-sans/DejaVuSans-BoldOblique.ttf'
+    }
+    font 'DejaVuSans'
   end
 end
