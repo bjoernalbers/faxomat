@@ -1,6 +1,27 @@
 FactoryGirl.define do
   factory :report do
-    subject { Faker::Lorem.sentence }
+    #subject { Faker::Lorem.sentence }
+    subject do
+      studies = <<-EOT
+        Mammographie beidseits mit Tomosynthese beidseits
+        MRT der HWS
+        MRT des Kopfes nativ mit arterieller Angiographie und computergestützter Rekonstruktion
+        MRT Becken mit computergesteuerter Rekonstruktion
+        MRT des rechten Kniegelenkes nativ
+        MRT des rechten Kniegelenkes
+        MRT der LWS nativ
+        CT der LWS ab L2 und des Os sacrum in Multislicespiraltechnik, mit Kontrastmittel und computergestützter Rekonstruktion
+        CCT nativ in Multislicespiraltechnik mit computergestützter Rekonstruktion
+        MRT des Kopfes nativ, mit Kontrastmittelgabe, mit arterieller und venöser Gefäßdarstellung und computergestützter Rekonstruktion
+        MRT rechtes OSG nativ und mit Kontrastmittel
+        Abklärungsbericht
+        MRT des rechten Kniegelenkes
+        CT der LWS in Multislicespiraltechnik von L1 bis S1 mit computergesteuerter Rekonstruktion
+        Mammographie beidseits in 2 Ebenen
+      EOT
+      date = Faker::Date.between(1.month.ago, Date.today)
+      studies.split("\n").map(&:strip).sample + " vom #{date.strftime('%d.%m.%Y')}"
+    end
     examination { Faker::Lorem.sentences.join("\n") }
     anamnesis { Faker::Lorem.sentences.join("\n") }
     diagnosis { Faker::Lorem.sentences.join("\n") }

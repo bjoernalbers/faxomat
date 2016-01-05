@@ -9,19 +9,17 @@
   </li>
 </ul>
 
-<table>
-  <thead>
-    <tr>
-      <td>Erstellt</td>
-      <td>Arztbrief</td>
-    </tr>
-  </thead>
-  <tbody>
-    <% @reports.each do |report| %>
-      <tr>
-        <td><%= l(report.created_at, format: :short) %></td>
-        <td><%= link_to report.title, report_path(report) %></td>
-      </tr>
+<div class="list-group">
+  <% @reports.each do |report| %>
+    <%= link_to report, class: 'list-group-item' do %>
+      <p class="list-group-item-heading">
+        <strong>
+          <%= report.title %>
+        </strong>
+      </p>
+      <p class="list-group-item-text">
+        <%= report.subject %>
+      </p>
     <% end %>
-  </tbody>
-</table>
+  <% end %>
+</div>
