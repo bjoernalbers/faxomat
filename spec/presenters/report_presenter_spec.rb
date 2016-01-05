@@ -73,7 +73,7 @@ describe ReportPresenter do
   end
 
   [
-    :examination,
+    :study,
     :anamnesis,
     :diagnosis,
     :findings,

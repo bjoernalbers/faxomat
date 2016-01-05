@@ -5,7 +5,7 @@ module API
     def self.report_attributes
       [
         :subject,
-        :examination,
+        :study,
         :anamnesis,
         :diagnosis,
         :findings,

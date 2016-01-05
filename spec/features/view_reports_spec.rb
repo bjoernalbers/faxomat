@@ -27,7 +27,7 @@ feature 'View Reports' do
     expect(page).to have_content(report.subject)
 
     expect(page).to have_content('Untersuchung')
-    expect(page).to have_content(report.examination)
+    expect(page).to have_content(report.study)
 
     expect(page).to have_content('Indikation')
     expect(page).to have_content(report.anamnesis)

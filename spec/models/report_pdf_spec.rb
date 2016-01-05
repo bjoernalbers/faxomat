@@ -40,7 +40,7 @@ describe ReportPdf do
       expect(report_pdf_strings).to include('1. Mai 1970')
     end
 
-    %i(examination anamnesis findings evaluation procedure clinic).each do |method|
+    %i(study anamnesis findings evaluation procedure clinic).each do |method|
       it "includes report #{method}" do
         expect(report_pdf_strings).to include(Report.human_attribute_name(method) + ':')
         expect(report_pdf_strings.join(' ')).to include(report.send(method).gsub("\n", ' '))

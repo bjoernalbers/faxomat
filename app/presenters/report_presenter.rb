@@ -5,7 +5,7 @@ class ReportPresenter
   delegate :recipient, to: :report
   delegate :user, to: :report
   delegate :subject, to: :report
-  delegate :examination, to: :report
+  delegate :study, to: :report
   delegate :anamnesis, to: :report
   delegate :diagnosis, to: :report
   delegate :findings, to: :report

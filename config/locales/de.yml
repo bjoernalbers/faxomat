@@ -3,7 +3,7 @@ de:
     attributes:
       report:
         subject: Betreff
-        examination: Untersuchung
+        study: Untersuchung
         anamnesis: Indikation
         diagnosis: Diagnose
         findings: Befund
