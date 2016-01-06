@@ -5,11 +5,9 @@
 <%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %>
 </h1>
 
-<% if @report.subject.present? %>
-  <h2>
-    <%= @report.subject %>
-  </h2>
-<% end %>
+<h2>
+  <%= @report.subject %>
+</h2>
 
 <% %i(anamnesis diagnosis findings evaluation procedure clinic).each do |method| %>
   <% if @report.send(method).present? %>

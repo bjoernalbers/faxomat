@@ -42,10 +42,9 @@ describe Report do
   end
 
   describe '#subject' do
-    it 'is an alias for study' do
-      expect(report.subject).to eq report.study
-      report.study = 'chunky bacon'
-      expect(report.subject).to eq report.study
+    it 'joins study and study date' do
+      report = build(:report, study: 'MRT des Kopfes', study_date: '2016-01-01')
+      expect(report.subject).to eq 'MRT des Kopfes vom 1.1.2016'
     end
   end
 

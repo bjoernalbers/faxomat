@@ -12,7 +12,7 @@ class Report < ActiveRecord::Base
     :study_date
 
   def subject
-    study
+    "#{study} vom #{study_date.strftime('%-d.%-m.%Y')}"
   end
 
   def title
