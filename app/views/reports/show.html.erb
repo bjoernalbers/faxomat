@@ -11,7 +11,7 @@
   </h2>
 <% end %>
 
-<% %i(study anamnesis diagnosis findings evaluation procedure clinic).each do |method| %>
+<% %i(anamnesis diagnosis findings evaluation procedure clinic).each do |method| %>
   <% if @report.send(method).present? %>
     <h3>
       <%= @report.class.human_attribute_name(method) %>

@@ -151,7 +151,7 @@ class ReportPdf
 
     move_down font.height
 
-    %i(study anamnesis procedure clinic findings evaluation).each do |method|
+    %i(anamnesis procedure clinic findings evaluation).each do |method|
       if @report.send(method).present?
         text Report.human_attribute_name(method) + ':', style: :bold, size: 11.pt
         text @report.send(method), size: 11.pt

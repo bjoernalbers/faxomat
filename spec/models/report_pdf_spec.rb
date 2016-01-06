@@ -40,7 +40,12 @@ describe ReportPdf do
       expect(report_pdf_strings).to include('1. Mai 1970')
     end
 
-    %i(study anamnesis findings evaluation procedure clinic).each do |method|
+    it 'includes subject' do
+      allow(report).to receive(:subject).and_return('MRT des Kopfes vom 1.1.1970')
+      expect(report_pdf_strings).to include('MRT des Kopfes vom 1.1.1970')
+    end
+
+    %i(anamnesis findings evaluation procedure clinic).each do |method|
       it "includes report #{method}" do
         expect(report_pdf_strings).to include(Report.human_attribute_name(method) + ':')
         expect(report_pdf_strings.join(' ')).to include(report.send(method).gsub("\n", ' '))
