@@ -147,7 +147,7 @@ class ReportPdf
 
     move_down font.height
 
-    text "vielen Dank für die freundliche Überweisung Ihres Patienten #{report.patient_name}.", size: 11.pt
+    text "vielen Dank für die Überweisung Ihres Patienten #{report.patient_name}.", size: 11.pt
 
     move_down font.height
 
