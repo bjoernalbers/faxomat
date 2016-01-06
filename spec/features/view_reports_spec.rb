@@ -23,7 +23,6 @@ feature 'View Reports' do
 
     click_link report.title
 
-    expect(page).to have_content('Betreff')
     expect(page).to have_content(report.subject)
 
     expect(page).to have_content('Untersuchung')

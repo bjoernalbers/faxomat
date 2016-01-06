@@ -9,7 +9,6 @@ module API
 
     # Required attributes
     [
-      :subject,
       :username,
       :patient_number,
       :patient_first_name,

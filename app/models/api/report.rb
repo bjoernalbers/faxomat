@@ -2,8 +2,7 @@ module API
   class Report
     include ActiveModel::Model
 
-    attr_accessor :subject,
-      :username,
+    attr_accessor :username,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
@@ -30,8 +29,7 @@ module API
 
     attr_reader :report
 
-    validates_presence_of :subject,
-      :username,
+    validates_presence_of :username,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
@@ -54,8 +52,7 @@ module API
 
     def save
       if valid?
-        @report ||= ::Report.new(subject: subject,
-                                 patient_id: patient.id,
+        @report ||= ::Report.new(patient_id: patient.id,
                                  user_id: user.id,
                                  recipient_id: recipient.id,
                                  study: study,

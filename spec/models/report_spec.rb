@@ -8,7 +8,6 @@ describe Report do
 
   # Required attributes
   [
-    :subject,
     :user,
     :patient,
     :recipient,
@@ -37,6 +36,14 @@ describe Report do
     it 'accepts 2 as canceled' do
       report.status = 2
       expect(report).to be_canceled
+    end
+  end
+
+  describe '#subject' do
+    it 'is an alias for study' do
+      expect(report.subject).to eq report.study
+      report.study = 'chunky bacon'
+      expect(report.subject).to eq report.study
     end
   end
 
