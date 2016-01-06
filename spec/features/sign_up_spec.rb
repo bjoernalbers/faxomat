@@ -13,6 +13,8 @@ feature 'Sign up' do
     expect(page).to have_content('Sign up')
 
     fill_in 'Username', with: user.username
+    fill_in 'First name', with: user.first_name
+    fill_in 'Last name', with: user.last_name
     fill_in 'Password', with: user.password
     fill_in 'Password confirmation', with: user.password
 

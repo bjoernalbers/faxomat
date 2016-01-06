@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160106122602) do
+ActiveRecord::Schema.define(version: 20160106155607) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -91,8 +91,8 @@ ActiveRecord::Schema.define(version: 20160106122602) do
   add_index "reports", ["user_id"], name: "index_reports_on_user_id"
 
   create_table "users", force: :cascade do |t|
-    t.string   "first_name"
-    t.string   "last_name"
+    t.string   "first_name",                          null: false
+    t.string   "last_name",                           null: false
     t.string   "title"
     t.string   "username",               default: "", null: false
     t.string   "encrypted_password",     default: "", null: false

@@ -9,6 +9,16 @@
   </div>
 
   <div class="field">
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name %>
+  </div>
+
+  <div class="field">
     <%= f.label :password %>
     <% if @minimum_password_length %>
     <em>(<%= @minimum_password_length %> characters minimum)</em>
@@ -22,8 +32,8 @@
   </div>
 
   <div class="field">
-    <%= f.label :signature %><br />
-    <%= f.file_field :signature %>
+    <%# f.label :signature %><br />
+    <%# f.file_field :signature %>
   </div>
 
   <div class="actions">

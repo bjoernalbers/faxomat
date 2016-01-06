@@ -1,11 +1,13 @@
 describe User do
   let(:user) { build(:user) }
 
-  it { expect(user).to validate_presence_of(:username) }
-  it { expect(user).to validate_uniqueness_of(:username) }
-  it { expect(user).not_to validate_presence_of(:first_name) }
-  it { expect(user).not_to validate_presence_of(:last_name) }
+  %i(username first_name last_name).each do |attr|
+    it { expect(user).to validate_presence_of(attr) }
+  end
+
   it { expect(user).not_to validate_presence_of(:title) }
+
+  it { expect(user).to validate_uniqueness_of(:username) }
 
   it { expect(user).to have_many(:reports) }
 
