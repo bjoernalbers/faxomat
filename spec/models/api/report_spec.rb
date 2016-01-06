@@ -17,7 +17,8 @@ module API
       :recipient_fax_number,
       :anamnesis,
       :evaluation,
-      :procedure
+      :procedure,
+      :study_date
     ].each do |attr|
       it { expect(report).to validate_presence_of(attr) }
     end

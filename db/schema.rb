@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160105163149) do
+ActiveRecord::Schema.define(version: 20160106115017) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(version: 20160105163149) do
     t.text     "evaluation",               null: false
     t.text     "procedure",                null: false
     t.text     "clinic"
+    t.date     "study_date",               null: false
   end
 
   add_index "reports", ["user_id"], name: "index_reports_on_user_id"

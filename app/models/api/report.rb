@@ -20,6 +20,7 @@ module API
       :recipient_city,
       :recipient_fax_number,
       :study,
+      :study_date,
       :anamnesis,
       :diagnosis,
       :findings,
@@ -37,7 +38,8 @@ module API
       :recipient_fax_number,
       :anamnesis,
       :evaluation,
-      :procedure
+      :procedure,
+      :study_date
 
     validate :validate_existence_of_username
 
@@ -56,6 +58,7 @@ module API
                                  user_id: user.id,
                                  recipient_id: recipient.id,
                                  study: study,
+                                 study_date: study_date,
                                  anamnesis: anamnesis,
                                  diagnosis: diagnosis,
                                  findings: findings,

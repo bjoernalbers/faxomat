@@ -6,6 +6,7 @@ module API
       [
         :subject,
         :study,
+        :study_date,
         :anamnesis,
         :diagnosis,
         :findings,

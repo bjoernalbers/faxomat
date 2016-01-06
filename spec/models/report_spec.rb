@@ -13,7 +13,8 @@ describe Report do
     :recipient,
     :anamnesis,
     :evaluation,
-    :procedure
+    :procedure,
+    :study_date
   ].each do |attribute|
     it { expect(report).to validate_presence_of(attribute) }
   end
