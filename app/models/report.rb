@@ -8,6 +8,7 @@ class Report < ActiveRecord::Base
   validates_presence_of :anamnesis,
     :evaluation,
     :procedure,
+    :study,
     :study_date
 
   def subject

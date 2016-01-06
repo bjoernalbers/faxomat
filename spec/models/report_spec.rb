@@ -14,6 +14,7 @@ describe Report do
     :anamnesis,
     :evaluation,
     :procedure,
+    :study,
     :study_date
   ].each do |attribute|
     it { expect(report).to validate_presence_of(attribute) }

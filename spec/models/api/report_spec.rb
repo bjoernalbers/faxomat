@@ -18,6 +18,7 @@ module API
       :anamnesis,
       :evaluation,
       :procedure,
+      :study,
       :study_date
     ].each do |attr|
       it { expect(report).to validate_presence_of(attr) }

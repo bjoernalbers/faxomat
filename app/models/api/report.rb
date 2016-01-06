@@ -39,6 +39,7 @@ module API
       :anamnesis,
       :evaluation,
       :procedure,
+      :study,
       :study_date
 
     validate :validate_existence_of_username

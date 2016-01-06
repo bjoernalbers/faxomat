@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160106115017) do
+ActiveRecord::Schema.define(version: 20160106122602) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20160106115017) do
     t.integer  "patient_id",               null: false
     t.integer  "status",       default: 0, null: false
     t.integer  "recipient_id",             null: false
-    t.text     "study"
+    t.string   "study",                    null: false
     t.text     "anamnesis",                null: false
     t.text     "diagnosis"
     t.text     "findings"
