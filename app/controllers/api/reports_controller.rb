@@ -34,6 +34,12 @@ module API
 
     def create
       api_report = Report.new(report_params)
+
+      # TODO: Remove this hack!
+      if api_report.study_date.blank?
+        api_report.study_date = api_report.study.split(':').first.to_date
+      end
+
       if api_report.save
         @report = api_report.report
         render :show, status: :created,
