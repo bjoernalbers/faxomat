@@ -54,6 +54,11 @@ module API
     end
 
     def save
+      # NOTE: Evil hack to capture study date from study.
+      if study_date.blank? && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
+        self.study_date, self.study = match.captures
+      end
+
       if valid?
         @report ||= ::Report.new(patient_id: patient.id,
                                  user_id: user.id,

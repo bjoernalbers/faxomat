@@ -34,15 +34,6 @@ module API
 
     def create
       api_report = Report.new(report_params)
-
-      # NOTE: This caputures the study date from the study because we do not
-      # have a sufficient way to limit a karteieintragsdatum for the current /
-      # active besuch.
-      if api_report.study_date.blank? && api_report.study.match %r{^([0-9.-]+):\s+(.+)$}
-        api_report.study_date = $1
-        api_report.study = $2
-      end
-
       if api_report.save
         @report = api_report.report
         render :show, status: :created,

@@ -7,6 +7,24 @@ module API
       expect(report).to be_valid
     end
 
+    context 'on save when study includes date prefix' do
+      let(:report) { build(:api_report,
+                           study_date: nil,
+                           study:      '01.12.1980: Party: Yes!') }
+
+      before do
+        report.save
+      end
+
+      it 'stores the date as study date' do
+        expect(report.study_date).to eq '01.12.1980'
+      end
+
+      it 'removes the date prefix from study' do
+        expect(report.study).to eq 'Party: Yes!'
+      end
+    end
+
     # Required attributes
     [
       :username,
