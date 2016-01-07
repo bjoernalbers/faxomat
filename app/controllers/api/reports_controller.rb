@@ -38,7 +38,7 @@ module API
       # NOTE: This caputures the study date from the study because we do not
       # have a sufficient way to limit a karteieintragsdatum for the current /
       # active besuch.
-      if api_report.study_date.blank? && api_report.study =~ /^([0-9.-]+):\s+(.+)$/
+      if api_report.study_date.blank? && api_report.study.match %r{^([0-9.-]+):\s+(.+)$}
         api_report.study_date = $1
         api_report.study = $2
       end
