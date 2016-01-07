@@ -4,7 +4,6 @@ module API
 
     def self.report_attributes
       [
-        :subject,
         :study,
         :study_date,
         :anamnesis,
