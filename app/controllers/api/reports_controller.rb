@@ -35,9 +35,12 @@ module API
     def create
       api_report = Report.new(report_params)
 
-      # TODO: Remove this hack!
-      if api_report.study_date.blank?
-        api_report.study_date = api_report.study.split(':').first.to_date
+      # NOTE: This caputures the study date from the study because we do not
+      # have a sufficient way to limit a karteieintragsdatum for the current /
+      # active besuch.
+      if api_report.study_date.blank? && api_report.study =~ /^([0-9.-]+):\s+(.+)$/
+        api_report.study_date = $1
+        api_report.study = $2
       end
 
       if api_report.save
