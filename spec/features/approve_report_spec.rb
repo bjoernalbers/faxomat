@@ -2,9 +2,6 @@
 # I want to approve reports
 # In order to avoid that pending reports gets accidentially send.
 
-include Warden::Test::Helpers
-Warden.test_mode!
-
 feature 'Approve Report' do
   before do
     # Disable fax delivery!
