@@ -43,7 +43,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def configure_account_update_params
-    devise_parameter_sanitizer.for(:account_update) << :first_name << :last_name
+    devise_parameter_sanitizer.
+      for(:account_update) << :first_name << :last_name << :title
   end
 
   # The path used after sign up.
