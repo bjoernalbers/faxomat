@@ -4,25 +4,27 @@
 
 feature 'Sign up' do
   scenario 'new user' do
-    user = build(:user, password: 'chunkybacon')
-
     visit new_user_registration_path
 
     #TODO: Add german translations!
 
     expect(page).to have_content('Sign up')
 
-    fill_in 'Username', with: user.username
-    fill_in 'First name', with: user.first_name
-    fill_in 'Last name', with: user.last_name
-    fill_in 'Password', with: user.password
-    fill_in 'Password confirmation', with: user.password
+    fill_in 'Username',              with: 'bjoern'
+    fill_in 'First name',            with: 'Björn'
+    fill_in 'Last name',             with: 'Albers'
+    fill_in 'Title',                 with: 'Dipl.-Ing. (FH)'
+    fill_in 'Password',              with: 'totalgeheim'
+    fill_in 'Password confirmation', with: 'totalgeheim'
 
     #TODO: Test upload of signature image!
 
     click_button 'Sign up'
 
-    #TODO: Test if user was persisted(?)!
+    user = User.find_by username: 'bjoern'
+    expect(user.first_name).to eq 'Björn'
+    expect(user.last_name).to  eq 'Albers'
+    expect(user.title).to      eq 'Dipl.-Ing. (FH)'
 
     # TODO: Check that we're on the user's root page.
     expect(page).to have_content 'Sie haben sich erfolgreich registriert.'
