@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160106155607) do
+ActiveRecord::Schema.define(version: 20160112142548) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -59,16 +59,16 @@ ActiveRecord::Schema.define(version: 20160106155607) do
 
   create_table "recipients", force: :cascade do |t|
     t.string   "first_name"
-    t.string   "last_name",     null: false
+    t.string   "last_name",  null: false
     t.string   "title"
     t.string   "suffix"
     t.string   "address"
     t.string   "zip"
     t.string   "city"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.integer  "fax_number_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string   "salutation"
+    t.string   "fax_number"
   end
 
   create_table "reports", force: :cascade do |t|

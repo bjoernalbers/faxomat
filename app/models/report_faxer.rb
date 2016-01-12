@@ -26,7 +26,7 @@ class ReportFaxer
   end
 
   def recipient_fax_number
-    report.recipient.fax_number_string
+    report.recipient.fax_number
   end
 
   def report_pdf_file

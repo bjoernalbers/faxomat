@@ -64,7 +64,7 @@ describe ReportFaxer do
   describe '#recipient_fax_number' do
     it 'returns recipient fax number as string' do
       allow(report).to receive(:recipient).
-        and_return double(fax_number_string: '0123456789')
+        and_return double(fax_number: '0123456789')
       expect(report_faxer.recipient_fax_number).to eq '0123456789'
     end
   end

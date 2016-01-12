@@ -107,12 +107,7 @@ module API
         address:       recipient_address,
         zip:           recipient_zip,
         city:          recipient_city,
-        fax_number_id: fax_number.id)
-    end
-
-    def fax_number
-      @fax_number ||= FaxNumber.find_or_create_by(
-        phone: recipient_fax_number)
+        fax_number:    recipient_fax_number)
     end
 
     private

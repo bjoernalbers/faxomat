@@ -5,12 +5,9 @@ describe Recipient do
   it { expect(recipient).to validate_presence_of(:last_name) }
 
   # Optional attributes
-  [ :first_name, :title, :suffix, :salutation, :address, :zip, :city ].each do |attr|
+  [ :first_name, :title, :suffix, :salutation, :address, :zip, :city, :fax_number ].each do |attr|
     it { expect(recipient).not_to validate_presence_of(attr) }
   end
-
-  # Associations
-  it { expect(recipient).to belong_to(:fax_number) }
 
   describe '#full_name' do
     it 'joins title, first and last name' do
@@ -38,11 +35,33 @@ describe Recipient do
     end
   end
 
-  describe '#fax_number_string' do
-    it 'returns fax number as string' do
-      allow(recipient).to receive(:fax_number).
-        and_return double(to_s: '0123456789')
-      expect(recipient.fax_number_string).to eq '0123456789'
+  describe '#fax_number' do
+    it 'is valid when nil' do
+      expect(recipient).not_to validate_presence_of(:fax_number)
+    end
+
+    it 'drops nondigits before validation' do
+      recipient = build(:recipient, fax_number: ' 0123-456 789 ')
+      expect(recipient).to be_valid
+      expect(recipient.fax_number).to eq '0123456789'
+    end
+
+    it 'is invalid when to short' do
+      recipient = build(:recipient, fax_number: '0123456')
+      expect(recipient).to be_invalid
+      expect(recipient.errors[:fax_number]).to be_present
+    end
+
+    it 'is invalid without leading zero' do
+      recipient = build(:recipient, fax_number: '123456789')
+      expect(recipient).to be_invalid
+      expect(recipient.errors[:fax_number]).to be_present
+    end
+
+    it 'is invalid with multiple leading zeros' do
+      recipient = build(:recipient, fax_number: '00123456789')
+      expect(recipient).to be_invalid
+      expect(recipient.errors[:fax_number]).to be_present
     end
   end
 end

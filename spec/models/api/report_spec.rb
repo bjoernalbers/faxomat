@@ -123,7 +123,8 @@ module API
                        recipient_suffix:     'MD',
                        recipient_address:    'Sesamstraße 42',
                        recipient_zip:        '98765',
-                       recipient_city:       'Hollywood')
+                       recipient_city:       'Hollywood',
+                       recipient_fax_number: '0123456789')
         report.save!
         recipient = report.recipient
 
@@ -136,16 +137,7 @@ module API
         expect(recipient.zip).to eq        '98765'
         expect(recipient.city).to eq       'Hollywood'
         expect(recipient.salutation).to eq 'Hallihallo,'
-      end
-
-      it 'creates fax number' do
-        report = build(:api_report,
-                       recipient_fax_number: '0123456789')
-        report.save!
-        fax_number = report.fax_number
-
-        expect(fax_number).to be_persisted
-        expect(fax_number.fax_number).to eq '0123456789'
+        expect(recipient.fax_number).to eq '0123456789'
       end
     end
   end
