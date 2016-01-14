@@ -9,6 +9,8 @@ describe Recipient do
     it { expect(recipient).not_to validate_presence_of(attr) }
   end
 
+  it { expect(recipient).to have_many(:reports) }
+
   describe '#full_name' do
     it 'joins title, first and last name' do
       recipient = build(:recipient,

@@ -6,9 +6,9 @@ class Recipient < ActiveRecord::Base
 
   before_validation :strip_nondigits_from_fax_number
 
+  has_many :reports
+
   validates :fax_number,
-    #presence: true,
-    #uniqueness: true,
     length: {minimum: MINIMUM_PHONE_LENGTH},
     format: {with: AREA_CODE_REGEX, message: 'has no area code'}
 
