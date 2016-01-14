@@ -22,24 +22,90 @@ describe Report do
     it { expect(report).to validate_presence_of(attribute) }
   end
 
-  describe '#status' do
-    it 'defaults to pending' do
-      expect(report).to be_pending
-    end
+  # Optional attributes
+  [
+    :diagnosis,
+    :findings,
+    :clinic,
+    :verified_at,
+    :canceled_at
+  ].each do |attribute|
+    it { expect(report).not_to validate_presence_of(attribute) }
+  end
 
-    it 'accepts 0 as pending' do
-      report.status = 0
-      expect(report).to be_pending
-    end
+  describe '.pending' do
+    let(:now) { Time.zone.now }
 
-    it 'accepts 1 as approved' do
-      report.status = 1
+    it 'returns all pending reports' do
+      pending = create(:report, verified_at: nil, canceled_at: nil)
+      approved = create(:report, verified_at: now, canceled_at: nil)
+      canceled = create(:report, verified_at: now, canceled_at: now)
+      expect(Report.pending.all).to eq  [ pending ]
+    end
+  end
+
+  describe '#approved!' do
+    it 'sets status to approved' do
+      expect(report).not_to be_approved
+      report.approved!
       expect(report).to be_approved
     end
+  end
 
-    it 'accepts 2 as canceled' do
-      report.status = 2
+  describe '#canceled!' do
+    it 'sets status to canceled' do
+      expect(report).not_to be_canceled
+      report.canceled!
       expect(report).to be_canceled
+    end
+  end
+
+  describe '#pending!' do
+    it 'sets status to pending' do
+      report.approved!
+      expect(report).not_to be_pending
+      report.pending!
+      expect(report).to be_pending
+    end
+  end
+
+  describe '#status' do
+    let(:now) { Time.zone.now }
+
+    context 'when initialized' do
+      let(:report) { build(:report) }
+
+      it 'is pending' do
+        expect(report.status).to eq 'pending'
+        expect(report).to be_pending
+      end
+    end
+
+    context 'when not verified and not canceled' do
+      let(:report) { build(:report, verified_at: nil, canceled_at: nil) }
+
+      it 'is pending by default' do
+        expect(report.status).to eq 'pending'
+        expect(report).to be_pending
+      end
+    end
+
+    context 'when verified and not canceled' do
+      let(:report) { build(:report, verified_at: now, canceled_at: nil) }
+
+      it 'is approved' do
+        expect(report.status).to eq 'approved'
+        expect(report).to be_approved
+      end
+    end
+
+    context 'when verified and canceled' do
+      let(:report) { build(:report, verified_at: now, canceled_at: now) }
+
+      it 'is canceled' do
+        expect(report.status).to eq 'canceled'
+        expect(report).to be_canceled
+      end
     end
   end
 
