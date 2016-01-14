@@ -5,6 +5,8 @@ describe Fax do
     expect(fax.document.path).to_not be_nil
   end
 
+  it { expect(fax).to belong_to(:report) }
+
   describe '.count_by_status' do
     it 'returns number of faxes by status' do
       2.times { create(:active_fax) }

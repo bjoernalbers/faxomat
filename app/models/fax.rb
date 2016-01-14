@@ -5,6 +5,7 @@ class Fax < ActiveRecord::Base
   attr_writer :phone
 
   belongs_to :fax_number
+  belongs_to :report
   has_many :print_jobs, dependent: :destroy
 
   has_attached_file :document,

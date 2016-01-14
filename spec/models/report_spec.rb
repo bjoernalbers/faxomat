@@ -6,6 +6,8 @@ describe Report do
     it { expect(report).to belong_to(association) }
   end
 
+  it { expect(report).to have_many(:faxes) }
+
   # Required attributes
   [
     :user,
