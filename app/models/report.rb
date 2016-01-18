@@ -35,9 +35,9 @@ class Report < ActiveRecord::Base
     elsif status == :pending and internal_status == :verified
       errors.add(:status, 'can not be changed from :verified to :pending')
     elsif status == :pending and internal_status == :canceled
-      errors.add(:status, 'can not be changed from :verified to :pending')
+      errors.add(:status, 'can not be changed from :canceled to :pending')
     elsif status == :verified and internal_status == :canceled
-      errors.add(:status, 'can not be changed from :verified to :pending')
+      errors.add(:status, 'can not be changed from :canceled to :verified')
     end
   end
 
