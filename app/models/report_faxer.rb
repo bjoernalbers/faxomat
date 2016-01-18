@@ -10,7 +10,7 @@ class ReportFaxer
   end
 
   def deliver
-    fail 'Report is not approved!' unless report_approved?
+    fail 'Report is not verified!' unless report_verified?
 
     document = report_pdf_file
     fax = Fax.create(title:    report_title,
@@ -53,7 +53,7 @@ class ReportFaxer
     ReportPdf.new(ReportPresenter.new(report, ActionView::Base.new)).render
   end
 
-  def report_approved?
-    report.approved?
+  def report_verified?
+    report.verified?
   end
 end

@@ -64,7 +64,7 @@ describe ReportPdf do
       it 'include no signature'
     end
 
-    context 'with approved report' do
+    context 'with verified report' do
       it 'includes no watermark'
       it 'includes signature'
     end

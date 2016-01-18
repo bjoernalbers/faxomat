@@ -10,43 +10,46 @@ class Report < ActiveRecord::Base
     :study,
     :study_date
 
-  scope :pending, -> { where(verified_at: nil).where(canceled_at: nil) }
+  scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
+  scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
+
+  validate :status_change_is_allowed
+  validates :status, inclusion: { in: %i(pending verified canceled),
+        message: "%{value} is not a valid status" }
+
+  before_save :set_verified_at
+  before_save :set_canceled_at
 
   def status
-    if canceled_at.present?
-      'canceled'
-    elsif verified_at.present?
-      'approved'
-    else
-      'pending'
+    @status ||= internal_status
+  end
+
+  def status=(attr)
+    @status = attr.to_sym unless attr.blank?
+  end
+
+  # TODO: Refactor this!
+  def status_change_is_allowed
+    if status == :canceled and internal_status == :pending
+      errors.add(:status, 'can not be changed from :pending to :canceled')
+    elsif status == :pending and internal_status == :verified
+      errors.add(:status, 'can not be changed from :verified to :pending')
+    elsif status == :pending and internal_status == :canceled
+      errors.add(:status, 'can not be changed from :verified to :pending')
+    elsif status == :verified and internal_status == :canceled
+      errors.add(:status, 'can not be changed from :verified to :pending')
     end
   end
 
+  # TODO: Refactor these!
   def pending?
-    status == 'pending'
+    status == :pending
   end
-
-  def approved?
-    status == 'approved'
+  def verified?
+    status == :verified
   end
-
   def canceled?
-    status == 'canceled'
-  end
-
-  def approved!
-    now = Time.zone.now
-    update!(verified_at: now)
-  end
-
-  def canceled!
-    now = Time.zone.now
-    update!(canceled_at: now)
-  end
-
-  # TODO: Remove (this should not be possible!)
-  def pending!
-    update!(verified_at: nil, canceled_at: nil)
+    status == :canceled
   end
 
   def subject
@@ -59,5 +62,25 @@ class Report < ActiveRecord::Base
 
   def deliver_as_fax
     ReportFaxer.deliver(self)
+  end
+
+  private
+
+  def internal_status
+    if canceled_at.present?
+      :canceled
+    elsif verified_at.present?
+      :verified
+    else
+      :pending
+    end
+  end
+
+  def set_verified_at
+    self.verified_at ||= Time.zone.now if verified?
+  end
+
+  def set_canceled_at
+    self.canceled_at ||= Time.zone.now if canceled?
   end
 end

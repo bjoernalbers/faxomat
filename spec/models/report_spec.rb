@@ -37,76 +37,206 @@ describe Report do
     let(:now) { Time.zone.now }
 
     it 'returns all pending reports' do
-      pending = create(:report, verified_at: nil, canceled_at: nil)
-      approved = create(:report, verified_at: now, canceled_at: nil)
-      canceled = create(:report, verified_at: now, canceled_at: now)
+      pending = create(:pending_report)
+      verified = create(:verified_report)
+      canceled = create(:canceled_report)
       expect(Report.pending.all).to eq  [ pending ]
     end
   end
 
-  describe '#approved!' do
-    it 'sets status to approved' do
-      expect(report).not_to be_approved
-      report.approved!
-      expect(report).to be_approved
-    end
-  end
+  describe '.verified' do
+    let(:now) { Time.zone.now }
 
-  describe '#canceled!' do
-    it 'sets status to canceled' do
-      expect(report).not_to be_canceled
-      report.canceled!
-      expect(report).to be_canceled
-    end
-  end
-
-  describe '#pending!' do
-    it 'sets status to pending' do
-      report.approved!
-      expect(report).not_to be_pending
-      report.pending!
-      expect(report).to be_pending
+    it 'returns all verified reports' do
+      pending = create(:pending_report)
+      verified = create(:verified_report)
+      canceled = create(:canceled_report)
+      expect(Report.verified.all).to eq  [ verified ]
     end
   end
 
   describe '#status' do
-    let(:now) { Time.zone.now }
+    context 'when :pending' do
+      let(:report) { build(:pending_report) }
 
-    context 'when initialized' do
-      let(:report) { build(:report) }
+      it 'returns status as symbol' do
+        expect(report.status).to eq :pending
+      end
 
-      it 'is pending' do
-        expect(report.status).to eq 'pending'
+      it 'is pending, but not verified or canceled' do
         expect(report).to be_pending
+        expect(report).not_to be_verified
+        expect(report).not_to be_canceled
+      end
+
+      it 'has no verified_at' do
+        expect(report.verified_at).to be nil
+      end
+
+      it 'has no canceled_at' do
+        expect(report.canceled_at).to be nil
+      end
+
+      context 'and changed to :verified' do
+        before do
+          report.status = :verified
+        end
+
+        it 'is valid' do
+          expect(report).to be_valid
+        end
+
+        it 'sets verified_at on save once' do
+          now = Time.zone.now
+
+          Timecop.freeze(now) { report.save }
+          expect(report.verified_at).to eq now
+
+          Timecop.freeze(now+1.week) { report.save }
+          expect(report.verified_at).to eq now
+        end
+      end
+
+      context 'and changed to :canceled' do
+        before do
+          report.status = :canceled
+        end
+
+        it 'is invalid' do
+          expect(report).to be_invalid
+          expect(report.errors[:status]).to be_present
+        end
+      end
+
+      context 'and changed to "verified"' do
+        before do
+          report.status = "verified"
+        end
+
+        it 'returns status as symbol' do
+          expect(report.status).to eq :verified
+        end
+      end
+
+      context 'and changed to nil' do
+        before do
+          report.status = nil
+        end
+
+        it 'is :pending' do
+          expect(report.status).to eq :pending
+        end
       end
     end
 
-    context 'when not verified and not canceled' do
-      let(:report) { build(:report, verified_at: nil, canceled_at: nil) }
+    context 'when :verified' do
+      let(:report) { build(:verified_report) }
 
-      it 'is pending by default' do
-        expect(report.status).to eq 'pending'
-        expect(report).to be_pending
+      it 'returns status an symbol' do
+        expect(report.status).to eq :verified
+      end
+
+      it 'is verified, but not pending or canceled' do
+        expect(report).to be_verified
+        expect(report).not_to be_pending
+        expect(report).not_to be_canceled
+      end
+
+      it 'has verified_at' do
+        expect(report.verified_at).not_to be nil
+      end
+
+      it 'has no canceled_at' do
+        expect(report.canceled_at).to be nil
+      end
+
+      context 'and changed to :pending' do
+        before do
+          report.status = :pending
+        end
+
+        it 'is invalid' do
+          expect(report).to be_invalid
+          expect(report.errors[:status]).to be_present
+        end
+      end
+
+      context 'and changed to :canceled' do
+        before do
+          report.status = :canceled
+        end
+
+        it 'is valid' do
+          expect(report).to be_valid
+        end
+
+        it 'sets canceled_at on save once' do
+          now = Time.zone.now
+
+          Timecop.freeze(now) { report.save }
+          expect(report.canceled_at).to eq now
+
+          Timecop.freeze(now+1.week) { report.save }
+          expect(report.canceled_at).to eq now
+        end
       end
     end
 
-    context 'when verified and not canceled' do
-      let(:report) { build(:report, verified_at: now, canceled_at: nil) }
+    context 'when :canceled' do
+      let(:report) { build(:canceled_report) }
 
-      it 'is approved' do
-        expect(report.status).to eq 'approved'
-        expect(report).to be_approved
+      it 'returns status as symbol' do
+        expect(report.status).to eq :canceled
       end
-    end
 
-    context 'when verified and canceled' do
-      let(:report) { build(:report, verified_at: now, canceled_at: now) }
-
-      it 'is canceled' do
-        expect(report.status).to eq 'canceled'
+      it 'is canceled, but not pending or canceled' do
         expect(report).to be_canceled
+        expect(report).not_to be_verified
+        expect(report).not_to be_pending
+      end
+
+      it 'has verified_at' do
+        expect(report.verified_at).not_to be nil
+      end
+
+      it 'has canceled_at' do
+        expect(report.canceled_at).not_to be nil
+      end
+
+      context 'and changed to :pending' do
+        before do
+          report.status = :pending
+        end
+
+        it 'is invalid' do
+          expect(report).to be_invalid
+          expect(report.errors[:status]).to be_present
+        end
+      end
+
+      context 'and changed to :verified' do
+        before do
+          report.status = :verified
+        end
+
+        it 'is invalid' do
+          expect(report).to be_invalid
+          expect(report.errors[:status]).to be_present
+        end
       end
     end
+
+    context 'with unknown status' do
+      before do
+        report.status = :chunky_bacon
+      end
+
+      it 'is invalid' do
+        expect(report).to be_invalid
+        expect(report.errors[:status]).to be_present
+      end
+    end
+
   end
 
   describe '#subject' do

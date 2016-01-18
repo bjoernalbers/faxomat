@@ -28,12 +28,12 @@ describe ReportFaxer do
       allow(report_faxer).to receive(:report_title).and_return('chunky bacon')
       allow(report_faxer).to receive(:recipient_fax_number).and_return('0123456789')
       allow(report_faxer).to receive(:report_pdf_file).and_return(report_pdf_file)
-      allow(report_faxer).to receive(:report_approved?).and_return(true)
+      allow(report_faxer).to receive(:report_verified?).and_return(true)
     end
 
-    it 'fails without approved report' do
-      allow(report_faxer).to receive(:report_approved?).and_return(false)
-      expect { report_faxer.deliver }.to raise_error /not approved/
+    it 'fails without verified report' do
+      allow(report_faxer).to receive(:report_verified?).and_return(false)
+      expect { report_faxer.deliver }.to raise_error /not verified/
       #report_faxer.deliver
     end
 
@@ -102,11 +102,11 @@ describe ReportFaxer do
     end
   end
 
-  describe '#report_approved?' do
-    it 'checks if report is approved' do
-      allow(report).to receive(:approved?).and_return(:absolutely)
-      expect(report_faxer.send(:report_approved?)).to eq :absolutely
-      expect(report).to have_received(:approved?)
+  describe '#report_verified?' do
+    it 'checks if report is verified' do
+      allow(report).to receive(:verified?).and_return(:absolutely)
+      expect(report_faxer.send(:report_verified?)).to eq :absolutely
+      expect(report).to have_received(:verified?)
     end
   end
 end

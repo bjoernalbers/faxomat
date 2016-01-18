@@ -31,6 +31,21 @@ FactoryGirl.define do
     user
     patient
     recipient
+
+    factory :pending_report do
+      verified_at { nil }
+      canceled_at { nil }
+    end
+
+    factory :verified_report do
+      verified_at { Time.zone.now }
+      canceled_at { nil }
+    end
+
+    factory :canceled_report do
+      verified_at { Time.zone.now }
+      canceled_at { Time.zone.now }
+    end
   end
 
   factory :api_report, class: API::Report do

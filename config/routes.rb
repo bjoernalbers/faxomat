@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   root 'faxes#index'
 
   resources :reports, only: [:index, :show] do
-    put 'approve', on: :member
+    put 'verify', on: :member
   end
 
   resources :attendances, only: [:new]

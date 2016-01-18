@@ -19,9 +19,10 @@ class ReportsController < ApplicationController
     end
   end
 
-  def approve
+  # TODO: Replace by "update" action!
+  def verify
     @report = Report.find(params[:id])
-    @report.approved!
+    @report.update!(status: :verified)
     #@report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Find a better way to fax!
     # TODO: Test redirection!
     redirect_to reports_path, notice: "Arztbrief erfolgreich vidiert: #{@report.title}"
@@ -31,7 +32,7 @@ class ReportsController < ApplicationController
 
   def reports
     if params[:pending] == 'false'
-      current_user.reports.approved
+      current_user.reports.verified
     else
       current_user.reports.pending
     end

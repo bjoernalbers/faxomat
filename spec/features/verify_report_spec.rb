@@ -1,8 +1,8 @@
 # As a doctor / user
-# I want to approve reports
+# I want to verify reports
 # In order to avoid that pending reports gets accidentially send.
 
-feature 'Approve Report' do
+feature 'Verify report' do
   before do
     # Disable fax delivery!
     allow_any_instance_of(Report).to receive(:deliver_as_fax)
@@ -26,8 +26,8 @@ feature 'Approve Report' do
     click_link 'freigeben'
 
     expect(page).not_to have_content 'freigegeben'
-    report.reload
-    expect(report).to be_approved
+    report = Report.find(report.id) # NOTE: `report.reload`´does not update status!
+    expect(report).to be_verified
 
     expect(page).not_to have_link 'freigeben'
   end

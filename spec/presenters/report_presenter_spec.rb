@@ -112,29 +112,32 @@ describe ReportPresenter do
 
   describe '#watermark' do
     it 'with pending report returns "ENTWURF"' do
-      report.pending!
+      allow(presenter).to receive(:report).
+        and_return build(:pending_report)
       expect(presenter.watermark).to eq 'ENTWURF'
     end
 
-    it 'with approved report returns nil' do
-      report.approved!
+    it 'with verified report returns nil' do
+      allow(presenter).to receive(:report).
+        and_return build(:verified_report)
       expect(presenter.watermark).to be nil
     end
 
     it 'with canceled report' do
-      report.canceled!
+      allow(presenter).to receive(:report).
+        and_return build(:canceled_report)
       expect(presenter.watermark).to eq 'STORNIERT'
     end
   end
 
   describe '#include_signature?' do
-    it 'is true with report approval' do
-      allow(report).to receive(:approved?).and_return(true)
+    it 'is true with report verification' do
+      allow(report).to receive(:verified?).and_return(true)
       expect(presenter.include_signature?).to be true
     end
 
-    it 'is false without report approval' do
-      allow(report).to receive(:approved?).and_return(false)
+    it 'is false without report verification' do
+      allow(report).to receive(:verified?).and_return(false)
       expect(presenter.include_signature?).to be false
     end
   end

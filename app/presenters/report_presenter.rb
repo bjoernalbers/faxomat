@@ -47,15 +47,14 @@ class ReportPresenter
   end
 
   def watermark
-    if report.pending?
-      'ENTWURF'
-    elsif report.canceled?
-      'STORNIERT'
+    case report.status
+    when :pending  then 'ENTWURF'
+    when :canceled then 'STORNIERT'
     end
   end
 
   def include_signature?
-    report.approved?
+    report.verified?
   end
 
   def signature_path
