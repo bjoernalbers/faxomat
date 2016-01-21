@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_many :reports
+  has_many :letters
 
   validates :username,   presence: true, uniqueness: true
   validates :first_name, presence: true

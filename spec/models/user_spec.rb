@@ -11,6 +11,8 @@ describe User do
 
   it { expect(user).to have_many(:reports) }
 
+  it { expect(user).to have_many(:letters) }
+
   it { expect(user).to have_attached_file(:signature) }
   it { expect(user).to validate_attachment_content_type(:signature).
         allowing('image/png', 'image/jpg', 'image/jpeg').

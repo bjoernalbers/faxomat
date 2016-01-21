@@ -8,6 +8,8 @@ describe Report do
 
   it { expect(report).to have_many(:faxes) }
 
+  it { expect(report).to have_one(:letter) }
+
   # Required attributes
   [
     :user,

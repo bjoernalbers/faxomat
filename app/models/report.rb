@@ -3,6 +3,7 @@ class Report < ActiveRecord::Base
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
   has_many :faxes
+  has_one :letter
 
   validates_presence_of :anamnesis,
     :evaluation,

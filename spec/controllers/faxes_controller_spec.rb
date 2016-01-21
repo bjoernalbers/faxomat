@@ -39,7 +39,7 @@ describe FaxesController do
     end
   end
 
-  describe 'GET show' do
+  describe 'GET #show' do
     it 'sends the pdf document' do
       # NOTE: This fixes the missing template error
       # (see http://stackoverflow.com/questions/4701108/rspec-send-file-testing)

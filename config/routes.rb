@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     put 'verify', on: :member
   end
 
+  resources :letters, only: [:create, :show]
+
   resources :attendances, only: [:new]
 
   #namespace :api, defaults: { format: :json } do
