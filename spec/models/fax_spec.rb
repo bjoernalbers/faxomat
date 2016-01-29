@@ -5,6 +5,10 @@ describe Fax do
     expect(fax.document.path).to_not be_nil
   end
 
+  it 'has factory for completed faxes' do
+    expect(create(:completed_fax)).to be_completed
+  end
+
   it { expect(fax).to belong_to(:report) }
 
   describe '.count_by_status' do
