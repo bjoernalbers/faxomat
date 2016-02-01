@@ -322,6 +322,49 @@ describe Report do
     end
   end
 
+  describe '#destroy' do
+    context 'when pending' do
+      let!(:report) { create(:pending_report) }
+
+      it 'destroys report' do
+        expect {
+          report.destroy
+        }.to change(Report, :count).by(-1)
+      end
+    end
+
+    %w(verified canceled).each do |status|
+      context "when #{status}" do
+        let!(:report) { create("#{status}_report") }
+
+        it 'does not destroy report' do
+          expect {
+            report.destroy
+          }.to change(Report, :count).by(0)
+        end
+
+        it 'adds error to base' do
+          report.destroy
+          expect(report.errors[:base]).to be_present
+        end
+      end
+    end
+  end
+
+  describe '#deletable?' do
+    it 'is true when pending' do
+      expect(build(:pending_report)).to be_deletable
+    end
+
+    it 'is false when verified' do
+      expect(build(:verified_report)).not_to be_deletable
+    end
+
+    it 'is false when canceled' do
+      expect(build(:canceled_report)).not_to be_deletable
+    end
+  end
+
   describe '#deliver_as_fax' do
     it 'delivers itself as fax' do
       allow(ReportFaxer).to receive(:deliver)

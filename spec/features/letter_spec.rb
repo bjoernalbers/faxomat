@@ -18,6 +18,7 @@ feature 'Mail' do
   end
 
   scenario 'with verified report' do
+    pending
     report = create(:verified_report, user: user)
 
     visit report_url(report)

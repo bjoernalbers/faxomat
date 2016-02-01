@@ -7,7 +7,7 @@ class ReportsController < ApplicationController
   end
 
   def show
-    @report = Report.find(params[:id])
+    load_report
     respond_to do |format|
       format.html
       # TODO: Test this stuff!
@@ -21,14 +21,27 @@ class ReportsController < ApplicationController
 
   # TODO: Replace by "update" action!
   def verify
-    @report = Report.find(params[:id])
+    load_report
     @report.update!(status: :verified)
     #@report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Find a better way to fax!
     # TODO: Test redirection!
     redirect_to reports_path, notice: "Arztbrief erfolgreich vidiert: #{@report.title}"
   end
 
+  def destroy
+    load_report
+    if @report.destroy
+      redirect_to reports_url, notice: 'Der Arztbrief wurde gelöscht.'
+    else
+      redirect_to @report, alert: @report.errors.full_messages
+    end
+  end
+
   private
+
+  def load_report
+    @report = Report.find(params[:id])
+  end
 
   def reports
     if params[:pending] == 'false'

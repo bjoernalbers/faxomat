@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   root 'faxes#index'
 
-  resources :reports, only: [:index, :show] do
+  resources :reports, only: [:index, :show, :destroy] do
     put 'verify', on: :member
   end
 

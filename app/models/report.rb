@@ -25,6 +25,8 @@ class Report < ActiveRecord::Base
   before_save :set_verified_at
   before_save :set_canceled_at
 
+  before_destroy :allow_destroy_only_when_pending
+
   def status
     @status ||= internal_status
   end
@@ -56,6 +58,8 @@ class Report < ActiveRecord::Base
   def canceled?
     status == :canceled
   end
+
+  alias_method :deletable?, :pending?
 
   def subject
     "#{study} vom #{study_date.strftime('%-d.%-m.%Y')}"
@@ -91,5 +95,12 @@ class Report < ActiveRecord::Base
 
   def set_canceled_at
     self.canceled_at ||= Time.zone.now if canceled?
+  end
+
+  def allow_destroy_only_when_pending
+    unless pending?
+      errors.add(:base, 'Ein vidierter oder stornierter Arztbrief kann nicht gelöscht werden!')
+      false
+    end
   end
 end
