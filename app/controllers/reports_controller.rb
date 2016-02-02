@@ -20,7 +20,7 @@ class ReportsController < ApplicationController
   end
 
   def update
-    load_report
+    load_user_report
     if @report.update(report_params)
       #@report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Find a better way to fax!
       redirect_to @report, notice: "Arztbrief erfolgreich aktualisiert."
@@ -30,7 +30,7 @@ class ReportsController < ApplicationController
   end
 
   def destroy
-    load_report
+    load_user_report
     if @report.destroy
       redirect_to reports_url, notice: 'Der Arztbrief wurde gelöscht.'
     else
@@ -44,6 +44,10 @@ class ReportsController < ApplicationController
     @report = Report.find(params[:id])
   end
 
+  def load_user_report
+    @report = current_user.reports.find(params[:id])
+  end
+
   def reports
     if params[:pending] == 'false'
       current_user.reports.verified
@@ -53,6 +57,7 @@ class ReportsController < ApplicationController
   end
 
   def report_params
+    # NOTE: Since we're using button_to to update the model we can't nest attributes!
     params.permit(:status)
   end
 end

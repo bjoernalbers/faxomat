@@ -27,11 +27,6 @@
 
 <%= link_to 'Druckvorschau', report_path(@report, format: :pdf), class: 'btn btn-default' %>
 
-<% if @report.pending? %>
-  <%= button_to 'Vidieren', report_path(@report), method: :patch,
-    params: { status: :verified }, class: 'btn btn-primary' %>
-<% end %>
-
 <% if @report.letter.present? %>
     <%= link_to 'Brief zeigen', letter_path(@report.letter), class: 'btn btn-default'  %>
 <% else %>
@@ -40,9 +35,16 @@
   <% end %>
 <% end %>
 
-<% if @report.deletable? %>
-  <%= button_to 'Löschen', report_path(@report), method: :delete,
-    class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
+<% if @report.user == current_user %>
+  <% if @report.pending? %>
+    <%= button_to 'Vidieren', report_path(@report), method: :patch,
+      params: { status: :verified }, class: 'btn btn-primary' %>
+  <% end %>
+
+  <% if @report.deletable? %>
+    <%= button_to 'Löschen', report_path(@report), method: :delete,
+      class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
+  <% end %>
 <% end %>
 
 <%# link_to 'Edit', edit_report_path(@report) %> 

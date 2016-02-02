@@ -8,7 +8,7 @@ feature 'Verify report' do
     allow_any_instance_of(Report).to receive(:deliver_as_fax)
   end
 
-  scenario 'happy path' do
+  scenario 'when pending' do
     user = create(:user)
     patient = create(:patient,
                      first_name:    'Chuck',
@@ -29,5 +29,15 @@ feature 'Verify report' do
 
     report.reload
     expect(report).to be_verified
+  end
+
+  scenario 'when from other user' do
+    user = create(:user)
+    report = create(:report)
+
+    login_as user, scope: :user
+
+    visit report_url(report)
+    expect(page).not_to have_button 'Vidieren'
   end
 end

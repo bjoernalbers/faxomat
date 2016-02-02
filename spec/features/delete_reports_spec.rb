@@ -27,4 +27,18 @@ feature 'Delete reports' do
 
     expect(page).not_to have_button 'Löschen'
   end
+
+  scenario 'when canceled' do
+    report = create(:canceled_report, user: user)
+    visit report_url(report)
+
+    expect(page).not_to have_button 'Löschen'
+  end
+
+  scenario 'when from other user' do
+    report = create(:pending_report)
+    visit report_url(report)
+
+    expect(page).not_to have_button 'Löschen'
+  end
 end

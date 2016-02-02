@@ -18,7 +18,7 @@ describe ReportsController do
     end
 
     context 'with pending report' do
-      let!(:report) { create(:pending_report) }
+      let!(:report) { create(:pending_report, user: current_user) }
 
       it 'destroys report' do
         expect {
@@ -38,7 +38,7 @@ describe ReportsController do
     end
 
     context 'with verified report' do
-      let!(:report) { create(:verified_report) }
+      let!(:report) { create(:verified_report, user: current_user) }
 
       it 'does not destroy report' do
         expect {
@@ -56,16 +56,26 @@ describe ReportsController do
         expect(flash[:alert]).not_to be nil
       end
     end
+
+    context 'with report from other user' do
+      let!(:report) { create(:pending_report) }
+
+      it 'raises error' do
+        expect {
+          do_delete
+        }.to raise_error ActiveRecord::RecordNotFound
+      end
+    end
   end
 
   describe 'PATCH #update' do
-    let(:report) { create(:pending_report) }
+    let(:report) { create(:pending_report, user: current_user) }
+
+    def do_patch
+      patch :update, id: report, 'status' => 'verified'
+    end
 
     context 'with valid params' do
-      def do_patch
-        patch :update, id: report, 'status' => 'verified'
-      end
-
       it 'updates report' do
         do_patch
         report.reload
@@ -93,6 +103,16 @@ describe ReportsController do
         pending
         do_patch
         expect(response).to render_template :show
+      end
+    end
+
+    context 'with report from other user' do
+      let!(:report) { create(:pending_report) }
+
+      it 'raises error' do
+        expect {
+          do_patch
+        }.to raise_error ActiveRecord::RecordNotFound
       end
     end
   end
