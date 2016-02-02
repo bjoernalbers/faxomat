@@ -57,4 +57,43 @@ describe ReportsController do
       end
     end
   end
+
+  describe 'PATCH #update' do
+    let(:report) { create(:pending_report) }
+
+    context 'with valid params' do
+      def do_patch
+        patch :update, id: report, 'status' => 'verified'
+      end
+
+      it 'updates report' do
+        do_patch
+        report.reload
+        expect(report).to be_verified
+      end
+
+      it 'redirects to report' do
+        do_patch
+        expect(response).to redirect_to report_url(report)
+      end
+    end
+
+    context 'with invalid params' do
+      def do_patch
+        patch :update, id: report, 'status' => 'canceled'
+      end
+
+      it 'does not update report' do
+        do_patch
+        report.reload
+        expect(report).to be_pending
+      end
+
+      it 'renders show template' do
+        pending
+        do_patch
+        expect(response).to render_template :show
+      end
+    end
+  end
 end

@@ -23,12 +23,11 @@ feature 'Verify report' do
     expect(page).to have_content 'Norris, Chuck (* 10.03.1940)'
 
     expect(page).not_to have_content 'freigegeben'
-    click_link 'freigeben'
+    click_button 'Vidieren'
 
-    expect(page).not_to have_content 'freigegeben'
-    report = Report.find(report.id) # NOTE: `report.reload`´does not update status!
+    expect(page).not_to have_button 'Vidieren'
+
+    report.reload
     expect(report).to be_verified
-
-    expect(page).not_to have_link 'freigeben'
   end
 end

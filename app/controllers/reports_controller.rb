@@ -19,13 +19,14 @@ class ReportsController < ApplicationController
     end
   end
 
-  # TODO: Replace by "update" action!
-  def verify
+  def update
     load_report
-    @report.update!(status: :verified)
-    #@report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Find a better way to fax!
-    # TODO: Test redirection!
-    redirect_to reports_path, notice: "Arztbrief erfolgreich vidiert: #{@report.title}"
+    if @report.update(report_params)
+      #@report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Find a better way to fax!
+      redirect_to @report, notice: "Arztbrief erfolgreich aktualisiert."
+    else
+      render :show
+    end
   end
 
   def destroy
@@ -49,5 +50,9 @@ class ReportsController < ApplicationController
     else
       current_user.reports.pending
     end
+  end
+
+  def report_params
+    params.permit(:status)
   end
 end
