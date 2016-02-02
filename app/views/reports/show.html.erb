@@ -1,4 +1,25 @@
-<p id="notice"><%= notice %></p>
+<div class="row">
+  <% if @report.user == current_user %>
+    <% if @report.pending? %>
+      <div class="btn-group">
+        <%= button_to 'Vidieren', report_path(@report), method: :patch, params: { status: :verified }, class: 'btn btn-primary' %>
+        <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
+      </div>
+    <% elsif @report.verified? %>
+      <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
+    <% end %>
+  <% end %>
+
+  <%= link_to 'Druckvorschau', report_path(@report, format: :pdf), class: 'btn btn-default' %>
+
+  <% if @report.letter.present? %>
+      <%= link_to 'Brief zeigen', letter_path(@report.letter), class: 'btn btn-default'  %>
+  <% else %>
+    <% if @report.verified? %>
+      <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-default'  %>
+    <% end %>
+  <% end %>
+</div>
 
 <% p = @report.patient %>
 <h1>
@@ -24,28 +45,6 @@
 <p>
   <%= @report.status %>
 </p>
-
-<%= link_to 'Druckvorschau', report_path(@report, format: :pdf), class: 'btn btn-default' %>
-
-<% if @report.letter.present? %>
-    <%= link_to 'Brief zeigen', letter_path(@report.letter), class: 'btn btn-default'  %>
-<% else %>
-  <% if @report.verified? %>
-    <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-default'  %>
-  <% end %>
-<% end %>
-
-<% if @report.user == current_user %>
-  <% if @report.pending? %>
-    <%= button_to 'Vidieren', report_path(@report), method: :patch,
-      params: { status: :verified }, class: 'btn btn-primary' %>
-  <% end %>
-
-  <% if @report.deletable? %>
-    <%= button_to 'Löschen', report_path(@report), method: :delete,
-      class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
-  <% end %>
-<% end %>
 
 <%# link_to 'Edit', edit_report_path(@report) %> 
 <%# link_to 'Back', reports_path %>
