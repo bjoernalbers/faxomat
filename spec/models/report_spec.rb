@@ -79,55 +79,19 @@ describe Report do
         expect(report.canceled_at).to be nil
       end
 
-      context 'and changed to :verified' do
-        before do
-          report.status = :verified
-        end
-
-        it 'is valid' do
-          expect(report).to be_valid
-        end
-
-        it 'sets verified_at on save once' do
-          now = Time.zone.now
-
-          Timecop.freeze(now) { report.save }
-          expect(report.verified_at).to eq now
-
-          Timecop.freeze(now+1.week) { report.save }
-          expect(report.verified_at).to eq now
-        end
+      it 'can be changed to :verified' do
+        report.status = :verified
+        expect(report).to be_verified
       end
 
-      context 'and changed to :canceled' do
-        before do
-          report.status = :canceled
-        end
-
-        it 'is invalid' do
-          expect(report).to be_invalid
-          expect(report.errors[:status]).to be_present
-        end
+      it 'can not be changed to :canceled' do
+        report.status = :canceled
+        expect(report).to be_pending
       end
 
-      context 'and changed to "verified"' do
-        before do
-          report.status = "verified"
-        end
-
-        it 'returns status as symbol' do
-          expect(report.status).to eq :verified
-        end
-      end
-
-      context 'and changed to nil' do
-        before do
-          report.status = nil
-        end
-
-        it 'is :pending' do
-          expect(report.status).to eq :pending
-        end
+      it 'can not be changed to unknown status' do
+        report.status = :chunky_bacon
+        expect(report).to be_pending
       end
     end
 
@@ -152,35 +116,14 @@ describe Report do
         expect(report.canceled_at).to be nil
       end
 
-      context 'and changed to :pending' do
-        before do
-          report.status = :pending
-        end
-
-        it 'is invalid' do
-          expect(report).to be_invalid
-          expect(report.errors[:status]).to be_present
-        end
+      it 'can be changed to :canceled' do
+        report.status = :canceled
+        expect(report).to be_canceled
       end
 
-      context 'and changed to :canceled' do
-        before do
-          report.status = :canceled
-        end
-
-        it 'is valid' do
-          expect(report).to be_valid
-        end
-
-        it 'sets canceled_at on save once' do
-          now = Time.zone.now
-
-          Timecop.freeze(now) { report.save }
-          expect(report.canceled_at).to eq now
-
-          Timecop.freeze(now+1.week) { report.save }
-          expect(report.canceled_at).to eq now
-        end
+      it 'can not be changed to :pending' do
+        report.status = :pending
+        expect(report).to be_verified
       end
     end
 
@@ -205,40 +148,16 @@ describe Report do
         expect(report.canceled_at).not_to be nil
       end
 
-      context 'and changed to :pending' do
-        before do
-          report.status = :pending
-        end
-
-        it 'is invalid' do
-          expect(report).to be_invalid
-          expect(report.errors[:status]).to be_present
-        end
+      it 'can not be changed to :pending' do
+        report.status = :pending
+        expect(report).to be_canceled
       end
 
-      context 'and changed to :verified' do
-        before do
-          report.status = :verified
-        end
-
-        it 'is invalid' do
-          expect(report).to be_invalid
-          expect(report.errors[:status]).to be_present
-        end
+      it 'can not be changed to :verified' do
+        report.status = :verified
+        expect(report).to be_canceled
       end
     end
-
-    context 'with unknown status' do
-      before do
-        report.status = :chunky_bacon
-      end
-
-      it 'is invalid' do
-        expect(report).to be_invalid
-        expect(report.errors[:status]).to be_present
-      end
-    end
-
   end
 
   describe '#subject' do

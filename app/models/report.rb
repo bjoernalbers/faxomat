@@ -18,47 +18,32 @@ class Report < ActiveRecord::Base
   scope :without_letter, -> { includes(:letter).where(letters: { report_id: nil }) }
   scope :without_completed_fax, -> { where.not(id: Fax.completed.select(:report_id)) }
 
-  validate :status_change_is_allowed
-  validates :status, inclusion: { in: %i(pending verified canceled),
-        message: "%{value} is not a valid status" }
-
-  before_save :set_verified_at
-  before_save :set_canceled_at
-
   before_destroy :allow_destroy_only_when_pending
 
   def status
-    @status ||= internal_status
-  end
-
-  def status=(attr)
-    @status = attr.to_sym unless attr.blank?
-  end
-
-  # TODO: Refactor this!
-  def status_change_is_allowed
-    if status == :canceled and internal_status == :pending
-      errors.add(:status, 'can not be changed from :pending to :canceled')
-    elsif status == :pending and internal_status == :verified
-      errors.add(:status, 'can not be changed from :verified to :pending')
-    elsif status == :pending and internal_status == :canceled
-      errors.add(:status, 'can not be changed from :canceled to :pending')
-    elsif status == :verified and internal_status == :canceled
-      errors.add(:status, 'can not be changed from :canceled to :verified')
+    if canceled_at.present?
+      :canceled
+    elsif verified_at.present?
+      :verified
+    else
+      :pending
     end
   end
 
-  # TODO: Refactor these!
-  def pending?
-    status == :pending
-  end
-  def verified?
-    status == :verified
-  end
-  def canceled?
-    status == :canceled
+  def status=(attr)
+    case attr.to_sym
+    when :verified
+      self.verified_at = Time.zone.now if pending?
+    when :canceled
+      self.canceled_at = Time.zone.now if verified?
+    end
   end
 
+  %i(pending verified canceled).each do |method_name|
+    define_method("#{method_name}?") do
+      status == method_name
+    end
+  end
   alias_method :deletable?, :pending?
 
   def subject
@@ -78,24 +63,6 @@ class Report < ActiveRecord::Base
   end
 
   private
-
-  def internal_status
-    if canceled_at.present?
-      :canceled
-    elsif verified_at.present?
-      :verified
-    else
-      :pending
-    end
-  end
-
-  def set_verified_at
-    self.verified_at ||= Time.zone.now if verified?
-  end
-
-  def set_canceled_at
-    self.canceled_at ||= Time.zone.now if canceled?
-  end
 
   def allow_destroy_only_when_pending
     unless pending?
