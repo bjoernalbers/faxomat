@@ -46,7 +46,7 @@
   </div>
 </div>
 
-<% %i(anamnesis diagnosis findings evaluation procedure clinic).each do |method| %>
+<% %i(anamnesis procedure clinic findings evaluation).each do |method| %>
   <% if @report.send(method).present? %>
     <div class="row">
       <div class="col-md-2">
