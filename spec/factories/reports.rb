@@ -25,7 +25,7 @@ FactoryGirl.define do
     anamnesis { Faker::Lorem.sentences.join("\n") }
     diagnosis { Faker::Lorem.sentences.join("\n") }
     findings { Faker::Lorem.sentences.join("\n") }
-    evaluation { Faker::Lorem.sentences.join("\n") }
+    evaluation { Faker::Lorem.sentences(10).join("\n") }
     procedure { Faker::Lorem.sentences.join("\n") }
     clinic { Faker::Lorem.sentences.join("\n") }
     user

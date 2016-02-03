@@ -2,7 +2,7 @@
 
 <ul class="nav nav-tabs">
   <li role="presentation" class=<%= 'active' if params[:pending] != 'false' %>>
-    <%= link_to 'Ausstehend', reports_path %>
+    <%= link_to 'Unvidiert', reports_path %>
   </li>
   <li role="presentation" class=<%= 'active' if params[:pending] == 'false' %>>
     <%= link_to 'Vidiert', reports_path(pending: false) %>
