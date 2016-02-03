@@ -2,7 +2,7 @@
 # I want send reports by mail
 # Because not every recipient owns a (working) fax-machine
 
-feature 'Mail' do
+feature 'Send report as letter' do
   let(:user) { create(:user) }
 
   before do
@@ -11,24 +11,25 @@ feature 'Mail' do
 
   scenario 'with pending report' do
     report = create(:pending_report, user: user)
-
     visit report_url(report)
-
     expect(page).not_to have_button 'Brief senden'
   end
 
   scenario 'with verified report' do
-    pending
     report = create(:verified_report, user: user)
-
     visit report_url(report)
-
-    expect(page).not_to have_content('versendet am')
+    expect(page).not_to have_content('Versendet')
     click_button 'Brief senden'
+    visit page.driver.request.env['HTTP_REFERER'] # Goes back
+    expect(page).to have_content('Versendet')
+  end
 
-    # Whats comming next?
-
-    visit report_url(report)
-    expect(page).to have_content('versendet am')
+  scenario 'on undelivered reports page' do
+    report = create(:verified_report, user: user)
+    expect(report).not_to be_delivered
+    #visit '/reports?status=undelivered'
+    visit reports_url
+    click_link 'Unversendet'
+    expect(page).to have_content(report.subject)
   end
 end

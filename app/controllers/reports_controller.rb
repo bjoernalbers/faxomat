@@ -51,6 +51,8 @@ class ReportsController < ApplicationController
   def reports
     if params[:pending] == 'false'
       current_user.reports.verified
+    elsif params[:undelivered] == 'true'
+      Report.not_delivered
     else
       current_user.reports.pending
     end

@@ -31,11 +31,16 @@
         <%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %><br>
         <small>
           <%= @report.subject %>
+        </small>
+      </h1>
           <span class="label label-default">
             <%= report_status(@report) %>
           </span>
-        </small>
-      </h1>
+          <% if @report.delivered? %>
+            <span class="label label-success">
+              Versendet
+            </span>
+          <% end %>
     </div>
 
   </div>
