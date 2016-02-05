@@ -4,14 +4,12 @@ class LettersController < ApplicationController
   def create
     @letter = letters.new(letter_params)
     @letter.save!
-    redirect_to @letter
+    redirect_to @letter.report
   end
 
   def show
     letter = Letter.find(params[:id])
-    send_file letter.document.path,
-      type: letter.document.content_type,
-      disposition: 'inline'
+    send_file letter.document.path, type: letter.document.content_type
   end
 
   private

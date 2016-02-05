@@ -1,24 +1,20 @@
 <div class="row">
   <div class="col-md-12">
+    <%= link_to 'Öffnen', report_path(@report, format: :pdf), class: 'btn btn-default' %>
+
     <% if @report.user == current_user %>
-      <% if @report.pending? %>
-        <div class="btn-group">
-          <%= button_to 'Vidieren', report_path(@report), method: :patch, params: { status: :verified }, class: 'btn btn-primary' %>
-          <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
-        </div>
-      <% elsif @report.verified? %>
-        <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
-      <% end %>
+      <div class="btn-group pull-right">
+        <% if @report.pending? %>
+            <%= button_to 'Vidieren', report_path(@report), method: :patch, params: { status: :verified }, class: 'btn btn-primary' %>
+            <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
+        <% elsif @report.verified? %>
+          <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
+        <% end %>
+      </div>
     <% end %>
 
-    <%= link_to 'Druckvorschau', report_path(@report, format: :pdf), class: 'btn btn-default' %>
-
-    <% if @report.letter.present? %>
-        <%= link_to 'Brief zeigen', letter_path(@report.letter), class: 'btn btn-default'  %>
-    <% else %>
-      <% if @report.verified? %>
-        <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-default', data: { confirm: 'Bitte ausdrucken und postalisch versenden!' }  %>
-      <% end %>
+    <% if @report.verified? && !@report.letter.present? %>
+      <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-default', data: { confirm: 'Bitte ausdrucken und postalisch versenden!' }  %>
     <% end %>
   </div>
 </div>

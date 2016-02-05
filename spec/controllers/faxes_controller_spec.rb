@@ -47,7 +47,7 @@ describe FaxesController do
 
       fax = create(:fax)
       expect(controller).to receive(:send_file).
-        with(fax.document.path, type: 'application/pdf', disposition: 'inline')
+        with(fax.document.path, type: 'application/pdf')
       get :show, id: fax
     end
   end

@@ -28,7 +28,7 @@ describe LettersController do
 
       it 'displays letter as PDF' do
         do_post
-        expect(response).to redirect_to letter_path(assigns(:letter))
+        expect(response).to redirect_to report_path(report)
       end
     end
 
@@ -46,7 +46,7 @@ describe LettersController do
 
       letter = create(:letter)
       expect(controller).to receive(:send_file).
-        with(letter.document.path, type: 'application/pdf', disposition: 'inline')
+        with(letter.document.path, type: 'application/pdf')
       get :show, id: letter
     end
   end

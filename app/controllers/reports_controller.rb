@@ -14,7 +14,7 @@ class ReportsController < ApplicationController
       format.pdf do
         pdf = ReportPdf.new(ReportPresenter.new(@report, view_context))
         #TODO: Replace hard-coded filename!
-        send_data pdf.render, filename: 'foo.pdf', type: 'application/pdf', disposition: :inline
+        send_data pdf.render, filename: "Arztbrief-#{@report.id}.pdf", type: 'application/pdf'
       end
     end
   end

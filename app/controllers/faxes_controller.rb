@@ -7,9 +7,7 @@ class FaxesController < ApplicationController
 
   def show
     fax = Fax.find(params[:id])
-    send_file fax.document.path,
-      type: fax.document.content_type,
-      disposition: 'inline'
+    send_file fax.document.path, type: fax.document.content_type
   end
 
   def create

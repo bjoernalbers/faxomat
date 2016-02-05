@@ -30,8 +30,8 @@ feature 'View Reports' do
     expect(page).to have_content('Indikation')
     expect(page).to have_content(report.anamnesis)
 
-    expect(page).to have_content('Diagnose')
-    expect(page).to have_content(report.diagnosis)
+    expect(page).not_to have_content('Diagnose')
+    expect(page).not_to have_content(report.diagnosis)
 
     expect(page).to have_content('Befund')
     expect(page).to have_content(report.findings)
