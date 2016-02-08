@@ -8,13 +8,15 @@
             <%= button_to 'Vidieren', report_path(@report), method: :patch, params: { status: :verified }, class: 'btn btn-primary' %>
             <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
         <% elsif @report.verified? %>
+          <% unless @report.letter.present? %>
+            <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-primary', data: { confirm: 'Bitte ausdrucken und postalisch versenden!' }  %>
+          <% end %>
+          <% unless @report.faxes.active.present? %>
+            <%= button_to 'Fax senden', report_faxes_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-primary' %>
+          <% end %>
           <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
         <% end %>
       </div>
-    <% end %>
-
-    <% if @report.verified? && !@report.letter.present? %>
-      <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-default', data: { confirm: 'Bitte ausdrucken und postalisch versenden!' }  %>
     <% end %>
   </div>
 </div>

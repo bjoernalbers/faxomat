@@ -22,7 +22,8 @@ describe ReportFaxer do
 
     before do
       allow(fax).to receive(:deliver)
-      allow(Fax).to receive(:create).and_return(fax)
+      allow_any_instance_of(Fax).to receive(:deliver)
+
       allow(report_pdf_file).to receive(:close!)
 
       allow(report_faxer).to receive(:report_title).and_return('chunky bacon')
@@ -34,21 +35,28 @@ describe ReportFaxer do
     it 'fails without verified report' do
       allow(report_faxer).to receive(:report_verified?).and_return(false)
       expect { report_faxer.deliver }.to raise_error /not verified/
-      #report_faxer.deliver
     end
 
-    it 'creates fax from report' do
-      report_faxer.deliver
-      expect(Fax).to have_received(:create).with(
-        title: 'chunky bacon', phone: '0123456789', document: report_pdf_file)
+    it 'creates fax for report' do
+      report = create(:verified_report)
+      report_faxer = ReportFaxer.new(report)
+      expect {
+        report_faxer.deliver
+      }.to change(report.faxes, :count).by(1)
+
+      fax = report.faxes.last
+      expect(fax.title).to eq report_faxer.report_title
+      expect(fax.phone).to eq report_faxer.recipient_fax_number
     end
 
     it 'delivers fax' do
+      allow(report_faxer).to receive(:fax).and_return(fax)
       report_faxer.deliver
       expect(fax).to have_received(:deliver)
     end
 
     it 'deletes report_pdf_file' do
+      allow(report_faxer).to receive(:fax).and_return(fax)
       report_faxer.deliver
       expect(report_pdf_file).to have_received(:close!)
     end

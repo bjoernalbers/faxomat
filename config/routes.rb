@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   resources :attendances, only: [:new]
 
+  resources :report_faxes, only: [:create]
+
   #namespace :api, defaults: { format: :json } do
   #  resources :faxes, only: [:index]
   #  resources :reports, only: [:create, :show]

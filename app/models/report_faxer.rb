@@ -12,13 +12,9 @@ class ReportFaxer
   def deliver
     fail 'Report is not verified!' unless report_verified?
 
-    document = report_pdf_file
-    fax = Fax.create(title:    report_title,
-                     phone:    recipient_fax_number,
-                     document: document)
     fax.deliver
   ensure
-    document.close! if document # Close and unlink temp. file.
+    report_pdf_file.close! if report_pdf_file # Close and unlink temp. file.
   end
 
   def report_title
@@ -47,6 +43,12 @@ class ReportFaxer
   end
 
   private
+
+  def fax
+    @fax ||= report.faxes.create(title:    report_title,
+                                 phone:    recipient_fax_number,
+                                 document: report_pdf_file)
+  end
 
   # TODO: Test this!
   def rendered_report_pdf
