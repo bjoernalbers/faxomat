@@ -2,3 +2,7 @@
 .button_to div {
     display: inline;
   }
+
+.label-group span {
+  margin-right: 5px;
+}

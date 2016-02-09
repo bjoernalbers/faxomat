@@ -15,9 +15,12 @@ feature 'Cancel report' do
 
     visit report_url(report)
 
+    expect(page).not_to have_content 'Storniert'
+
     click_button 'Stornieren'
 
     expect(page).not_to have_button 'Stornieren'
+    expect(page).to have_content 'Storniert'
 
     report.reload
     expect(report).to be_canceled

@@ -40,5 +40,22 @@ feature 'Report delivery as fax' do
     create(:active_fax, report: report)
     visit report_url(report)
     expect(page).not_to have_button send_fax
+    expect(page).to have_content('Fax aktiv') # Label
+  end
+
+  scenario 'with completed fax' do
+    report = create(:verified_report, user: user)
+    create(:completed_fax, report: report)
+    visit report_url(report)
+    expect(page).to have_button send_fax
+    expect(page).to have_content('Fax zugestellt') # Label
+  end
+
+  scenario 'with aborted fax' do
+    report = create(:verified_report, user: user)
+    create(:aborted_fax, report: report)
+    visit report_url(report)
+    expect(page).to have_button send_fax
+    expect(page).to have_content('Fax abgebrochen') # Label
   end
 end

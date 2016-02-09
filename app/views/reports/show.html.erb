@@ -31,16 +31,38 @@
           <%= @report.subject %>
         </small>
       </h1>
-          <span class="label label-default">
-            <%= report_status(@report) %>
+      <div class="label-group">
+        <% if @report.verified? %>
+          <span class="label label-info">
+            Vidiert
           </span>
-          <% if @report.delivered? %>
+        <% elsif @report.canceled? %>
+          <span class="label label-danger">
+            Storniert
+          </span>
+        <% end %>
+        <% if @report.letter.present? %>
+          <span class="label label-success">
+            Brief gesendet
+          </span>
+        <% end %>
+        <% @report.faxes.each do |fax| %>
+          <% if fax.active? %>
+            <span class="label label-default">
+              Fax aktiv
+            </span>
+          <% elsif fax.completed? %>
             <span class="label label-success">
-              Versendet
+              Fax zugestellt
+            </span>
+          <% elsif fax.aborted? %>
+            <span class="label label-warning">
+              Fax abgebrochen
             </span>
           <% end %>
+        <% end %>
+      </div>
     </div>
-
   </div>
 </div>
 

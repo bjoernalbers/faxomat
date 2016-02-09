@@ -5,6 +5,7 @@
 feature 'Report delivery as letter' do
   let(:user) { create(:user) }
   let(:send_as_letter) { 'Brief senden' }
+  let(:sent_as_letter) { 'Brief gesendet' }
 
   before do
     login_as user, scope: :user
@@ -19,9 +20,9 @@ feature 'Report delivery as letter' do
   scenario 'with verified report' do
     report = create(:verified_report, user: user)
     visit report_url(report)
-    expect(page).not_to have_content('Versendet')
+    expect(page).not_to have_content sent_as_letter
     click_button send_as_letter
-    expect(page).to have_content('Versendet')
+    expect(page).to have_content sent_as_letter
   end
 
   scenario 'on undelivered reports page' do

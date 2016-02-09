@@ -22,10 +22,11 @@ feature 'Verify report' do
     visit report_url(report)
     expect(page).to have_content 'Norris, Chuck (* 10.03.1940)'
 
-    expect(page).not_to have_content 'freigegeben'
+    expect(page).not_to have_content 'Vidiert'
     click_button 'Vidieren'
 
     expect(page).not_to have_button 'Vidieren'
+    expect(page).to have_content 'Vidiert'
 
     report.reload
     expect(report).to be_verified
