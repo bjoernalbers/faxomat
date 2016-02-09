@@ -174,10 +174,10 @@ class ReportPdf
 
   def set_default_font
     font_families.update 'DejaVuSans' => {
-      normal:      Rails.root + 'app/fonts/dejavu-sans/DejaVuSans.ttf',
-      italic:      Rails.root + 'app/fonts/dejavu-sans/DejaVuSans-Oblique.ttf',
-      bold:        Rails.root + 'app/fonts/dejavu-sans/DejaVuSans-Bold.ttf',
-      bold_italic: Rails.root + 'app/fonts/dejavu-sans/DejaVuSans-BoldOblique.ttf'
+      normal:      Rails.root + 'app/fonts/dejavu/DejaVuSans.ttf',
+      italic:      Rails.root + 'app/fonts/dejavu/DejaVuSans-Oblique.ttf',
+      bold:        Rails.root + 'app/fonts/dejavu/DejaVuSans-Bold.ttf',
+      bold_italic: Rails.root + 'app/fonts/dejavu/DejaVuSans-BoldOblique.ttf'
     }
     font 'DejaVuSans'
   end
