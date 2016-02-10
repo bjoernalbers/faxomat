@@ -23,5 +23,6 @@
 
 # Ignore site-specific deployment configuration
 /config/deploy
+/config/database.yml
 
 /.capistrano

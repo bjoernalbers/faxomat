@@ -39,6 +39,26 @@ set :services, %w(app check)
 # set :keep_releases, 5
 
 namespace :deploy do
+  namespace :check do
+    # This stuff here is only used for the first deployment (a.k.a. "cold
+    # start") in order to get the beast running.
+    # We just have to make sure that the linked files do exist.
+    task :linked_files => %w(config/database.yml db/production.sqlite3 .env)
+
+    remote_file 'config/database.yml' => 'config/database.yml.sample', roles: :app
+    # NOTE: The local file (second argument) must have a different path or we'd
+    # get circular dependency errors.
+    # Therefore we use a './' prefix here.
+    remote_file 'db/production.sqlite3' => './db/production.sqlite3', roles: :db
+    remote_file '.env' => 'env.sample', roles: :app
+
+    file './db/production.sqlite3' do
+      unless identical? 'config/database.yml', 'config/database.yml.sample'
+        fail 'No, we do not setup a production database when config/database.yml was changed!'
+      end
+      sh 'RAILS_ENV=production bin/rake db:setup'
+    end
+  end
 
   desc 'Restart application'
   task :restart do
@@ -49,14 +69,4 @@ namespace :deploy do
   end
 
   after :publishing, :restart
-
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
-    end
-  end
-
 end
