@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160120094742) do
+ActiveRecord::Schema.define(version: 20160216140859) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20160120094742) do
     t.datetime "document_updated_at"
     t.integer  "status"
     t.integer  "report_id"
+    t.integer  "cups_job_id",                       null: false
   end
 
   create_table "letters", force: :cascade do |t|
@@ -58,18 +59,6 @@ ActiveRecord::Schema.define(version: 20160120094742) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
-
-  create_table "print_jobs", force: :cascade do |t|
-    t.integer  "cups_job_id",                             null: false
-    t.string   "cups_job_status", limit: 255
-    t.integer  "fax_id",                                  null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "status",                      default: 0, null: false
-  end
-
-  add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
-  add_index "print_jobs", ["fax_id"], name: "index_print_jobs_on_fax_id"
 
   create_table "recipients", force: :cascade do |t|
     t.string   "first_name"

@@ -6,7 +6,6 @@ class Fax < ActiveRecord::Base
 
   belongs_to :fax_number
   belongs_to :report
-  has_many :print_jobs, dependent: :destroy
 
   has_attached_file :document,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
@@ -24,7 +23,6 @@ class Fax < ActiveRecord::Base
     format: {with: FaxNumber::AREA_CODE_REGEX, message: 'has no area code'}
 
   before_save :assign_fax_number
-  before_save :set_status
   before_destroy :check_if_aborted
 
   def self.updated_today
@@ -122,16 +120,6 @@ class Fax < ActiveRecord::Base
 
   def assign_fax_number
     self.fax_number = FaxNumber.find_or_create_by!(phone: phone)
-  end
-
-  def set_status
-    self.status =
-      case
-      when print_jobs.empty?             then nil
-      when print_jobs.active.present?    then :active
-      when print_jobs.completed.present? then :completed
-      else                                    :aborted
-      end
   end
 
   def check_if_aborted
