@@ -2,7 +2,7 @@ describe Printer do
   let(:printer) { Printer.new(printer_name: 'Fax') }
 
   describe '#print' do
-    let(:fax) { create(:fax) }
+    let(:fax) { build(:fax) }
     let(:cups_job) { double('cups_job') }
 
     before do
@@ -34,12 +34,8 @@ describe Printer do
         allow(cups_job).to receive(:print).and_return(true)
       end
 
-      it 'creates print job with CUPS jobs id' do
-        expect {
-          printer.print(fax)
-        }.to change(fax.print_jobs, :count).by(1)
-        print_job = fax.print_jobs.find_by(cups_job_id: cups_job.job_id)
-        expect(print_job).not_to be nil
+      it 'returns CUPS job ID' do
+        expect(printer.print(fax)).to eq cups_job.job_id
       end
     end
 
@@ -48,15 +44,14 @@ describe Printer do
         allow(cups_job).to receive(:print).and_return(false)
       end
 
-      it 'creates no print job' do
-        expect{ printer.print(fax) }.to raise_error
-        expect(fax.print_jobs).to be_empty
+      it 'returns false' do
+        expect(printer.print(fax)).to be false
       end
     end
   end
 
   describe '#check' do
-    let(:print_job) { create(:print_job) }
+    let(:fax) { build(:fax) }
 
     before do
       allow(printer).to receive(:cups_job_statuses) { { } }
@@ -64,14 +59,14 @@ describe Printer do
 
     it 'updates cups_job_status of print jobs' do
       allow(printer).to receive(:cups_job_statuses).and_return(
-        { print_job.cups_job_id => 'completed' }
+        { fax.cups_job_id => 'completed' }
       )
-      printer.check [print_job]
-      expect(print_job.cups_job_status).to eq 'completed'
+      printer.check [fax]
+      expect(fax).to be_completed
     end
 
     it 'calls cups_job_status only once' do
-      printer.check [print_job, print_job]
+      printer.check [fax, fax]
       expect(printer).to have_received(:cups_job_statuses).once
     end
   end

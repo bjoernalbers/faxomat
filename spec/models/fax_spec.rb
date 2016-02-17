@@ -18,6 +18,94 @@ describe Fax do
     expect(build(:aborted_fax)).to be_aborted
   end
 
+  it 'does not validate presence of cups_job_id' do
+    expect(fax).not_to validate_presence_of(:cups_job_id)
+  end
+
+  it 'validates uniqueness of cups_job_id when present' do
+    expect(fax).to validate_uniqueness_of(:cups_job_id)
+  end
+
+  context 'when valid and saved' do
+    let(:printer) { double(:printer) }
+    let(:cups_job_id_from_printer) { 98716 }
+    let(:fax) { build(:fax) }
+
+    before do
+      allow(printer).to receive(:print).and_return(cups_job_id_from_printer)
+      allow(fax).to receive(:printer).and_return(printer)
+    end
+
+    context 'with cups_job_id' do
+      let(:fax) { build(:fax, cups_job_id: 458731, status: :completed) }
+
+      before do
+        fax.save!
+      end
+
+      it 'does not get printed' do
+        expect(printer).not_to have_received(:print)
+      end
+
+      it 'is persisted' do
+        expect(fax).to be_persisted
+      end
+
+      it 'stores assigned cups_job_id' do
+        expect(fax.cups_job_id).to eq 458731
+      end
+
+      it 'does not overwrite status as active' do
+        expect(fax).to be_completed
+      end
+    end
+
+    context 'without cups_job_id' do
+      let(:fax) { build(:fax, cups_job_id: nil, status: :completed) }
+
+      before do
+        fax.save!
+      end
+
+      it 'gets printed' do
+        expect(printer).to have_received(:print).with(fax)
+      end
+
+      it 'stores cups_job_id from printer' do
+        expect(fax.cups_job_id).to eq cups_job_id_from_printer
+      end
+
+      it 'overwrites status as active' do
+        expect(fax).to be_active
+      end
+
+      it 'is persisted' do
+        expect(fax).to be_persisted
+      end
+    end
+
+    context 'without cups_job_id but failed print' do
+      let(:fax) { build(:fax, cups_job_id: nil, status: :completed) }
+
+      before do
+        allow(printer).to receive(:print).and_return(nil)
+        fax.save
+      end
+
+      it 'is not persisted' do
+        expect(fax).not_to be_persisted
+      end
+
+      it 'is not active' do
+        expect(fax).not_to be_active
+      end
+
+      it 'contains an error' do
+        expect(fax.errors[:base]).to be_present
+      end
+    end
+  end
+
   it { expect(fax).to belong_to(:report) }
 
   describe '.count_by_status' do

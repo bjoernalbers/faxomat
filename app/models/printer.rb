@@ -12,18 +12,14 @@ class Printer
   # Print (deliver) the fax.
   def print(fax)
     cups_job = build_cups_job(fax)
-    if cups_job.print
-      fax.print_jobs.create!(cups_job_id: cups_job.job_id)
-    else
-      fail "could not print fax: #{fax}"
-    end
+    cups_job.print ? cups_job.job_id : false
   end
 
-  # Update CUPS job statuses on print jobs.
-  def check(print_jobs)
+  # Update CUPS job statuses on faxes.
+  def check(faxes)
     statuses = cups_job_statuses
-    print_jobs.each do |print_job|
-      print_job.update! cups_job_status: statuses[print_job.cups_job_id]
+    faxes.each do |fax|
+      fax.update! status: statuses[fax.cups_job_id]
     end
   end
 

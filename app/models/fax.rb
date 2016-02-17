@@ -13,6 +13,9 @@ class Fax < ActiveRecord::Base
   validates :title,
     presence: true
 
+  validates :cups_job_id,
+    uniqueness: true
+
   validates_attachment :document,
     presence: true,
     content_type: { content_type: 'application/pdf' }
@@ -23,6 +26,7 @@ class Fax < ActiveRecord::Base
     format: {with: FaxNumber::AREA_CODE_REGEX, message: 'has no area code'}
 
   before_save :assign_fax_number
+  before_save :print, unless: :cups_job_id
   before_destroy :check_if_aborted
 
   def self.updated_today
@@ -74,6 +78,10 @@ class Fax < ActiveRecord::Base
     Printer.new.print(self)
   end
 
+  def printer
+    # TODO: Implement!
+  end
+
   def phone
     @phone ? @phone.gsub(/[^0-9]/, '') : fax_number.try(:phone)
   end
@@ -120,6 +128,16 @@ class Fax < ActiveRecord::Base
 
   def assign_fax_number
     self.fax_number = FaxNumber.find_or_create_by!(phone: phone)
+  end
+
+  # Actually print the fax / print_job.
+  def print
+    if self.cups_job_id = printer.print(self)
+      self.status = :active
+    else
+      errors.add(:base, 'Druckauftrag konnte nicht erzeugt werden.')
+      return false
+    end
   end
 
   def check_if_aborted
