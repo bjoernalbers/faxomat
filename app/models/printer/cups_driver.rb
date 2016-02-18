@@ -12,13 +12,7 @@ class Printer::CupsDriver
   # Print (deliver) the fax.
   def print(fax)
     cups_job = build_cups_job(fax)
-    if cups_job.print
-      job_id = cups_job.job_id
-      raise "print job is zero" if job_id.zero?
-      job_id
-    else
-      false
-    end
+    cups_job.print ? cups_job.job_id : false
   end
 
   # Update CUPS job statuses on faxes.
