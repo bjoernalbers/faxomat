@@ -331,20 +331,6 @@ describe Fax do
     end
   end
 
-  describe '#deliver' do
-    let(:printer) { double(:printer) }
-
-    before do
-      allow(Printer).to receive(:new).and_return(printer)
-      allow(printer).to receive(:print)
-    end
-
-    it 'prints itself' do
-      fax.deliver
-      expect(printer).to have_received(:print).with(fax)
-    end
-  end
-
   describe '#document' do
     it 'allows to attach documents' do
       filename = File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')

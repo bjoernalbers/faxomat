@@ -3,11 +3,6 @@
 # In order to save money
 
 feature 'Report delivery as fax' do
-  before do
-    # Disable fax delivery!
-    allow_any_instance_of(Fax).to receive(:deliver)
-  end
-
   let(:user) { create(:user) }
   let(:send_fax) { 'Fax senden' }
 

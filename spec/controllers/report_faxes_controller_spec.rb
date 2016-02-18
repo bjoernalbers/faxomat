@@ -8,11 +8,6 @@ describe ReportFaxesController do
     user
   end
 
-  before do
-    # Disable fax delivery!
-    allow_any_instance_of(Fax).to receive(:deliver)
-  end
-
   describe 'POST #create' do
     context 'with valid params' do
       let(:report) { create(:verified_report) }

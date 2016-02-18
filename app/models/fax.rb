@@ -73,15 +73,6 @@ class Fax < ActiveRecord::Base
     result
   end
 
-  # Deliver the fax.
-  def deliver
-    Printer.new.print(self)
-  end
-
-  def printer
-    # TODO: Implement!
-  end
-
   def phone
     @phone ? @phone.gsub(/[^0-9]/, '') : fax_number.try(:phone)
   end
@@ -96,6 +87,10 @@ class Fax < ActiveRecord::Base
   end
 
   private
+
+  def printer
+    @printer ||= Printer.new
+  end
 
   # Helper class to strip down a search query string.
   class Query

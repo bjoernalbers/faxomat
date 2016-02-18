@@ -17,15 +17,10 @@ describe ReportFaxer do
   end
 
   describe '#deliver' do
-    let(:fax) { double('fax') }
     let(:report_pdf_file) { double('report_pdf_file') }
 
     before do
-      allow(fax).to receive(:deliver)
-      allow_any_instance_of(Fax).to receive(:deliver)
-
       allow(report_pdf_file).to receive(:close!)
-
       allow(report_faxer).to receive(:report_title).and_return('chunky bacon')
       allow(report_faxer).to receive(:recipient_fax_number).and_return('0123456789')
       allow(report_faxer).to receive(:report_pdf_file).and_return(report_pdf_file)
@@ -47,18 +42,6 @@ describe ReportFaxer do
       fax = report.faxes.last
       expect(fax.title).to eq report_faxer.report_title
       expect(fax.phone).to eq report_faxer.recipient_fax_number
-    end
-
-    it 'delivers fax' do
-      allow(report_faxer).to receive(:fax).and_return(fax)
-      report_faxer.deliver
-      expect(fax).to have_received(:deliver)
-    end
-
-    it 'deletes report_pdf_file' do
-      allow(report_faxer).to receive(:fax).and_return(fax)
-      report_faxer.deliver
-      expect(report_pdf_file).to have_received(:close!)
     end
   end
 

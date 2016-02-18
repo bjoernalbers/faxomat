@@ -11,12 +11,6 @@ describe 'Create Fax' do
     }
   end
 
-  before do
-    printer = double(:printer)
-    allow(Printer).to receive(:new).and_return(printer)
-    allow(printer).to receive(:print)
-  end
-
   context 'with valid params' do
     let(:params) do
       {
@@ -52,15 +46,6 @@ describe 'Create Fax' do
       do_post
       fax = Fax.first
       expect(File.read(fax.document.path)).to eq File.read(path)
-      #expect(Fax.count).to eq 1
-      #expect(Fax.first.document.path).to_not be_nil
-    end
-
-    it 'delivers fax' do
-      fax = double(:fax, save: true, deliver: nil)
-      allow(Fax).to receive(:new).and_return(fax)
-      do_post
-      expect(fax).to have_received(:deliver)
     end
   end
 
