@@ -57,17 +57,61 @@ describe Printer::CupsDriver do
       allow(printer).to receive(:cups_job_statuses) { { } }
     end
 
-    it 'updates cups_job_status of print jobs' do
-      allow(printer).to receive(:cups_job_statuses).and_return(
-        { fax.cups_job_id => 'completed' }
-      )
-      printer.check [fax]
-      expect(fax).to be_completed
-    end
-
     it 'calls cups_job_status only once' do
       printer.check [fax, fax]
       expect(printer).to have_received(:cups_job_statuses).once
+    end
+
+    context 'when cups returns "completed"' do
+      before do
+        allow(printer).to receive(:cups_job_statuses).and_return(
+          { fax.cups_job_id => 'completed' }
+        )
+      end
+
+      it 'sets fax status to "completed"' do
+        printer.check [fax]
+        expect(fax).to be_completed
+      end
+    end
+
+    context 'when cups returns "aborted"' do
+      before do
+        allow(printer).to receive(:cups_job_statuses).and_return(
+          { fax.cups_job_id => 'aborted' }
+        )
+      end
+
+      it 'sets fax status to "aborted"' do
+        printer.check [fax]
+        expect(fax).to be_aborted
+      end
+    end
+
+    context 'when cups returns "cancelled"' do
+      before do
+        allow(printer).to receive(:cups_job_statuses).and_return(
+          { fax.cups_job_id => 'cancelled' }
+        )
+      end
+
+      it 'sets fax status to "aborted"' do
+        printer.check [fax]
+        expect(fax).to be_aborted
+      end
+    end
+
+    context 'when cups returns no status' do
+      before do
+        allow(printer).to receive(:cups_job_statuses).and_return(
+          { }
+        )
+      end
+
+      it 'sets fax status to "active"' do
+        printer.check [fax]
+        expect(fax).to be_active
+      end
     end
   end
 

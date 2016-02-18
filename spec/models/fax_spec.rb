@@ -245,10 +245,12 @@ describe Fax do
 
   describe '.check' do
     it 'updates active print jobs' do
-      # TODO: Test!
-      #allow(PrintJob).to receive(:update_active)
-      #Fax.check
-      #expect(PrintJob).to have_received(:update_active)
+      printer = double('printer')
+      allow(printer).to receive(:check)
+      allow(Printer).to receive(:new).and_return(printer)
+      allow(Fax).to receive(:active).and_return( [fax] )
+      Fax.check
+      expect(printer).to have_received(:check).with( [fax] )
     end
   end
 

@@ -19,7 +19,13 @@ class Printer::CupsDriver
   def check(faxes)
     statuses = cups_job_statuses
     faxes.each do |fax|
-      fax.update! status: statuses[fax.cups_job_id]
+      status =
+        case statuses[fax.cups_job_id]
+        when 'completed'            then :completed
+        when 'aborted', 'cancelled' then :aborted
+        else                             :active
+        end
+      fax.update! status: status
     end
   end
 

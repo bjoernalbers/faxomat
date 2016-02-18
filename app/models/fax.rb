@@ -47,7 +47,7 @@ class Fax < ActiveRecord::Base
 
   # Update active print jobs.
   def self.check
-    PrintJob.update_active
+    Printer.new.check(self.active)
   end
 
   def self.search(params)
