@@ -14,7 +14,7 @@ class MergePrintJobsIntoFaxes < ActiveRecord::Migration
       last_print_job = PrintJob.where(fax_id: fax.id).order(:created_at).last
       fax.update_columns(
         status:      last_print_job.status,
-        cups_job_id: last_print_job.cups_job_id)
+        cups_job_id: last_print_job.cups_job_id) unless last_print_job.nil?
     end
     change_column :faxes, :cups_job_id, :integer, unique: true, null: false
     
