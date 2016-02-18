@@ -39,17 +39,6 @@ describe Printer::CupsDriver do
       end
     end
 
-    context 'when printed successfully but job_id is still zero' do
-      before do
-        allow(cups_job).to receive(:print).and_return(true)
-        allow(cups_job).to receive(:job_id).and_return(0, 0, 61623)
-      end
-
-      it 'retries untill not zero' do
-        expect(printer.print(fax)).to eq 61623
-      end
-    end
-
     context 'when not printed successfully' do
       before do
         allow(cups_job).to receive(:print).and_return(false)
