@@ -22,7 +22,6 @@ class ReportsController < ApplicationController
   def update
     load_user_report
     if @report.update(report_params)
-      #@report.deliver_as_fax unless @report.recipient.fax_number.nil? # TODO: Find a better way to fax!
       redirect_to @report, notice: "Arztbrief erfolgreich aktualisiert."
     else
       render :show
@@ -51,8 +50,8 @@ class ReportsController < ApplicationController
   def reports
     if params[:pending] == 'false'
       current_user.reports.verified
-    elsif params[:undelivered] == 'true'
-      Report.not_delivered
+    elsif params[:unsent] == 'true'
+      Report.unsent
     else
       current_user.reports.pending
     end

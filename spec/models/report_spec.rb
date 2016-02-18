@@ -173,60 +173,60 @@ describe Report do
     end
   end
 
-  describe '.not_delivered' do
+  describe '.unsent' do
     it 'excludes pending reports' do
       report = create(:pending_report)
-      expect(Report.not_delivered).not_to include report
+      expect(Report.unsent).not_to include report
     end
 
     it 'excludes canceled reports' do
       report = create(:canceled_report)
-      expect(Report.not_delivered).not_to include report
+      expect(Report.unsent).not_to include report
     end
 
     it 'excludes verified reports with letter' do
       report = create(:verified_report)
       create(:letter, report: report)
-      expect(Report.not_delivered).not_to include report
+      expect(Report.unsent).not_to include report
     end
 
     it 'includes verified reports with active fax' do
       report = create(:verified_report)
       create(:active_fax, report: report)
-      expect(Report.not_delivered).to include report
+      expect(Report.unsent).to include report
     end
 
     it 'includes verified reports with aborted fax' do
       report = create(:verified_report)
       create(:aborted_fax, report: report)
-      expect(Report.not_delivered).to include report
+      expect(Report.unsent).to include report
     end
 
     it 'excludes reports with completed fax' do
       report = create(:verified_report)
       create(:completed_fax, report: report)
-      expect(Report.not_delivered).not_to include report
+      expect(Report.unsent).not_to include report
     end
   end
 
-  describe '#delivered?' do
+  describe '#sent?' do
     let(:report) { create(:verified_report) }
 
     context 'without letter' do
       it 'and without fax is false' do
         expect(report.faxes).to be_empty
-        expect(report).not_to be_delivered
+        expect(report).not_to be_sent
       end
 
       it 'and without completed fax is false' do
         create(:active_fax, report: report)
         create(:aborted_fax, report: report)
-        expect(report).not_to be_delivered
+        expect(report).not_to be_sent
       end
 
       it 'and completed fax is true' do
         create(:completed_fax, report: report)
-        expect(report).to be_delivered
+        expect(report).to be_sent
       end
     end
 
@@ -236,7 +236,7 @@ describe Report do
       end
 
       it 'is true' do
-        expect(report).to be_delivered
+        expect(report).to be_sent
       end
     end
   end

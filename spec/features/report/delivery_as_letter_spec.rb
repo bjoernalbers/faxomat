@@ -25,11 +25,11 @@ feature 'Report delivery as letter' do
     expect(page).to have_content sent_as_letter
   end
 
-  scenario 'on undelivered reports page' do
+  scenario 'on unsent reports page' do
     report = create(:verified_report, user: user)
-    expect(report).not_to be_delivered
+    expect(report).not_to be_sent
     visit reports_url
-    click_link 'Unversendet'
+    click_link 'Ungesendet'
     expect(page).to have_content(report.subject)
   end
 end

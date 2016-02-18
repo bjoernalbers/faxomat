@@ -7,8 +7,8 @@
   <li role="presentation" class=<%= 'active' if params[:pending] == 'false' %>>
     <%= link_to 'Vidiert', reports_path(pending: false) %>
   </li>
-  <li role="presentation" class=<%= 'active' if params[:undelivered] == 'true' %>>
-    <%= link_to 'Unversendet', reports_path(undelivered: true) %>
+  <li role="presentation" class=<%= 'active' if params[:unsent] == 'true' %>>
+    <%= link_to 'Ungesendet', reports_path(unsent: true) %>
   </li>
 </ul>
 

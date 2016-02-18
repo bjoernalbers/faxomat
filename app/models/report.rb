@@ -13,7 +13,7 @@ class Report < ActiveRecord::Base
 
   scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
   scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
-  scope :not_delivered, -> { verified.without_letter.without_completed_fax }
+  scope :unsent, -> { verified.without_letter.without_completed_fax }
   # Taken from: http://stackoverflow.com/questions/5319400/want-to-find-records-with-no-associated-records-in-rails-3
   scope :without_letter, -> { includes(:letter).where(letters: { report_id: nil }) }
   scope :without_completed_fax, -> { where.not(id: Fax.completed.select(:report_id)) }
@@ -58,7 +58,7 @@ class Report < ActiveRecord::Base
     ReportFaxer.deliver(self)
   end
 
-  def delivered?
+  def sent?
     letter.present? || faxes.completed.present?
   end
 
