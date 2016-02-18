@@ -26,7 +26,8 @@ class Fax < ActiveRecord::Base
     format: {with: FaxNumber::AREA_CODE_REGEX, message: 'has no area code'}
 
   before_save :assign_fax_number
-  before_save :print, unless: :cups_job_id
+  #NOTE: This does not work since #attachments are only persisted and available after(!) save!
+  #before_save :print, unless: :cups_job_id
   before_destroy :check_if_aborted
 
   def self.updated_today

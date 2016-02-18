@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160216140859) do
+ActiveRecord::Schema.define(version: 20160218215147) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -32,8 +32,10 @@ ActiveRecord::Schema.define(version: 20160216140859) do
     t.datetime "document_updated_at"
     t.integer  "status"
     t.integer  "report_id"
-    t.integer  "cups_job_id",                       null: false
+    t.integer  "cups_job_id"
   end
+
+  add_index "faxes", ["cups_job_id"], name: "index_faxes_on_cups_job_id", unique: true
 
   create_table "letters", force: :cascade do |t|
     t.integer  "report_id",             null: false
