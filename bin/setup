@@ -7,7 +7,9 @@ APP_ROOT = Pathname.new File.expand_path('../../',  __FILE__)
 Dir.chdir APP_ROOT do
   puts "== Installing dependencies =="
   system "gem install bundler --conservative"
-  system "bundle check || bundle install"
+  # NOTE: ARCHFLAGS are required to build "pg" native extensions
+  # (see: http://www.uponmyshoulder.com/blog/2011/cant-find-the-postgresql-client-library-libpq/)
+  system "bundle check || ARCHFLAGS='-arch x86_64' bundle install"
 
   puts "\n== Copying sample files =="
   unless File.exist?("config/database.yml")

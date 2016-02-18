@@ -34,6 +34,10 @@ set :services, %w(app check)
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
+#
+# NOTE: ARCHFLAGS are required to build "pg" native extensions
+# (see: http://www.uponmyshoulder.com/blog/2011/cant-find-the-postgresql-client-library-libpq/)
+set :default_env, { 'ARCHFLAGS' => '"-arch x86_64"' }
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
