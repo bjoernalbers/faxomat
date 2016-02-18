@@ -13,15 +13,13 @@ class Printer::CupsDriver
   def print(fax)
     cups_job = build_cups_job(fax)
     if cups_job.print
-      Rails.logger.info 'Successfully send print job to CUPS.'
+      # Wait for the CUPS job ID to be set.
       loop do
         sleep 0.1
         job_id = cups_job.job_id
         return job_id unless job_id.zero?
-        Rails.logger.warn 'SHIT: Got a zero Job ID from CUPS!'
       end
     else
-      Rails.logger.warn 'Failed to send print job to CUPS.'
       false
     end
   end
