@@ -101,31 +101,4 @@ describe FaxesController do
       end
     end
   end
-
-  describe 'PATCH #deliver' do
-    let(:fax) { double(:fax) }
-
-    before do
-      allow(Fax).to receive(:find).and_return(fax)
-      allow(fax).to receive(:deliver)
-
-      patch :deliver, id: '42'
-    end
-
-    it 'loads fax' do
-      expect(Fax).to have_received(:find).with('42')
-    end
-
-    it 'assigns fax' do
-      expect(assigns(:fax)).to eq fax
-    end
-
-    it 'delivers fax' do
-      expect(fax).to have_received(:deliver)
-    end
-
-    it 'redirect to aborted faxes' do
-      expect(response).to redirect_to(aborted_faxes_path)
-    end
-  end
 end

@@ -65,13 +65,6 @@ class FaxesController < ApplicationController
     end
   end
 
-  def deliver
-    @fax = Fax.find(params[:id])
-    @fax.deliver
-    redirect_to aborted_faxes_path
-    #render nothing: true # TODO: Remove!
-  end
-
   private
 
   def fax_params
