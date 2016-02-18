@@ -3,7 +3,7 @@ class Printer
   class << self
     # Returns CUPS driver if not set.
     def default_driver_class
-      @default_driver_class || CupsDriver
+      @default_driver_class || Printer::CupsDriver
     end
 
     # Set default driver.
