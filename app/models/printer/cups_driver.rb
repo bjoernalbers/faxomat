@@ -13,9 +13,12 @@ class Printer::CupsDriver
   def print(fax)
     cups_job = build_cups_job(fax)
     if cups_job.print
-      job_id = cups_job.job_id
-      raise "print job is zero" if job_id.zero?
-      job_id
+      # Wait for the CUPS job ID to be set.
+      loop do
+        sleep 0.1
+        job_id = cups_job.job_id
+        return job_id unless job_id.zero?
+      end
     else
       false
     end
