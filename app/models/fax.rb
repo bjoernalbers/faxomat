@@ -13,8 +13,9 @@ class Fax < ActiveRecord::Base
   validates :title,
     presence: true
 
-  validates :cups_job_id,
-    uniqueness: true
+  validates_uniqueness_of :cups_job_id, allow_nil: true
+  validates_presence_of :cups_job_id, if: :status
+  validates_absence_of :cups_job_id, unless: :status
 
   validates_attachment :document,
     presence: true,

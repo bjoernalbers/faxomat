@@ -18,12 +18,35 @@ describe Fax do
     expect(build(:aborted_fax)).to be_aborted
   end
 
-  it 'does not validate presence of cups_job_id' do
-    expect(fax).not_to validate_presence_of(:cups_job_id)
-  end
+  describe '#cups_job_id' do
+    context 'without status' do
+      let(:fax) { build(:fax, status: nil) }
 
-  it 'validates uniqueness of cups_job_id when present' do
-    expect(fax).to validate_uniqueness_of(:cups_job_id)
+      it { expect(fax).to validate_absence_of(:cups_job_id) }
+
+      context 'and when nil but non-unique' do
+        before do
+          create(:fax, status: nil, cups_job_id: nil)
+          fax.cups_job_id = nil
+        end
+
+        it 'is valid' do
+          expect(fax).to be_valid
+        end
+
+        it 'can be saved' do
+          expect{ fax.save!(validate: false) }.not_to raise_error
+        end
+      end
+    end
+
+    context 'with status' do
+      let(:fax) { build(:fax, status: :active) }
+
+      it { expect(fax).to validate_presence_of(:cups_job_id) }
+
+      it { expect(fax).to validate_uniqueness_of(:cups_job_id) }
+    end
   end
 
   context 'when valid and saved' do
