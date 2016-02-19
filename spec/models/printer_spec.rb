@@ -40,17 +40,14 @@ describe Printer do
   end
 
   describe '#print' do
-    let(:fax) { build(:fax) }
-    let(:driver) { double('driver') }
+    let(:fax) { create(:fax, cups_job_id: nil, status: nil) }
 
-    before do
-      allow(printer).to receive(:driver).and_return(driver)
-    end
-
-    it 'calls print on the default driver' do
-      allow(driver).to receive(:print).and_return 78933
-      expect(printer.print(fax)).to eq 78933
-      expect(driver).to have_received(:print).with(fax)
+    it 'updates the fax' do
+      printer.print(fax)
+      fax.reload
+      #expect(fax.cups_job_id).to eq 78933
+      expect(fax.cups_job_id).to be_present
+      expect(fax).to be_active
     end
   end
 

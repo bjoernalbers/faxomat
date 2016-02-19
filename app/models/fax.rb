@@ -27,8 +27,11 @@ class Fax < ActiveRecord::Base
     format: {with: FaxNumber::AREA_CODE_REGEX, message: 'has no area code'}
 
   before_save :assign_fax_number
-  #NOTE: This does not work since #attachments are only persisted and available after(!) save!
+
+  #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
   #before_save :print, unless: :cups_job_id
+  after_commit :print, on: :create # TODO: Test this!
+
   before_destroy :check_if_aborted
 
   def self.updated_today
@@ -88,6 +91,11 @@ class Fax < ActiveRecord::Base
     document.path
   end
 
+  # TODO: Test this!
+  def print
+    printer.print(self)
+  end
+
   private
 
   def printer
@@ -125,16 +133,6 @@ class Fax < ActiveRecord::Base
 
   def assign_fax_number
     self.fax_number = FaxNumber.find_or_create_by!(phone: phone)
-  end
-
-  # Actually print the fax / print_job.
-  def print
-    if self.cups_job_id = printer.print(self)
-      self.status = :active
-    else
-      errors.add(:base, 'Druckauftrag konnte nicht erzeugt werden.')
-      return false
-    end
   end
 
   def check_if_aborted

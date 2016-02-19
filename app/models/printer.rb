@@ -19,8 +19,10 @@ class Printer
   end
 
   # Print the print job.
-  def print(print_job)
-    driver.print(print_job)
+  def print(fax)
+    fax = Fax.find(fax.id)
+    cups_job_id = driver.print(fax)
+    fax.update cups_job_id: cups_job_id, status: :active
   end
 
   # Update print jobs.
