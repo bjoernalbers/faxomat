@@ -49,6 +49,36 @@ describe Fax do
     end
   end
 
+  context 'when saved without cups_job_id and status' do
+    let(:fax) { build(:fax, cups_job_id: nil, status: nil) }
+    let(:printer) { double('printer') }
+
+    before do
+      allow(fax).to receive(:printer).and_return(printer)
+      allow(printer).to receive(:print)
+    end
+
+    it 'prints itself' do
+      fax.save!
+      expect(printer).to have_received(:print).with(fax)
+    end
+  end
+
+  context 'when saved with cups_job_id and status' do
+    let(:fax) { build(:completed_fax) }
+    let(:printer) { double('printer') }
+
+    before do
+      allow(fax).to receive(:printer).and_return(printer)
+      allow(printer).to receive(:print)
+    end
+
+    it 'does not print itself' do
+      fax.save!
+      expect(printer).not_to have_received(:print)
+    end
+  end
+
   context 'when valid and saved' do
     let(:printer) { double(:printer) }
     let(:cups_job_id_from_printer) { 98716 }

@@ -30,7 +30,7 @@ class Fax < ActiveRecord::Base
 
   #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
   #before_save :print, unless: :cups_job_id
-  after_commit :print, on: :create # TODO: Test this!
+  after_commit :print, on: :create, unless: :cups_job_id
 
   before_destroy :check_if_aborted
 
