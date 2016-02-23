@@ -11,7 +11,7 @@ class ReportFaxer
 
   def deliver
     if report_verified?
-      report.faxes.create(
+      report.print_jobs.create(
         title:    report_title,
         phone:    recipient_fax_number,
         document: report_pdf_file)

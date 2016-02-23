@@ -1,0 +1,21 @@
+<div class='container'>
+<h1>Fax-Bericht</h1>
+<p>Erstellt: <%= Time.zone.now %></p>
+
+<table>
+  <tr>
+    <th>Druckauftrag</th>
+    <th>Empfänger</th>
+    <th>Erstellt</th>
+    <th>Status</th>
+  </tr>
+  <% @print_jobs.each do |print_job| %>
+    <%= content_tag_for(:tr, print_job, class: print_job.state) do %>
+      <%= content_tag(:td, print_job.title, class: 'title') %>
+      <%= content_tag(:td, print_job.phone, class: 'phone') %>
+      <%= content_tag(:td, print_job.created_at.to_date, class: 'created_at') %>
+      <%= content_tag(:td, print_job.state, class: 'state') %>
+    <% end %>
+  <% end %>
+</table>
+</div>

@@ -2,7 +2,7 @@ class FaxNumber < ActiveRecord::Base
   MINIMUM_PHONE_LENGTH = 8
   AREA_CODE_REGEX = %r{\A0[1-9]}
 
-  has_many :faxes
+  has_many :print_jobs
 
   before_validation :strip_nondigits
 

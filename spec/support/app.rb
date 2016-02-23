@@ -1,38 +1,37 @@
-class FaxSection < SitePrism::Section
+class PrintJobSection < SitePrism::Section
   element :title, '.title'
   element :phone, '.phone'
   element :created_at, '.created_at'
   element :status, '.status'
 end
 
-class FaxesPage < SitePrism::Page
-  set_url '/faxes'
-  set_url_matcher /faxes\/?/
+class PrintJobsPage < SitePrism::Page
+  set_url '/print_jobs'
+  set_url_matcher /print_jobs\/?/
 
-  sections :faxes, FaxSection, '.fax'
+  sections :print_jobs, PrintJobSection, '.print_job'
 
-  def has_fax?(fax)
-    faxes.any? { |f| f.has_css?("#fax_#{fax.id}") }
+  def has_print_job?(print_job)
+    print_jobs.any? { |f| f.has_css?("#print_job_#{print_job.id}") }
   end
 end
 
-class AbortedFaxesPage < FaxesPage
-  set_url '/faxes/aborted'
-  set_url_matcher /faxes\/aborted\/?/
+class AbortedPrintJobsPage < PrintJobsPage
+  set_url '/print_jobs/aborted'
+  set_url_matcher /print_jobs\/aborted\/?/
 end
 
-class SearchFaxesPage < FaxesPage
-  #set_url '/faxes/search{?q*}'
-  set_url '/faxes/search{?title*}'
-  set_url_matcher /faxes\/search\/?/
+class SearchPrintJobsPage < PrintJobsPage
+  set_url '/print_jobs/search{?title*}'
+  set_url_matcher /print_jobs\/search\/?/
 end
 
 class App
-  def faxes_page
-    FaxesPage.new
+  def print_jobs_page
+    PrintJobsPage.new
   end
 
-  def aborted_faxes_page
-    AbortedFaxesPage.new
+  def aborted_print_jobs_page
+    AbortedPrintJobsPage.new
   end
 end

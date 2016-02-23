@@ -1,19 +1,19 @@
 feature 'navigation' do
-  scenario 'active faxes' do
+  scenario 'active print jobs' do
     app = App.new
 
     visit '/'
-    click_link 'Faxe in Versendung'
+    click_link 'Aktive Druckaufträge'
 
-    expect(app.faxes_page).to be_displayed
+    expect(app.print_jobs_page).to be_displayed
   end
 
-  scenario 'aborted faxes' do
+  scenario 'aborted print jobs' do
     app = App.new
 
     visit '/'
-    click_link 'Abgebrochene Faxe'
+    click_link 'Abgebrochene Druckaufträge'
 
-    expect(app.aborted_faxes_page).to be_displayed
+    expect(app.aborted_print_jobs_page).to be_displayed
   end
 end

@@ -17,10 +17,10 @@ describe ReportFaxesController do
       end
 
       it 'creates fax for report' do
-        expect(report.faxes).to be_empty
+        expect(report.print_jobs).to be_empty
         do_post
         report.reload
-        expect(report.faxes).not_to be_empty
+        expect(report.print_jobs).not_to be_empty
       end
 
       it 'redirects to report' do

@@ -37,9 +37,9 @@ describe ReportFaxer do
       report_faxer = ReportFaxer.new(report)
       expect {
         report_faxer.deliver
-      }.to change(report.faxes, :count).by(1)
+      }.to change(report.print_jobs, :count).by(1)
 
-      fax = report.faxes.last
+      fax = report.print_jobs.last
       expect(fax.title).to eq report_faxer.report_title
       expect(fax.phone).to eq report_faxer.recipient_fax_number
     end

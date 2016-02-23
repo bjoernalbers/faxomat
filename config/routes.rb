@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index]
 
-  root 'faxes#index'
+  root 'print_jobs#index'
 
   resources :reports, only: [:index, :show, :destroy, :update]
 
@@ -18,15 +18,15 @@ Rails.application.routes.draw do
   resources :report_faxes, only: [:create]
 
   #namespace :api, defaults: { format: :json } do
-  #  resources :faxes, only: [:index]
+  #  resources :print_jobs, only: [:index]
   #  resources :reports, only: [:create, :show]
   #end
   namespace :api do
-    resources :faxes, only: [:index], defaults: { format: :json }
+    resources :print_jobs, only: [:index], defaults: { format: :json }
     resources :reports, only: [:create, :show]
   end
 
-  resources :faxes, except: [:edit, :update] do
+  resources :print_jobs, except: [:edit, :update] do
     get 'aborted', on: :collection
     get 'search', on: :collection
     get 'filter', on: :collection

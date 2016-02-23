@@ -1,9 +1,9 @@
-describe 'GET /api/faxes' do
+describe 'GET /api/print_jobs' do
   let(:params)  { { } }
   let(:headers) { { 'Accept' => 'application/json' } }
 
   def do_get
-    get '/api/faxes', params, headers
+    get '/api/print_jobs', params, headers
   end
 
   def json
@@ -19,22 +19,22 @@ describe 'GET /api/faxes' do
     end
   end
 
-  it 'returns number of faxes by status' do
-    Fax.destroy_all # TODO: Fix database cleaner!
-    2.times { FactoryGirl.create(:active_fax) }
-    1.times { FactoryGirl.create(:aborted_fax) }
-    0.times { FactoryGirl.create(:completed_fax) }
+  it 'returns number of print jobs by status' do
+    PrintJob.destroy_all # TODO: Fix database cleaner!
+    2.times { FactoryGirl.create(:active_print_job) }
+    1.times { FactoryGirl.create(:aborted_print_job) }
+    0.times { FactoryGirl.create(:completed_print_job) }
     do_get
     expect(json['active']).to eq 2
     expect(json['aborted']).to eq 1
     expect(json['completed']).to eq 0
   end
 
-  it 'returns number of active faxes' do
-    7.times { FactoryGirl.create(:active_fax) }
+  it 'returns number of active print jobs' do
+    7.times { FactoryGirl.create(:active_print_job) }
     do_get
     expect(json['active']).to eq 7
   end
 
-  it 'returns number of aborted faxes'
+  it 'returns number of aborted print jobs'
 end

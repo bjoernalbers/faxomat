@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160218215147) do
+ActiveRecord::Schema.define(version: 20160222141114) do
 
   create_table "fax_numbers", force: :cascade do |t|
     t.string   "phone",      limit: 255, null: false
@@ -20,22 +20,6 @@ ActiveRecord::Schema.define(version: 20160218215147) do
   end
 
   add_index "fax_numbers", ["phone"], name: "index_fax_numbers_on_phone", unique: true
-
-  create_table "faxes", force: :cascade do |t|
-    t.integer  "fax_number_id",                     null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "title",                 limit: 255, null: false
-    t.string   "document_file_name",    limit: 255
-    t.string   "document_content_type", limit: 255
-    t.integer  "document_file_size"
-    t.datetime "document_updated_at"
-    t.integer  "status"
-    t.integer  "report_id"
-    t.integer  "cups_job_id"
-  end
-
-  add_index "faxes", ["cups_job_id"], name: "index_faxes_on_cups_job_id", unique: true
 
   create_table "letters", force: :cascade do |t|
     t.integer  "report_id",             null: false
@@ -61,6 +45,22 @@ ActiveRecord::Schema.define(version: 20160218215147) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
+
+  create_table "print_jobs", force: :cascade do |t|
+    t.integer  "fax_number_id",                     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "title",                 limit: 255, null: false
+    t.string   "document_file_name",    limit: 255
+    t.string   "document_content_type", limit: 255
+    t.integer  "document_file_size"
+    t.datetime "document_updated_at"
+    t.integer  "status"
+    t.integer  "report_id"
+    t.integer  "cups_job_id"
+  end
+
+  add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
 
   create_table "recipients", force: :cascade do |t|
     t.string   "first_name"

@@ -5,7 +5,7 @@ class ReportFaxesController < ApplicationController
   def create
     load_report
     @report.deliver_as_fax
-    redirect_to @report, notice: 'Fax wird gesendet'
+    redirect_to @report, notice: 'Druckauftrag wird gesendet.'
   end
 
   private

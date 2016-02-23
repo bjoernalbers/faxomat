@@ -1,5 +1,5 @@
-# Stores faxes.
-class Fax < ActiveRecord::Base
+# Keeps track of print jobs.
+class PrintJob < ActiveRecord::Base
   enum status: { active: 0, completed: 1, aborted: 2 }
 
   attr_writer :phone
@@ -47,7 +47,7 @@ class Fax < ActiveRecord::Base
 
   def self.count_by_status
     counts = group(:status).count
-    Hash[Fax.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
+    Hash[PrintJob.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
   end
 
   # Update active print jobs.
@@ -137,7 +137,7 @@ class Fax < ActiveRecord::Base
 
   def check_if_aborted
     unless aborted?
-      self.errors[:base] << 'Can only delete aborted faxes.'
+      self.errors[:base] << 'Nur abgebrochene Druckaufträge können gelöscht werden.'
       false
     end
   end

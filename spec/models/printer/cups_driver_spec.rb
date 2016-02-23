@@ -2,7 +2,7 @@ describe Printer::CupsDriver do
   let(:printer) { Printer::CupsDriver.new(printer_name: 'Fax') }
 
   describe '#print' do
-    let(:fax) { build(:fax) }
+    let(:print_job) { build(:print_job) }
     let(:cups_job) { double('cups_job') }
 
     before do
@@ -12,21 +12,21 @@ describe Printer::CupsDriver do
       allow(cups_job).to receive(:print) { true }
       allow(cups_job).to receive(:job_id) { 42 }
 
-      allow(fax).to receive(:path).and_return('chunky_bacon.pdf')
-      allow(fax).to receive(:phone).and_return('012456789')
+      allow(print_job).to receive(:path).and_return('chunky_bacon.pdf')
+      allow(print_job).to receive(:phone).and_return('012456789')
     end
 
-    it 'prints fax on CUPS fax printer' do
+    it 'prints print_job on CUPS print_job printer' do
       printer = Printer::CupsDriver.new(dialout_prefix: 0)
-      printer.print(fax)
+      printer.print(print_job)
       expect(Cups::PrintJob).to have_received(:new).
-        with(fax.path, printer.printer_name, {'phone' => '0' + fax.phone})
+        with(print_job.path, printer.printer_name, {'phone' => '0' + print_job.phone})
       expect(cups_job).to have_received(:print)
     end
 
     it 'sets print job title' do
-      printer.print(fax)
-      expect(cups_job).to have_received(:title=).with(fax.title)
+      printer.print(print_job)
+      expect(cups_job).to have_received(:title=).with(print_job.title)
     end
 
     context 'when printed successfully' do
@@ -35,7 +35,7 @@ describe Printer::CupsDriver do
       end
 
       it 'returns CUPS job ID' do
-        expect(printer.print(fax)).to eq cups_job.job_id
+        expect(printer.print(print_job)).to eq cups_job.job_id
       end
     end
 
@@ -45,59 +45,59 @@ describe Printer::CupsDriver do
       end
 
       it 'returns false' do
-        expect(printer.print(fax)).to be false
+        expect(printer.print(print_job)).to be false
       end
     end
   end
 
   describe '#check' do
-    let(:fax) { build(:fax) }
+    let(:print_job) { build(:print_job) }
 
     before do
       allow(printer).to receive(:cups_job_statuses) { { } }
     end
 
     it 'calls cups_job_status only once' do
-      printer.check [fax, fax]
+      printer.check [print_job, print_job]
       expect(printer).to have_received(:cups_job_statuses).once
     end
 
     context 'when cups returns "completed"' do
       before do
         allow(printer).to receive(:cups_job_statuses).and_return(
-          { fax.cups_job_id => 'completed' }
+          { print_job.cups_job_id => 'completed' }
         )
       end
 
-      it 'sets fax status to "completed"' do
-        printer.check [fax]
-        expect(fax).to be_completed
+      it 'sets print_job status to "completed"' do
+        printer.check [print_job]
+        expect(print_job).to be_completed
       end
     end
 
     context 'when cups returns "aborted"' do
       before do
         allow(printer).to receive(:cups_job_statuses).and_return(
-          { fax.cups_job_id => 'aborted' }
+          { print_job.cups_job_id => 'aborted' }
         )
       end
 
-      it 'sets fax status to "aborted"' do
-        printer.check [fax]
-        expect(fax).to be_aborted
+      it 'sets print_job status to "aborted"' do
+        printer.check [print_job]
+        expect(print_job).to be_aborted
       end
     end
 
     context 'when cups returns "cancelled"' do
       before do
         allow(printer).to receive(:cups_job_statuses).and_return(
-          { fax.cups_job_id => 'cancelled' }
+          { print_job.cups_job_id => 'cancelled' }
         )
       end
 
-      it 'sets fax status to "aborted"' do
-        printer.check [fax]
-        expect(fax).to be_aborted
+      it 'sets print_job status to "aborted"' do
+        printer.check [print_job]
+        expect(print_job).to be_aborted
       end
     end
 
@@ -108,9 +108,9 @@ describe Printer::CupsDriver do
         )
       end
 
-      it 'sets fax status to "active"' do
-        printer.check [fax]
-        expect(fax).to be_active
+      it 'sets print_job status to "active"' do
+        printer.check [print_job]
+        expect(print_job).to be_active
       end
     end
   end

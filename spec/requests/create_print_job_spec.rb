@@ -1,4 +1,4 @@
-describe 'Create Fax' do
+describe 'Create Print job' do
   let(:path) do
     File.join(File.dirname(__FILE__), '..', 'support', 'sample.pdf')
   end
@@ -14,7 +14,7 @@ describe 'Create Fax' do
   context 'with valid params' do
     let(:params) do
       {
-        fax: {
+        print_job: {
           phone:    '013456789',
           title:    'hello, world!',
           document: Rack::Test::UploadedFile.new(path, mime_type)
@@ -23,7 +23,7 @@ describe 'Create Fax' do
     end
 
     def do_post
-      post '/faxes', params, headers
+      post '/print_jobs', params, headers
     end
 
     it 'responds with HTTP 201' do
@@ -31,28 +31,28 @@ describe 'Create Fax' do
       expect( response.status ).to eq 201
     end
 
-    it 'returns the fax as JSON'
+    it 'returns the print job as JSON'
 
     it 'responds in JSON' do
       do_post
       expect( response.content_type ).to be_json
     end
 
-    it 'creates a new fax' do
-      expect{ do_post }.to change(Fax, :count).by(1)
+    it 'creates a new print job' do
+      expect{ do_post }.to change(PrintJob, :count).by(1)
     end
 
     it 'saves the content' do
       do_post
-      fax = Fax.first
-      expect(File.read(fax.document.path)).to eq File.read(path)
+      print_job = PrintJob.first
+      expect(File.read(print_job.document.path)).to eq File.read(path)
     end
   end
 
   context 'with invalid params' do
     let(:params) do
       {
-        fax: {
+        print_job: {
           phone: nil,
           document: nil
         }
@@ -60,20 +60,20 @@ describe 'Create Fax' do
     end
 
     it 'responds with HTTP 422' do
-      post '/faxes', params, headers
+      post '/print_jobs', params, headers
       expect( response.status ).to eq 422
     end
 
     it 'responds in JSON' do
-      post '/faxes', params, headers
+      post '/print_jobs', params, headers
       expect( response.content_type ).to be_json
     end
 
     it 'returns the validation errors' do
-      fax = Fax.new
-      fax.valid? # Used to populate the errors
-      post '/faxes', params, headers
-      expect(response.body).to eq fax.errors.to_json
+      print_job = PrintJob.new
+      print_job.valid? # Used to populate the errors
+      post '/print_jobs', params, headers
+      expect(response.body).to eq print_job.errors.to_json
     end
   end
 end

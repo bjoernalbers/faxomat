@@ -6,7 +6,7 @@ describe Report do
     it { expect(report).to belong_to(association) }
   end
 
-  it { expect(report).to have_many(:faxes) }
+  it { expect(report).to have_many(:print_jobs) }
 
   it { expect(report).to have_one(:letter) }
 
@@ -190,21 +190,21 @@ describe Report do
       expect(Report.unsent).not_to include report
     end
 
-    it 'includes verified reports with active fax' do
+    it 'includes verified reports with active print_job' do
       report = create(:verified_report)
-      create(:active_fax, report: report)
+      create(:active_print_job, report: report)
       expect(Report.unsent).to include report
     end
 
-    it 'includes verified reports with aborted fax' do
+    it 'includes verified reports with aborted print_job' do
       report = create(:verified_report)
-      create(:aborted_fax, report: report)
+      create(:aborted_print_job, report: report)
       expect(Report.unsent).to include report
     end
 
-    it 'excludes reports with completed fax' do
+    it 'excludes reports with completed print_job' do
       report = create(:verified_report)
-      create(:completed_fax, report: report)
+      create(:completed_print_job, report: report)
       expect(Report.unsent).not_to include report
     end
   end
@@ -213,19 +213,19 @@ describe Report do
     let(:report) { create(:verified_report) }
 
     context 'without letter' do
-      it 'and without fax is false' do
-        expect(report.faxes).to be_empty
+      it 'and without print_job is false' do
+        expect(report.print_jobs).to be_empty
         expect(report).not_to be_sent
       end
 
-      it 'and without completed fax is false' do
-        create(:active_fax, report: report)
-        create(:aborted_fax, report: report)
+      it 'and without completed print_job is false' do
+        create(:active_print_job, report: report)
+        create(:aborted_print_job, report: report)
         expect(report).not_to be_sent
       end
 
-      it 'and completed fax is true' do
-        create(:completed_fax, report: report)
+      it 'and completed print_job is true' do
+        create(:completed_print_job, report: report)
         expect(report).to be_sent
       end
     end
@@ -284,8 +284,8 @@ describe Report do
     end
   end
 
-  describe '#deliver_as_fax' do
-    it 'delivers itself as fax' do
+  describe '#deliver_as_print_job' do
+    it 'delivers itself as print_job' do
       allow(ReportFaxer).to receive(:deliver)
       report.deliver_as_fax
       expect(ReportFaxer).to have_received(:deliver).with(report)

@@ -27,30 +27,30 @@ feature 'Report delivery as fax' do
     visit report_url(report)
     expect(page).to have_button send_fax
     click_button send_fax
-    expect(page).to have_content('Fax wird gesendet')
+    expect(page).to have_content('Druckauftrag wird gesendet')
   end
 
   scenario 'with active fax' do
     report = create(:verified_report, user: user)
-    create(:active_fax, report: report)
+    create(:active_print_job, report: report)
     visit report_url(report)
     expect(page).not_to have_button send_fax
-    expect(page).to have_content('Fax aktiv') # Label
+    expect(page).to have_content('Druckauftrag aktiv') # Label
   end
 
   scenario 'with completed fax' do
     report = create(:verified_report, user: user)
-    create(:completed_fax, report: report)
+    create(:completed_print_job, report: report)
     visit report_url(report)
     expect(page).to have_button send_fax
-    expect(page).to have_content('Fax zugestellt') # Label
+    expect(page).to have_content('Druckauftrag abgeschlossen') # Label
   end
 
   scenario 'with aborted fax' do
     report = create(:verified_report, user: user)
-    create(:aborted_fax, report: report)
+    create(:aborted_print_job, report: report)
     visit report_url(report)
     expect(page).to have_button send_fax
-    expect(page).to have_content('Fax abgebrochen') # Label
+    expect(page).to have_content('Druckauftrag abgebrochen') # Label
   end
 end

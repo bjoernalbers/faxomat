@@ -11,7 +11,7 @@
           <% unless @report.letter.present? %>
             <%= button_to 'Brief senden', letters_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-primary', data: { confirm: 'Bitte ausdrucken und postalisch versenden!' }  %>
           <% end %>
-          <% unless @report.faxes.active.present? %>
+          <% unless @report.print_jobs.active.present? %>
             <%= button_to 'Fax senden', report_faxes_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-primary' %>
           <% end %>
           <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
@@ -46,18 +46,18 @@
             Brief gesendet
           </span>
         <% end %>
-        <% @report.faxes.each do |fax| %>
-          <% if fax.active? %>
+        <% @report.print_jobs.each do |print_job| %>
+          <% if print_job.active? %>
             <span class="label label-default">
-              Fax aktiv
+              Druckauftrag aktiv
             </span>
-          <% elsif fax.completed? %>
+          <% elsif print_job.completed? %>
             <span class="label label-success">
-              Fax zugestellt
+              Druckauftrag abgeschlossen
             </span>
-          <% elsif fax.aborted? %>
+          <% elsif print_job.aborted? %>
             <span class="label label-warning">
-              Fax abgebrochen
+              Druckauftrag abgebrochen
             </span>
           <% end %>
         <% end %>

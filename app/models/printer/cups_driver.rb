@@ -9,33 +9,33 @@ class Printer::CupsDriver
       opts.fetch(:printer_name)   { ENV.fetch('PRINTER_NAME', 'Fax') }
   end
 
-  # Print (deliver) the fax.
-  def print(fax)
-    cups_job = build_cups_job(fax)
+  # Print (deliver) the print_job.
+  def print(print_job)
+    cups_job = build_cups_job(print_job)
     cups_job.print ? cups_job.job_id : false
   end
 
-  # Update CUPS job statuses on faxes.
-  def check(faxes)
+  # Update CUPS job statuses on print_jobs.
+  def check(print_jobs)
     statuses = cups_job_statuses
-    faxes.each do |fax|
+    print_jobs.each do |print_job|
       status =
-        case statuses[fax.cups_job_id]
+        case statuses[print_job.cups_job_id]
         when 'completed'            then :completed
         when 'aborted', 'cancelled' then :aborted
         else                             :active
         end
-      fax.update! status: status
+      print_job.update! status: status
     end
   end
 
   private
 
-  # Build CUPS job from fax.
-  def build_cups_job(fax)
-    phone = [dialout_prefix, fax.phone].join
-    Cups::PrintJob.new(fax.path, printer_name, 'phone' => phone).tap do |job|
-      job.title = fax.title if fax.title
+  # Build CUPS job from print_job.
+  def build_cups_job(print_job)
+    phone = [dialout_prefix, print_job.phone].join
+    Cups::PrintJob.new(print_job.path, printer_name, 'phone' => phone).tap do |job|
+      job.title = print_job.title if print_job.title
     end
   end
 

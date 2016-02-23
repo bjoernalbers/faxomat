@@ -18,7 +18,7 @@ feature 'Unsent reports' do
 
   scenario 'with sent report' do
     report = create(:verified_report, user: user)
-    fax = create(:completed_fax, report: report)
+    print_job = create(:completed_print_job, report: report)
 
     visit reports_url
     click_link 'Ungesendet'

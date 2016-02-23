@@ -1,0 +1,34 @@
+<ul class='nav nav-tabs'>
+  <%= content_tag(:li, link_to('Aktive Druckaufträge', print_jobs_path), class: ('active' if action_name == 'index')) %>
+  <%= content_tag(:li, class: ('active' if action_name == 'aborted')) do %>
+    <%= link_to(aborted_print_jobs_path) do %>
+      <%= content_tag(:span, 'Abgebrochene Druckaufträge') %>
+      <%= content_tag(:span, aborted_print_jobs_count, class: 'badge') %>
+    <% end %>
+  <% end %>
+  <%= content_tag(:li, link_to('Suche', search_print_jobs_path), class: ('active' if action_name == 'search')) %>
+</ul>
+
+<table>
+  <tr>
+    <th>Druckauftrag</th>
+    <th>Empfänger</th>
+    <th>Erstellt</th>
+    <th>Status</th>
+  </tr>
+  <% @print_jobs.each do |print_job| %>
+    <%= content_tag_for(:tr, print_job, class: print_job.status) do %>
+      <%= content_tag(:td, class: 'title') do %>
+        <%= link_to(print_job.title, print_job, target: '_blank') %>
+      <% end %>
+      <%= content_tag(:td, print_job.phone, class: 'phone') %>
+      <%= content_tag(:td, print_job.created_at, class: 'created_at') %>
+      <%= content_tag(:td, print_job.status, class: 'status') %>
+      <% if print_job.aborted? %>
+        <td>
+          <%= link_to 'löschen', print_job_path(print_job), method: :delete, class: 'btn btn-danger btn-xs', data: { confirm: 'Wirklich löschen?' } %>
+        </td>
+      <% end %>
+    <% end %>
+  <% end %>
+</table>
