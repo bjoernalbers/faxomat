@@ -11,15 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160222141114) do
-
-  create_table "fax_numbers", force: :cascade do |t|
-    t.string   "phone",      limit: 255, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "fax_numbers", ["phone"], name: "index_fax_numbers_on_phone", unique: true
+ActiveRecord::Schema.define(version: 20160223114800) do
 
   create_table "letters", force: :cascade do |t|
     t.integer  "report_id",             null: false
@@ -47,7 +39,6 @@ ActiveRecord::Schema.define(version: 20160222141114) do
   end
 
   create_table "print_jobs", force: :cascade do |t|
-    t.integer  "fax_number_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "title",                 limit: 255, null: false
@@ -58,6 +49,7 @@ ActiveRecord::Schema.define(version: 20160222141114) do
     t.integer  "status"
     t.integer  "report_id"
     t.integer  "cups_job_id"
+    t.string   "fax_number"
   end
 
   add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true

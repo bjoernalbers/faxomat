@@ -41,7 +41,7 @@ describe ReportFaxer do
 
       fax = report.print_jobs.last
       expect(fax.title).to eq report_faxer.report_title
-      expect(fax.phone).to eq report_faxer.recipient_fax_number
+      expect(fax.fax_number).to eq report_faxer.recipient_fax_number
     end
   end
 

@@ -1,6 +1,6 @@
 <%= print_job_report_header %>
 ==================================================================
-<%= "Empfänger:\t#{params[:phone]}\n" if params[:phone].present? -%>
+<%= "Empfänger:\t#{params[:fax_number]}\n" if params[:fax_number].present? -%>
 <%= "Zeitraum:\t#{Time.zone.parse(params[:created_since]).to_s(:short)} - #{Time.zone.now.to_s(:short)}\n" if params[:created_since].present? -%>
 
 Sendedatum<%= "\t" %>Patient(in) / Faxtitel

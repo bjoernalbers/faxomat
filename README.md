@@ -9,7 +9,7 @@ Sending a fax is easy as...
 
 ```
 /usr/bin/curl \
-  -F fax[phone]="0123456789" \
+  -F fax[fax_number]="0123456789" \
   -F fax[title]="hello, world." \
   -F fax[document]="@hello.pdf;type=application/pdf" \
   http://localhost:5000/faxes

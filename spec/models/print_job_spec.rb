@@ -18,6 +18,40 @@ describe PrintJob do
     expect(build(:aborted_print_job)).to be_aborted
   end
 
+  describe '#fax_number' do
+    it 'validates minimum length' do
+      print_job.fax_number = '0123456'
+      expect(print_job).to be_invalid
+      expect(print_job.errors[:fax_number]).to be_present
+      print_job.fax_number = '01234567'
+      expect(print_job).to be_valid
+    end
+
+    it 'validates excactly one leading zero' do
+      %w(123456789  00123456789).each do |fax_number|
+        print_job = build(:print_job, fax_number: fax_number)
+        expect(print_job).to be_invalid
+        expect(print_job.errors[:fax_number]).to be_present
+        expect(print_job.errors[:fax_number]).to include('has no area code')
+      end
+    end
+    
+    it 'strips non-digits on validation' do
+      print_job.fax_number = ' 0123-456 789 '
+      print_job.validate
+      expect(print_job.fax_number).to eq '0123456789'
+
+      print_job.fax_number = ' '
+      print_job.validate
+      expect(print_job.fax_number).to be nil
+    end
+
+    it 'does not validate presence' do
+      print_job.fax_number = nil
+      expect(print_job).to be_valid
+    end
+  end
+
   describe '#cups_job_id' do
     context 'without status' do
       let(:print_job) { build(:print_job, status: nil) }
@@ -189,65 +223,10 @@ describe PrintJob do
     end
   end
 
-  context 'without fax_number' do
-    let(:phone) { '01230123' }
-    let(:print_job) { build(:print_job, fax_number: nil, phone: phone) }
-
-    it 'creates and assigns a new fax_number by phone' do
-      expect{print_job.save}.to change(FaxNumber, :count).by 1
-      expect(print_job.fax_number).to eq FaxNumber.find_by(phone: phone)
-    end
-
-    it 'finds and assigns an existing fax_number by phone' do
-      create(:fax_number, phone: phone)
-      expect{print_job.save}.to change(FaxNumber, :count).by 0
-      expect(print_job.fax_number).to eq FaxNumber.find_by(phone: phone)
-    end
-  end
-
-  it 'validates the presence of phone' do
-    print_job = build(:print_job, fax_number: nil, phone: nil)
-    expect(print_job).to be_invalid
-    expect(print_job.errors[:phone]).to_not be_empty
-  end
-
   it 'validates the presence of a document' do
     print_job = build(:print_job, document: nil)
     expect(print_job).to_not be_valid
     expect(print_job.errors[:document].size).to eq(1)
-  end
-
-  it 'cleans the phone number from non-digits before save' do
-    print_job = create(:print_job, phone: ' 0123-456 789 ')
-    expect(print_job.phone).to eq '0123456789'
-  end
-
-  it 'is invalid with too short phone' do
-    print_job = build(:print_job, phone: '0123456')
-    print_job.valid?
-    expect(print_job.errors[:phone].size).to eq 1
-  end
-
-  it 'is invalid when phone has no leading zero' do
-    print_job = build(:print_job, phone: '123456789')
-    print_job.valid?
-    expect(print_job.errors[:phone].size).to eq 1
-    expect(print_job.errors[:phone]).to include('has no area code')
-  end
-
-  it 'is invalid when phone has more then one leading zero' do
-    print_job = build(:print_job, phone: '00123456789')
-    print_job.valid?
-    expect(print_job.errors[:phone].size).to eq 1
-    expect(print_job.errors[:phone]).to include('has no area code')
-  end
-
-  context 'without a fax_number' do
-    let(:print_job) { build(:print_job, fax_number: nil) }
-
-    it 'can not be saved in the database' do
-      expect { print_job.save!(validate: false) }.to raise_error
-    end
   end
 
   describe '.updated_today' do
@@ -342,9 +321,9 @@ describe PrintJob do
 
     it 'searches for the document name'
 
-    it 'searches by phone' do
-      print_job = create(:print_job, phone: '042424242')
-      query = {phone: print_job.phone}
+    it 'searches by fax number' do
+      print_job = create(:print_job, fax_number: '042424242')
+      query = {fax_number: print_job.fax_number}
       expect(PrintJob.search(query)).to match_array [print_job]
     end
 
@@ -352,26 +331,6 @@ describe PrintJob do
       [nil, ''].each do |query|
         expect(PrintJob.search(title: query)).to be_empty
       end
-    end
-  end
-
-  describe '#phone' do
-    let(:phone) { '01234754' }
-
-    it 'returns @phone when set' do
-      print_job = build(:print_job, phone: phone, fax_number: nil)
-      expect(print_job.phone).to eq phone
-    end
-
-    it 'returns fax_number.phone when @phone is not set' do
-      fax_number = build(:fax_number, phone: '09823121')
-      print_job = build(:print_job, phone: nil, fax_number: fax_number)
-      expect(print_job.phone).to eq fax_number.phone
-    end
-
-    it 'returns nil when @phone and fax_number are not set' do
-      print_job = build(:print_job, phone: nil, fax_number: nil)
-      expect(print_job.phone).to be_nil
     end
   end
 

@@ -21,7 +21,7 @@
       <%= content_tag(:td, class: 'title') do %>
         <%= link_to(print_job.title, print_job, target: '_blank') %>
       <% end %>
-      <%= content_tag(:td, print_job.phone, class: 'phone') %>
+      <%= content_tag(:td, print_job.fax_number, class: 'fax_number') %>
       <%= content_tag(:td, print_job.created_at, class: 'created_at') %>
       <%= content_tag(:td, print_job.status, class: 'status') %>
       <% if print_job.aborted? %>

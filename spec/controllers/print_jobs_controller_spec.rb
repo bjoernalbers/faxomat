@@ -1,19 +1,12 @@
 describe PrintJobsController do
   describe 'GET index' do
     it 'assigns print_jobs by fax number' do
-      skip
-      fax_number = create(:fax_number)
+      pending
+      fax_number = '0295235423434'
       print_job = create(:print_job, fax_number: fax_number)
-      get :index, fax_number_id: fax_number
+      other_print_job = create(:print_job)
+      get :index, fax_number: fax_number
       expect(assigns(:print_jobs)).to eq [print_job]
-    end
-
-    it 'does not assign print_jobs to other fax numbers' do
-      fax_number = create(:fax_number)
-      other_fax_number = create(:fax_number)
-      print_job = create(:print_job, fax_number: other_fax_number)
-      get :index, fax_number_id: fax_number
-      expect(assigns(:print_jobs)).to_not include print_job
     end
 
     it 'assigns only today updated print_jobs' do

@@ -1,6 +1,6 @@
 class PrintJobSection < SitePrism::Section
   element :title, '.title'
-  element :phone, '.phone'
+  element :fax_number, '.fax_number'
   element :created_at, '.created_at'
   element :status, '.status'
 end

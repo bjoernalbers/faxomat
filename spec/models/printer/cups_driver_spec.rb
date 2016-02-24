@@ -13,14 +13,14 @@ describe Printer::CupsDriver do
       allow(cups_job).to receive(:job_id) { 42 }
 
       allow(print_job).to receive(:path).and_return('chunky_bacon.pdf')
-      allow(print_job).to receive(:phone).and_return('012456789')
+      allow(print_job).to receive(:fax_number).and_return('012456789')
     end
 
     it 'prints print_job on CUPS print_job printer' do
       printer = Printer::CupsDriver.new(dialout_prefix: 0)
       printer.print(print_job)
       expect(Cups::PrintJob).to have_received(:new).
-        with(print_job.path, printer.printer_name, {'phone' => '0' + print_job.phone})
+        with(print_job.path, printer.printer_name, {'phone' => '0' + print_job.fax_number})
       expect(cups_job).to have_received(:print)
     end
 

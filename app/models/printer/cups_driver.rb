@@ -33,8 +33,8 @@ class Printer::CupsDriver
 
   # Build CUPS job from print_job.
   def build_cups_job(print_job)
-    phone = [dialout_prefix, print_job.phone].join
-    Cups::PrintJob.new(print_job.path, printer_name, 'phone' => phone).tap do |job|
+    fax_number = [dialout_prefix, print_job.fax_number].join
+    Cups::PrintJob.new(print_job.path, printer_name, 'phone' => fax_number).tap do |job|
       job.title = print_job.title if print_job.title
     end
   end

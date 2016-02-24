@@ -12,9 +12,9 @@ class ReportFaxer
   def deliver
     if report_verified?
       report.print_jobs.create(
-        title:    report_title,
-        phone:    recipient_fax_number,
-        document: report_pdf_file)
+        title:      report_title,
+        fax_number: recipient_fax_number,
+        document:   report_pdf_file)
     else
       fail 'Report is not verified!'
     end

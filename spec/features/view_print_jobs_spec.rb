@@ -14,7 +14,7 @@ feature 'View print jobs' do
     expect(page.print_jobs.count).to eq 1
     print_job_section = page.print_jobs.first
     expect(print_job_section.title.text).to eq(print_job.title)
-    expect(print_job_section.phone.text).to eq(print_job.phone)
+    expect(print_job_section.fax_number.text).to eq(print_job.fax_number)
     expect(print_job_section.status.text).to eq('aborted')
     expect(print_job_section).to have_css('.aborted')
   end
@@ -28,7 +28,7 @@ feature 'View print jobs' do
     expect(page.print_jobs.count).to eq 1
     print_job_section = page.print_jobs.first
     expect(print_job_section.title.text).to eq(print_job.title)
-    expect(print_job_section.phone.text).to eq(print_job.phone)
+    expect(print_job_section.fax_number.text).to eq(print_job.fax_number)
     expect(print_job_section.status.text).to eq('active')
     expect(print_job_section).to have_css('.active')
   end

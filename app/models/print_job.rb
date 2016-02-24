@@ -1,14 +1,17 @@
 # Keeps track of print jobs.
 class PrintJob < ActiveRecord::Base
+  MINIMUM_PHONE_LENGTH = 8
+  AREA_CODE_REGEX = %r{\A0[1-9]}
+
   enum status: { active: 0, completed: 1, aborted: 2 }
 
-  attr_writer :phone
-
-  belongs_to :fax_number
   belongs_to :report
 
   has_attached_file :document,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
+
+  before_validation :strip_nondigits_from_fax_number, if: :fax_number
+  #before_validation :strip_nondigits_from_fax_number
 
   validates :title,
     presence: true
@@ -21,12 +24,10 @@ class PrintJob < ActiveRecord::Base
     presence: true,
     content_type: { content_type: 'application/pdf' }
 
-  validates :phone,
-    presence: true,
-    length: {minimum: FaxNumber::MINIMUM_PHONE_LENGTH},
-    format: {with: FaxNumber::AREA_CODE_REGEX, message: 'has no area code'}
-
-  before_save :assign_fax_number
+  validates :fax_number,
+    length: {minimum: MINIMUM_PHONE_LENGTH},
+    format: {with: AREA_CODE_REGEX, message: 'has no area code'},
+    allow_nil: true
 
   #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
   #before_save :print, unless: :cups_job_id
@@ -56,14 +57,14 @@ class PrintJob < ActiveRecord::Base
   end
 
   def self.search(params)
-    result = joins(:fax_number)
+    result = all
 
     if params[:title].present?
       result = result.where('title LIKE ?', "%#{params[:title]}%")
     end
 
-    if params[:phone].present?
-      result = result.merge(FaxNumber.by_phone(params[:phone]))
+    if params[:fax_number].present?
+      result = result.where(fax_number: params[:fax_number])
     end
 
     if params[:created_since].present?
@@ -71,15 +72,11 @@ class PrintJob < ActiveRecord::Base
       result = result.where(created_at: range)
     end
 
-    if [:phone, :title].all? { |p| params[p].blank? }
+    if [:fax_number, :title].all? { |p| params[p].blank? }
       result = none
     end
 
     result
-  end
-
-  def phone
-    @phone ? @phone.gsub(/[^0-9]/, '') : fax_number.try(:phone)
   end
 
   def to_s
@@ -111,10 +108,10 @@ class PrintJob < ActiveRecord::Base
     end
 
     def blank?
-      phone.nil? && names.empty?
+      fax_number.nil? && names.empty?
     end
 
-    def phone
+    def fax_number
       words.find { |word| /\A\d{4,}\Z/ =~ word }
     end
 
@@ -131,8 +128,9 @@ class PrintJob < ActiveRecord::Base
 
   private
 
-  def assign_fax_number
-    self.fax_number = FaxNumber.find_or_create_by!(phone: phone)
+  def strip_nondigits_from_fax_number
+    self.fax_number =
+      self.fax_number.present? ? self.fax_number.gsub(/[^0-9]/, '') : nil
   end
 
   def check_if_aborted

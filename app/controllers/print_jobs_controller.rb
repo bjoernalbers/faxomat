@@ -46,13 +46,9 @@ class PrintJobsController < ApplicationController
   def filter
     @print_jobs = print_jobs.none # Return by default no print_jobs
 
-    # by phone
-    if params[:phone]
-      if fax_number = FaxNumber.find_by(phone: params[:phone])
-        @print_jobs = fax_number.print_jobs
-      else
-        @print_jobs = print_jobs.none
-      end
+    # by fax_number
+    if params[:fax_number]
+      @print_jobs = print_jobs.where(fax_number: params[:fax_number])
     end
 
     # by creation time
@@ -68,14 +64,10 @@ class PrintJobsController < ApplicationController
   private
 
   def print_job_params
-    params.require(:print_job).permit(:title, :phone, :document)
+    params.require(:print_job).permit(:title, :fax_number, :document)
   end
 
   def print_jobs
-    if params[:fax_number_id]
-      FaxNumber.find(params[:fax_number_id]).print_jobs
-    else
-      PrintJob
-    end.order('updated_at DESC')
+    PrintJob.all.order('updated_at DESC')
   end
 end
