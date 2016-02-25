@@ -5,13 +5,13 @@ class PrintJob < ActiveRecord::Base
 
   enum status: { active: 0, completed: 1, aborted: 2 }
 
+  belongs_to :printer
   belongs_to :report
 
   has_attached_file :document,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
 
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
-  #before_validation :strip_nondigits_from_fax_number
 
   validates :title,
     presence: true
@@ -49,11 +49,6 @@ class PrintJob < ActiveRecord::Base
   def self.count_by_status
     counts = group(:status).count
     Hash[PrintJob.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
-  end
-
-  # Update active print jobs.
-  def self.check
-    Printer.new.check(self.active)
   end
 
   def self.search(params)

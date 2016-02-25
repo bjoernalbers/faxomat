@@ -18,6 +18,8 @@ describe PrintJob do
     expect(build(:aborted_print_job)).to be_aborted
   end
 
+  it { expect(print_job).to belong_to(:printer) }
+
   describe '#fax_number' do
     it 'validates minimum length' do
       print_job.fax_number = '0123456'
@@ -274,17 +276,6 @@ describe PrintJob do
     it 'excludes print_job after sunday night last week' do
       print_job = create(:print_job, created_at: sunday_night_last_week + 1.second)
       expect(PrintJob.created_last_week).not_to include print_job
-    end
-  end
-
-  describe '.check' do
-    it 'updates active print jobs' do
-      printer = double('printer')
-      allow(printer).to receive(:check)
-      allow(Printer).to receive(:new).and_return(printer)
-      allow(PrintJob).to receive(:active).and_return( [print_job] )
-      PrintJob.check
-      expect(printer).to have_received(:check).with( [print_job] )
     end
   end
 

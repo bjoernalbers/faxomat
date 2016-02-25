@@ -6,6 +6,8 @@ describe ReportFaxesController do
     user = FactoryGirl.create(:user)
     sign_in user
     user
+
+    Rails.application.load_seed # To make the fax printer available!
   end
 
   describe 'POST #create' do

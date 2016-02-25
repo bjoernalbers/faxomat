@@ -20,6 +20,10 @@ describe ReportFaxer do
     let(:report_pdf_file) { double('report_pdf_file') }
 
     before do
+      Rails.application.load_seed # To make the fax printer available!
+    end
+
+    before do
       allow(report_pdf_file).to receive(:close!)
       allow(report_faxer).to receive(:report_title).and_return('chunky bacon')
       allow(report_faxer).to receive(:recipient_fax_number).and_return('0123456789')

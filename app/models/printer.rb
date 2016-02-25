@@ -1,5 +1,12 @@
-# Generic printer
-class Printer
+class Printer < ActiveRecord::Base
+  has_many :print_jobs
+
+  validates :name,
+    presence: true,
+    uniqueness: true
+  validates :label,
+    presence: true
+
   class << self
     # Returns CUPS driver if not set.
     def default_driver_class
@@ -10,29 +17,38 @@ class Printer
     def default_driver_class=(driver_class)
       @default_driver_class = driver_class
     end
+
+    def update_active_print_jobs
+      find_each { |printer| printer.update_active_print_jobs }
+    end
+
+    def fax_printer
+      find_by(name: 'Fax')
+    end
   end
 
-  attr_reader :printer_name, :dialout_prefix, :driver_class
-
-  def initialize(opts = {})
-    @driver_class = opts.fetch(:driver_class, self.class.default_driver_class)
+  def update_active_print_jobs
+    driver.check(active_print_jobs)
   end
 
-  # Print the print job.
+  # Print print job.
   def print(print_job)
     print_job = PrintJob.find(print_job.id)
     cups_job_id = driver.print(print_job)
     print_job.update cups_job_id: cups_job_id, status: :active
   end
 
-  # Update print jobs.
-  def check(print_jobs)
-    driver.check(print_jobs)
+  def driver
+    driver_class.new(printer_name: name, dialout_prefix: dialout_prefix)
+  end
+
+  def driver_class
+    self.class.default_driver_class
   end
 
   private
 
-  def driver
-    @driver ||= driver_class.new
+  def active_print_jobs
+    print_jobs.active.all
   end
 end

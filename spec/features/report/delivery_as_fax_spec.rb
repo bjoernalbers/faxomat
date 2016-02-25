@@ -7,6 +7,7 @@ feature 'Report delivery as fax' do
   let(:send_fax) { 'Fax senden' }
 
   before do
+    Rails.application.load_seed
     login_as user, scope: :user
   end
 

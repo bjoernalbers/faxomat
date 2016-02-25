@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160223114800) do
+ActiveRecord::Schema.define(version: 20160225204918) do
 
   create_table "letters", force: :cascade do |t|
     t.integer  "report_id",             null: false
@@ -50,9 +50,20 @@ ActiveRecord::Schema.define(version: 20160223114800) do
     t.integer  "report_id"
     t.integer  "cups_job_id"
     t.string   "fax_number"
+    t.integer  "printer_id",                        null: false
   end
 
   add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
+
+  create_table "printers", force: :cascade do |t|
+    t.string   "name"
+    t.string   "label"
+    t.integer  "dialout_prefix"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "printers", ["name"], name: "index_printers_on_name", unique: true
 
   create_table "recipients", force: :cascade do |t|
     t.string   "first_name"

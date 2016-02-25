@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     resources :reports, only: [:create, :show]
   end
 
+  resources :faxes, only: :create
+
   resources :print_jobs, except: [:edit, :update] do
     get 'aborted', on: :collection
     get 'search', on: :collection
