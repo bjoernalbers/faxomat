@@ -1,12 +1,9 @@
 # Interface to CUPS.
 class Printer::CupsDriver
-  attr_reader :printer_name, :dialout_prefix
+  attr_reader :printer
 
-  def initialize(opts = {})
-    @dialout_prefix =
-      opts.fetch(:dialout_prefix) { ENV.fetch('DIALOUT_PREFIX', nil) }
-    @printer_name =
-      opts.fetch(:printer_name)   { ENV.fetch('PRINTER_NAME', 'Fax') }
+  def initialize(printer)
+    @printer = printer
   end
 
   # Print (deliver) the print_job.
@@ -33,15 +30,19 @@ class Printer::CupsDriver
 
   # Build CUPS job from print_job.
   def build_cups_job(print_job)
-    fax_number = [dialout_prefix, print_job.fax_number].join
-    Cups::PrintJob.new(print_job.path, printer_name, 'phone' => fax_number).tap do |job|
-      job.title = print_job.title if print_job.title
+    fax_number = [printer.dialout_prefix, print_job.fax_number].join
+    cups_job = if printer.is_fax_printer?
+      Cups::PrintJob.new(print_job.path, printer.name, 'phone' => fax_number)
+    else
+      Cups::PrintJob.new(print_job.path, printer.name)
     end
+    cups_job.title = print_job.title if print_job.title
+    cups_job
   end
 
   # Return hash of CUPS job statuses by CUPS job id.
   def cups_job_statuses
-    Cups.all_jobs(printer_name).inject({}) do |memo, (cups_job_id,cups_job)|
+    Cups.all_jobs(printer.name).inject({}) do |memo, (cups_job_id,cups_job)|
       memo[cups_job_id] = cups_job.fetch(:state).to_s
       memo
     end

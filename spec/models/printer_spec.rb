@@ -5,19 +5,39 @@ describe Printer do
     expect(printer).to be_valid
   end
 
+  it 'has factory to build fax printer' do
+    printer = build(:fax_printer)
+    expect(printer.is_fax_printer).to be true
+  end
+
   it { expect(printer).to have_many(:print_jobs) }
 
   describe '.fax_printer' do
-    it 'returns printer named fax' do
-      other_printer = create(:printer)
-      fax_printer = create(:printer, name: 'Fax')
-      expect(Printer.fax_printer).to eq fax_printer
+    let(:printer) { Printer.fax_printer }
+
+    context 'with seeded database' do
+      before do
+        Rails.application.load_seed
+      end
+
+      it 'returns fax printer' do
+        expect(printer).to be_present
+        expect(printer.name).to eq 'Fax'
+        expect(printer.label).to eq 'Faxgerät'
+        expect(printer.is_fax_printer).to be true
+      end
     end
   end
 
   describe '#name' do
     it { expect(printer).to validate_presence_of(:name) }
+
     it { expect(printer).to validate_uniqueness_of(:name) }
+
+    it 'can not be stored when not unique' do
+      printer.name = create(:printer).name
+      expect{ printer.save!(validate: false) }.to raise_error
+    end
   end
 
   describe '#label' do
@@ -26,6 +46,10 @@ describe Printer do
 
   describe '#dialout_prefix' do
     it { expect(printer).not_to validate_presence_of(:dialout_prefix) }
+  end
+
+  describe '#is_fax_printer' do
+    it { expect(printer).not_to validate_presence_of(:is_fax_printer) }
   end
 
   describe '#update_active_print_jobs' do
@@ -92,8 +116,7 @@ describe Printer do
 
     it 'initializes and returns new driver' do
       expect(printer.driver).to eq :a_driver_instance
-      expect(driver_class).to have_received(:new).with(
-        printer_name: 'R2D2', dialout_prefix: 2 )
+      expect(driver_class).to have_received(:new).with(printer)
     end
   end
 end

@@ -27,7 +27,6 @@ Sending a fax is easy as...
 ## Quickstart
 
 - Install XCode along with Command Line Developer Tools
-- Install [foreman](https://github.com/ddollar/foreman)
 - Install Bundler with `sudo gem install bundler`
 - Set up your USB-modem and name it "Fax" (extra points when you verify it
   by "printing" a test fax manually)
@@ -36,17 +35,16 @@ Sending a fax is easy as...
 
 ```
 bundle install
-bin/rake db:create db:schema:load
-foreman start
+bin/rake db:setup
+bin/rails server
 ```
 
 - send a test-fax and the the web UI for open faxes (they will show up in the
   printer queue as well)
 - done (now celebrate with beer & pizza)
 
-PS: Just `cp env.sample .env` and edit if you phone line requires a dialout prefix or
-your fax printer has a different name.
-
+** Note: The previous setup task creates a default fax printer named 'Fax' in the database.
+Make sure that the name corresponds to the actual fax printer name or rename it in the database!**
 
 ## After that
 

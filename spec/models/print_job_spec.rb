@@ -20,37 +20,46 @@ describe PrintJob do
 
   it { expect(print_job).to belong_to(:printer) }
 
-  describe '#fax_number' do
-    it 'validates minimum length' do
-      print_job.fax_number = '0123456'
-      expect(print_job).to be_invalid
-      expect(print_job.errors[:fax_number]).to be_present
-      print_job.fax_number = '01234567'
-      expect(print_job).to be_valid
-    end
+  it { expect(print_job).to belong_to(:report) }
 
-    it 'validates excactly one leading zero' do
-      %w(123456789  00123456789).each do |fax_number|
-        print_job = build(:print_job, fax_number: fax_number)
+  describe '#fax_number' do
+    context 'with fax printer' do
+      let(:print_job) { build(:print_job, printer: create(:fax_printer)) }
+
+      it { expect(print_job).to validate_presence_of(:fax_number) }
+
+      it 'validates minimum length' do
+        print_job.fax_number = '0123456'
         expect(print_job).to be_invalid
         expect(print_job.errors[:fax_number]).to be_present
-        expect(print_job.errors[:fax_number]).to include('has no area code')
+        print_job.fax_number = '01234567'
+        expect(print_job).to be_valid
+      end
+
+      it 'validates excactly one leading zero' do
+        %w(123456789  00123456789).each do |fax_number|
+          print_job.fax_number = fax_number
+          expect(print_job).to be_invalid
+          expect(print_job.errors[:fax_number]).to be_present
+          expect(print_job.errors[:fax_number]).to include('has no area code')
+        end
+      end
+      
+      it 'strips non-digits on validation' do
+        print_job.fax_number = ' 0123-456 789 '
+        print_job.validate
+        expect(print_job.fax_number).to eq '0123456789'
+
+        print_job.fax_number = ' '
+        print_job.validate
+        expect(print_job.fax_number).to be nil
       end
     end
-    
-    it 'strips non-digits on validation' do
-      print_job.fax_number = ' 0123-456 789 '
-      print_job.validate
-      expect(print_job.fax_number).to eq '0123456789'
 
-      print_job.fax_number = ' '
-      print_job.validate
-      expect(print_job.fax_number).to be nil
-    end
-
-    it 'does not validate presence' do
-      print_job.fax_number = nil
-      expect(print_job).to be_valid
+    context 'without fax printer' do
+      let(:print_job) { build(:print_job, printer: create(:printer)) }
+      
+      it { expect(print_job).not_to validate_presence_of(:fax_number) }
     end
   end
 
@@ -87,117 +96,29 @@ describe PrintJob do
 
   context 'when saved without cups_job_id and status' do
     let(:print_job) { build(:print_job, cups_job_id: nil, status: nil) }
-    let(:printer) { double('printer') }
 
     before do
-      allow(print_job).to receive(:printer).and_return(printer)
-      allow(printer).to receive(:print)
+      allow(print_job).to receive(:print)
+      print_job.save!
     end
 
     it 'prints itself' do
-      print_job.save!
-      expect(printer).to have_received(:print).with(print_job)
+      expect(print_job).to have_received(:print)
     end
   end
 
   context 'when saved with cups_job_id and status' do
     let(:print_job) { build(:completed_print_job) }
-    let(:printer) { double('printer') }
 
     before do
-      allow(print_job).to receive(:printer).and_return(printer)
-      allow(printer).to receive(:print)
+      allow(print_job).to receive(:print)
+      print_job.save!
     end
 
     it 'does not print itself' do
-      print_job.save!
-      expect(printer).not_to have_received(:print)
+      expect(print_job).not_to have_received(:print)
     end
   end
-
-  context 'when valid and saved' do
-    let(:printer) { double(:printer) }
-    let(:cups_job_id_from_printer) { 98716 }
-    let(:print_job) { build(:print_job) }
-
-    before do
-      skip 'FIX printing / faxing!'
-
-      allow(printer).to receive(:print).and_return(cups_job_id_from_printer)
-      allow(print_job).to receive(:printer).and_return(printer)
-    end
-
-    context 'with cups_job_id' do
-      let(:print_job) { build(:print_job, cups_job_id: 458731, status: :completed) }
-
-      before do
-        print_job.save!
-      end
-
-      it 'does not get printed' do
-        expect(printer).not_to have_received(:print)
-      end
-
-      it 'is persisted' do
-        expect(print_job).to be_persisted
-      end
-
-      it 'stores assigned cups_job_id' do
-        expect(print_job.cups_job_id).to eq 458731
-      end
-
-      it 'does not overwrite status as active' do
-        expect(print_job).to be_completed
-      end
-    end
-
-    context 'without cups_job_id' do
-      let(:print_job) { build(:print_job, cups_job_id: nil, status: :completed) }
-
-      before do
-        print_job.save!
-      end
-
-      it 'gets printed' do
-        expect(printer).to have_received(:print).with(print_job)
-      end
-
-      it 'stores cups_job_id from printer' do
-        expect(print_job.cups_job_id).to eq cups_job_id_from_printer
-      end
-
-      it 'overwrites status as active' do
-        expect(print_job).to be_active
-      end
-
-      it 'is persisted' do
-        expect(print_job).to be_persisted
-      end
-    end
-
-    context 'without cups_job_id but failed print' do
-      let(:print_job) { build(:print_job, cups_job_id: nil, status: :completed) }
-
-      before do
-        allow(printer).to receive(:print).and_return(nil)
-        print_job.save
-      end
-
-      it 'is not persisted' do
-        expect(print_job).not_to be_persisted
-      end
-
-      it 'is not active' do
-        expect(print_job).not_to be_active
-      end
-
-      it 'contains an error' do
-        expect(print_job.errors[:base]).to be_present
-      end
-    end
-  end
-
-  it { expect(print_job).to belong_to(:report) }
 
   describe '.count_by_status' do
     it 'returns number of print_jobs by status' do
@@ -353,10 +274,6 @@ describe PrintJob do
       allow(print_job).to receive(:title) { 'an awesome print_job' }
       expect(print_job.to_s).to eq(print_job.title)
     end
-  end
-
-  describe '#status' do
-    #TODO: Test!
   end
 
   describe '#destroy' do

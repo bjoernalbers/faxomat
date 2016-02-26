@@ -25,9 +25,10 @@ class PrintJob < ActiveRecord::Base
     content_type: { content_type: 'application/pdf' }
 
   validates :fax_number,
-    length: {minimum: MINIMUM_PHONE_LENGTH},
-    format: {with: AREA_CODE_REGEX, message: 'has no area code'},
-    allow_nil: true
+    presence: true,
+    length:   { minimum: MINIMUM_PHONE_LENGTH },
+    format:   { with: AREA_CODE_REGEX, message: 'has no area code' },
+    if: :belongs_to_fax_printer?
 
   #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
   #before_save :print, unless: :cups_job_id
@@ -90,10 +91,6 @@ class PrintJob < ActiveRecord::Base
 
   private
 
-  def printer
-    @printer ||= Printer.new
-  end
-
   # Helper class to strip down a search query string.
   class Query
     attr_reader :query
@@ -133,5 +130,9 @@ class PrintJob < ActiveRecord::Base
       self.errors[:base] << 'Nur abgebrochene Druckaufträge können gelöscht werden.'
       false
     end
+  end
+
+  def belongs_to_fax_printer?
+    printer && printer.is_fax_printer?
   end
 end

@@ -1,6 +1,6 @@
 # A printer that does not print (for testing / development).
 class Printer::TestDriver
-  def initialize(opts = {})
+  def initialize(printer)
   end
 
   # Returns just random number.

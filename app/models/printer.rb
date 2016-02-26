@@ -23,7 +23,7 @@ class Printer < ActiveRecord::Base
     end
 
     def fax_printer
-      find_by(name: 'Fax')
+      find_by(is_fax_printer: true)
     end
   end
 
@@ -39,7 +39,7 @@ class Printer < ActiveRecord::Base
   end
 
   def driver
-    driver_class.new(printer_name: name, dialout_prefix: dialout_prefix)
+    driver_class.new(self)
   end
 
   def driver_class

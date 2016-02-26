@@ -72,12 +72,5 @@ describe 'Create fax' do
       post '/faxes', params, headers
       expect( response.content_type ).to be_json
     end
-
-    it 'returns the validation errors' do
-      print_job = PrintJob.new
-      print_job.valid? # Used to populate the errors
-      post '/faxes', params, headers
-      expect(response.body).to eq print_job.errors.to_json
-    end
   end
 end
