@@ -17,6 +17,8 @@ Rails.application.routes.draw do
 
   resources :report_faxes, only: [:create]
 
+  resource :template, except: [:destroy]
+
   #namespace :api, defaults: { format: :json } do
   #  resources :print_jobs, only: [:index]
   #  resources :reports, only: [:create, :show]

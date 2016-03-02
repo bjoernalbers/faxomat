@@ -1,0 +1,11 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Vorlage</h1>
+
+<% if @template %>
+  <%= render @template %>
+
+  <%= link_to 'Vorlage bearbeiten', edit_template_path %>
+<% else %>
+  <%= link_to 'Neue Vorlage erstellen', new_template_path %>
+<% end %>

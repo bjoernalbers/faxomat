@@ -1,5 +1,7 @@
 de:
   activerecord:
+    models:
+      template: 'Vorlage'
     attributes:
       report:
         subject: Betreff

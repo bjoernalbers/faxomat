@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160226164533) do
+ActiveRecord::Schema.define(version: 20160302165406) do
 
   create_table "letters", force: :cascade do |t|
     t.integer  "report_id",             null: false
@@ -99,6 +99,27 @@ ActiveRecord::Schema.define(version: 20160226164533) do
   end
 
   add_index "reports", ["user_id"], name: "index_reports_on_user_id"
+
+  create_table "templates", force: :cascade do |t|
+    t.string   "title"
+    t.string   "subtitle"
+    t.string   "short_title"
+    t.string   "slogan"
+    t.string   "address"
+    t.string   "zip"
+    t.string   "city"
+    t.string   "phone"
+    t.string   "fax"
+    t.string   "email"
+    t.string   "homepage"
+    t.string   "owners"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "first_name",                          null: false
