@@ -11,8 +11,6 @@ Rails.application.routes.draw do
 
   resources :reports, only: [:index, :show, :destroy, :update]
 
-  resources :letters, only: [:create, :show]
-
   resources :attendances, only: [:new]
 
   resources :report_faxes, only: [:create]

@@ -11,20 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160302165406) do
-
-  create_table "letters", force: :cascade do |t|
-    t.integer  "report_id",             null: false
-    t.integer  "user_id",               null: false
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-    t.string   "document_file_name"
-    t.string   "document_content_type"
-    t.integer  "document_file_size"
-    t.datetime "document_updated_at"
-  end
-
-  add_index "letters", ["report_id"], name: "index_letters_on_report_id", unique: true
+ActiveRecord::Schema.define(version: 20160303115642) do
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",     null: false

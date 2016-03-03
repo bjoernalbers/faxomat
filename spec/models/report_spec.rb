@@ -8,8 +8,6 @@ describe Report do
 
   it { expect(report).to have_many(:print_jobs) }
 
-  it { expect(report).to have_one(:letter) }
-
   # Required attributes
   [
     :user,
@@ -184,12 +182,6 @@ describe Report do
       expect(Report.unsent).not_to include report
     end
 
-    it 'excludes verified reports with letter' do
-      report = create(:verified_report)
-      create(:letter, report: report)
-      expect(Report.unsent).not_to include report
-    end
-
     it 'includes verified reports with active print_job' do
       report = create(:verified_report)
       create(:active_print_job, report: report)
@@ -212,32 +204,20 @@ describe Report do
   describe '#sent?' do
     let(:report) { create(:verified_report) }
 
-    context 'without letter' do
-      it 'and without print_job is false' do
-        expect(report.print_jobs).to be_empty
-        expect(report).not_to be_sent
-      end
-
-      it 'and without completed print_job is false' do
-        create(:active_print_job, report: report)
-        create(:aborted_print_job, report: report)
-        expect(report).not_to be_sent
-      end
-
-      it 'and completed print_job is true' do
-        create(:completed_print_job, report: report)
-        expect(report).to be_sent
-      end
+    it 'without print_job is false' do
+      expect(report.print_jobs).to be_empty
+      expect(report).not_to be_sent
     end
 
-    context 'with letter' do
-      before do
-        create(:letter, report: report)
-      end
+    it 'without completed print_job is false' do
+      create(:active_print_job, report: report)
+      create(:aborted_print_job, report: report)
+      expect(report).not_to be_sent
+    end
 
-      it 'is true' do
-        expect(report).to be_sent
-      end
+    it 'with completed print_job is true' do
+      create(:completed_print_job, report: report)
+      expect(report).to be_sent
     end
   end
 

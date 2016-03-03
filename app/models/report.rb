@@ -3,7 +3,6 @@ class Report < ActiveRecord::Base
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
   has_many :print_jobs
-  has_one :letter
 
   validates_presence_of :anamnesis,
     :evaluation,
@@ -13,9 +12,8 @@ class Report < ActiveRecord::Base
 
   scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
   scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
-  scope :unsent, -> { verified.without_letter.without_completed_print_job }
+  scope :unsent, -> { verified.without_completed_print_job }
   # Taken from: http://stackoverflow.com/questions/5319400/want-to-find-records-with-no-associated-records-in-rails-3
-  scope :without_letter, -> { includes(:letter).where(letters: { report_id: nil }) }
   scope :without_completed_print_job, -> { where.not(id: PrintJob.completed.select(:report_id)) }
 
   before_destroy :allow_destroy_only_when_pending
@@ -59,7 +57,7 @@ class Report < ActiveRecord::Base
   end
 
   def sent?
-    letter.present? || print_jobs.completed.present?
+    print_jobs.completed.present?
   end
 
   private
