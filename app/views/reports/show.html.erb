@@ -9,7 +9,10 @@
             <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
         <% elsif @report.verified? %>
           <% unless @report.print_jobs.active.present? %>
-            <%= button_to 'Fax senden', report_faxes_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-primary' %>
+            <%# button_to 'Fax senden', report_faxes_path, method: :post, params: { report_id: @report.id }, class: 'btn btn-primary' %>
+            <% if printer = Printer.fax_printer %>
+              <%= button_to 'Fax senden', report_printings_path(@report), method: :post, params: { printer_id: printer.id }, class: 'btn btn-primary' %>
+            <% end %>
           <% end %>
           <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
         <% end %>

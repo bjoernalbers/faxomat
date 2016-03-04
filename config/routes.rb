@@ -9,7 +9,9 @@ Rails.application.routes.draw do
 
   root 'print_jobs#index'
 
-  resources :reports, only: [:index, :show, :destroy, :update]
+  resources :reports, only: [:index, :show, :destroy, :update] do
+    resources :printings, only: :create
+  end
 
   resources :attendances, only: [:new]
 
