@@ -60,6 +60,10 @@ class Report < ActiveRecord::Base
     print_jobs.completed.present?
   end
 
+  def recipient_fax_number
+    recipient.try(:fax_number)
+  end
+
   private
 
   def allow_destroy_only_when_pending

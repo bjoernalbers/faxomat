@@ -271,4 +271,16 @@ describe Report do
       expect(ReportFaxer).to have_received(:deliver).with(report)
     end
   end
+
+  describe '#recipient_fax_number' do
+    it 'returns fax number of recipient' do
+      report.recipient.fax_number = '02342342354'
+      expect(report.recipient_fax_number).to eq '02342342354'
+    end
+
+    it 'returns nil when recipient missing' do
+      report.recipient = nil
+      expect(report.recipient_fax_number).to be nil
+    end
+  end
 end
