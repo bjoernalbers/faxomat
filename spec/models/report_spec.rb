@@ -283,4 +283,23 @@ describe Report do
       expect(report.recipient_fax_number).to be nil
     end
   end
+
+  describe '#replace_carriage_returns on save' do
+    let(:text_attributes) { %i(anamnesis diagnosis findings evaluation procedure) }
+
+    it 'converts carriage returns into new lines' do
+      text_attributes.each do |text_attribute|
+        report[text_attribute] = "Text with some\r carriage\rreturns."
+        report.save
+        expect(report[text_attribute]).to eq "Text with some\n carriage\nreturns."
+      end
+    end
+
+    it 'does not fail when nil' do
+      text_attributes.each do |text_attribute|
+        report[text_attribute] = nil
+        expect{ report.save!(validate: false) }.not_to raise_error NoMethodError
+      end
+    end
+  end
 end

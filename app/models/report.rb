@@ -16,6 +16,7 @@ class Report < ActiveRecord::Base
   # Taken from: http://stackoverflow.com/questions/5319400/want-to-find-records-with-no-associated-records-in-rails-3
   scope :without_completed_print_job, -> { where.not(id: PrintJob.completed.select(:report_id)) }
 
+  before_save :replace_carriage_returns
   before_destroy :allow_destroy_only_when_pending
 
   def status
@@ -65,6 +66,15 @@ class Report < ActiveRecord::Base
   end
 
   private
+
+  # NOTE: Tomedo somehow sends both carriage return and newlines. We're
+  # replacing all carriage returns with new lines since they look weird in PDF
+  # documents.
+  def replace_carriage_returns
+    %i(anamnesis diagnosis findings evaluation procedure).each do |attr|
+      self[attr].gsub!("\r", "\n") if self[attr].present?
+    end
+  end
 
   def allow_destroy_only_when_pending
     unless pending?
