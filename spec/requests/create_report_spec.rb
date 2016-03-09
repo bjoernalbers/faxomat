@@ -71,4 +71,16 @@ describe 'POST /api/reports' do
       expect(json[:errors]).to be_a(Array)
     end
   end
+
+  context 'without recipient fax number' do
+    let(:params) do
+      username = create(:user).username
+      attributes_for(:api_report, recipient_fax_number: nil).
+        merge(username: username).to_json
+    end
+
+    it 'creates report in database' do
+      expect { do_post }.to change(Report, :count).by(1)
+    end
+  end
 end

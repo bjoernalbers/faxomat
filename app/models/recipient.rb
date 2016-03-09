@@ -10,7 +10,8 @@ class Recipient < ActiveRecord::Base
 
   validates :fax_number,
     length: {minimum: MINIMUM_PHONE_LENGTH},
-    format: {with: AREA_CODE_REGEX, message: 'has no area code'}
+    format: {with: AREA_CODE_REGEX, message: 'has no area code'},
+    if: :fax_number
 
   def full_name
     [ title, first_name, last_name ].compact.join(' ')
@@ -27,6 +28,7 @@ class Recipient < ActiveRecord::Base
   end
 
   def strip_nondigits_from_fax_number
-    self.fax_number = self.fax_number.gsub(/[^0-9]/, '') if self.fax_number
+    self.fax_number =
+      self.fax_number.present? ? self.fax_number.gsub(/[^0-9]/, '') : nil
   end
 end

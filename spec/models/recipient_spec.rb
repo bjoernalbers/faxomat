@@ -39,7 +39,13 @@ describe Recipient do
 
   describe '#fax_number' do
     it 'is valid when nil' do
-      expect(recipient).not_to validate_presence_of(:fax_number)
+      recipient.fax_number = nil
+      expect(recipient).to be_valid
+    end
+
+    it 'is valid when empty' do
+      recipient.fax_number = ''
+      expect(recipient).to be_valid
     end
 
     it 'drops nondigits before validation' do
