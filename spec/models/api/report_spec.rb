@@ -7,6 +7,29 @@ module API
       expect(report).to be_valid
     end
 
+    describe '#user' do
+      it 'validates presence' do
+        expect(report).to validate_presence_of(:user)
+      end
+
+      context 'when initializes with existing username' do
+        let(:user) { create(:user) }
+        let(:report) { API::Report.new(username: user.username) }
+
+        it 'returns user' do
+          expect(report.user).to eq user
+        end
+      end
+
+      context 'when initializes with unknown username' do
+        let(:report) { API::Report.new(username: 'unknown-user') }
+
+        it 'returns nil' do
+          expect(report.user).to be nil
+        end
+      end
+    end
+
     context 'on save when study includes date prefix' do
       let(:report) { build(:api_report,
                            study_date: nil,
@@ -27,7 +50,6 @@ module API
 
     # Required attributes
     [
-      :username,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
@@ -39,12 +61,6 @@ module API
       :study_date
     ].each do |attr|
       it { expect(report).to validate_presence_of(attr) }
-    end
-
-    it 'validates existence of username' do
-      report.username = 'thisuserdoesnotexist'
-      expect(report).to be_invalid
-      expect(report.errors[:username]).to be_present
     end
 
     it 'saves report' do

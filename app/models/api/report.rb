@@ -2,7 +2,7 @@ module API
   class Report
     include ActiveModel::Model
 
-    attr_accessor :username,
+    attr_accessor :user,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
@@ -30,7 +30,7 @@ module API
 
     attr_reader :report
 
-    validates_presence_of :username,
+    validates_presence_of :user,
       :patient_number,
       :patient_first_name,
       :patient_last_name,
@@ -40,8 +40,6 @@ module API
       :procedure,
       :study,
       :study_date
-
-    validate :validate_existence_of_username
 
     validates_format_of :patient_sex, with: /\A(m|w|u)\z/i, allow_blank: true
 
@@ -60,7 +58,7 @@ module API
 
       if valid?
         @report ||= ::Report.new(patient_id: patient.id,
-                                 user_id: user.id,
+                                 user: user,
                                  recipient_id: recipient.id,
                                  study: study,
                                  study_date: study_date,
@@ -70,8 +68,7 @@ module API
                                  evaluation: evaluation,
                                  procedure: procedure,
                                  clinic: clinic)
-        report.save!
-        true
+        report.save
       else
         false
       end
@@ -109,16 +106,8 @@ module API
         fax_number:    recipient_fax_number)
     end
 
-    private
-
-    def validate_existence_of_username
-      unless user
-        errors.add :username, 'does not exist'
-      end
-    end
-
-    def user
-      @user ||= User.find_by(username: username)
+    def username=(username)
+      self.user = User.find_by(username: username)
     end
   end
 end
