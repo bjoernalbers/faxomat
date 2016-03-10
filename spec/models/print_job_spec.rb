@@ -306,4 +306,26 @@ describe PrintJob do
       expect(print_job.errors[:base]).to include(message)
     end
   end
+
+  describe '#document_fingerprint' do
+    let(:path) { Rails.root.join('spec', 'support', 'sample.pdf') }
+
+    before do
+      File.open(path) do |file|
+        print_job.document = file
+        print_job.save
+      end
+    end
+
+    it 'gets assigned when created' do
+      expect(print_job.document_fingerprint).to be_present
+      expect(print_job.document_fingerprint).
+        to eq Digest::MD5.file(print_job.document.path).to_s
+    end
+
+    it 'is equal to PrintJob#document.fingerprint' do
+      expect(print_job.document_fingerprint).
+        to eq print_job.document.fingerprint
+    end
+  end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160308151101) do
+ActiveRecord::Schema.define(version: 20160310114854) do
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",     null: false
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20160308151101) do
     t.integer  "cups_job_id"
     t.string   "fax_number"
     t.integer  "printer_id",                        null: false
+    t.string   "document_fingerprint"
   end
 
   add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true
