@@ -2,7 +2,7 @@ describe Patient do
   let(:patient) { build(:patient) }
 
   # Required attributes
-  [ :first_name, :last_name, :date_of_birth, :patient_number ].each do |attr|
+  [ :first_name, :last_name, :date_of_birth, :number ].each do |attr|
     it { expect(patient).to validate_presence_of(attr) }
   end
 
@@ -29,11 +29,11 @@ describe Patient do
     end
   end
 
-  describe '#patient_number' do
+  describe '#number' do
     it 'does not store leading and trailing whitespaces' do
-      patient.update(patient_number: " 42\t ")
+      patient.update(number: " 42\t ")
       patient.reload
-      expect(patient.patient_number).to eq '42'
+      expect(patient.number).to eq '42'
     end
   end
 

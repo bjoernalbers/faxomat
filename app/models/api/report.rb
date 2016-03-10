@@ -84,7 +84,7 @@ module API
 
     def patient
       @patient ||= Patient.find_or_create_by(
-        patient_number: patient_number,
+        number:         patient_number,
         first_name:     patient_first_name,
         last_name:      patient_last_name,
         date_of_birth:  patient_date_of_birth,

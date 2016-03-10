@@ -4,9 +4,9 @@ class Patient < ActiveRecord::Base
   validates_presence_of :first_name,
     :last_name,
     :date_of_birth,
-    :patient_number
+    :number
 
-  before_save :strip_patient_number
+  before_save :strip_number
 
   def display_name
     "#{last_name}, #{first_name} (* #{date_of_birth.strftime('%-d.%-m.%Y')})"
@@ -18,7 +18,7 @@ class Patient < ActiveRecord::Base
 
   private
 
-  def strip_patient_number
-    self.patient_number = self.patient_number.strip
+  def strip_number
+    self.number = self.number.strip
   end
 end

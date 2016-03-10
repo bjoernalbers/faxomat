@@ -120,7 +120,7 @@ module API
         patient = report.patient
 
         expect(patient).to be_persisted
-        expect(patient.patient_number).to eq '42'
+        expect(patient.number).to eq '42'
         expect(patient.first_name).to eq     'Chuck'
         expect(patient.last_name).to eq      'Norris'
         expect(patient.date_of_birth).to eq  Time.zone.parse('1940-03-10')
