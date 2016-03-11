@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   #end
   namespace :api do
     resources :print_jobs, only: [:index], defaults: { format: :json }
-    resources :reports, only: [:create, :show]
+    resources :reports, only: [:create, :update, :show]
   end
 
   resources :faxes, only: :create

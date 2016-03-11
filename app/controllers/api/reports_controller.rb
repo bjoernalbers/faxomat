@@ -29,7 +29,7 @@ module API
       ]
     end
 
-    skip_before_action :verify_authenticity_token, only: [:create]
+    skip_before_action :verify_authenticity_token, only: [:create, :update]
     wrap_parameters :report, include: self.report_attributes
 
     def create
@@ -37,6 +37,19 @@ module API
       if api_report.save
         @report = api_report.report
         render :show, status: :created,
+          location: api_report_url(@report)
+      else
+        render json: { errors: api_report.errors.full_messages },
+          status: :unprocessable_entity
+      end
+    end
+
+    def update
+      api_report = Report.find(params[:id])
+      api_report.attributes = report_params
+      if api_report.save
+        @report = api_report.report
+        render :show,
           location: api_report_url(@report)
       else
         render json: { errors: api_report.errors.full_messages },
