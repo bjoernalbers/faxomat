@@ -1,4 +1,4 @@
-describe 'POST /api/reports' do
+describe 'PUT /api/reports/:id' do
   let(:user) { create(:user) }
   let!(:report) { create(:report) }
 
@@ -30,15 +30,13 @@ describe 'POST /api/reports' do
       expect(response.status).to eq 200
     end
 
-    it 'returns JSON' do
+    it 'responds in JSON' do
       do_post
       expect(response.content_type).to be_json
-    end
-
-    it 'returns report id' do
-      do_post
-      expect(json[:id]).to eq Report.last.id
-      expect(json[:pdf_url]).to eq api_report_url(Report.last, format: :pdf)
+      expect(json[:id]).to      eq Report.last.id
+      expect(json[:message]).to eq 'Bericht erfolgreich aktualisiert'
+      expect(json[:errors]).to  be nil
+      expect(json[:pdf_url]).to eq api_report_url(Report.last, format: :pdf) # TODO: Remove!
     end
 
     it 'includes resource URL in location header' do
@@ -61,15 +59,13 @@ describe 'POST /api/reports' do
       expect(response.status).to eq 422
     end
 
-    it 'returns JSON' do
+    it 'responds in JSON' do
       do_post
       expect(response.content_type).to be_json
-    end
-
-    it 'returns array of errors' do
-      do_post
-      expect(json[:errors]).to be_present
-      expect(json[:errors]).to be_a(Array)
+      expect(json[:id]).to      eq report.id
+      expect(json[:message]).to eq 'Bericht ist fehlerhaft'
+      expect(json[:errors]).to  be_a Array
+      expect(json[:pdf_url]).to eq api_report_url(Report.last, format: :pdf) # TODO: Remove!
     end
   end
 end

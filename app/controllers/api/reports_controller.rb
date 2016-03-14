@@ -33,44 +33,45 @@ module API
     wrap_parameters :report, include: self.report_attributes
 
     def create
-      api_report = Report.new(report_params)
-      if api_report.save
-        @report = api_report.report
-        render :show, status: :created,
-          location: api_report_url(@report)
+      @report = Report.new(report_params)
+      if @report.save
+        @message = 'Bericht erfolgreich angelegt'
+        render :show, status: :created, location: api_report_url(@report)
       else
-        render json: { errors: api_report.errors.full_messages },
-          status: :unprocessable_entity
+        @message = 'Bericht ist fehlerhaft'
+        render :show, status: :unprocessable_entity
       end
     end
 
     def update
-      api_report = Report.find(params[:id])
-      api_report.attributes = report_params
-      if api_report.save
-        @report = api_report.report
-        render :show,
-          location: api_report_url(@report)
+      load_report
+      @report.attributes = report_params
+      if @report.save
+        @message = 'Bericht erfolgreich aktualisiert'
+        render :show, status: :ok, location: api_report_url(@report)
       else
-        render json: { errors: api_report.errors.full_messages },
-          status: :unprocessable_entity
+        @message = 'Bericht ist fehlerhaft'
+        render :show, status: :unprocessable_entity
       end
     end
 
     def show
-      @report = ::Report.find(params[:id])
+      load_report
       respond_to do |format|
         format.json { render :show, location: api_report_url(@report) }
         format.pdf  do
-          pdf = ReportPdf.new(ReportPresenter.new(@report, view_context))
+          pdf = ReportPdf.new(ReportPresenter.new(@report.report, view_context))
           #TODO: Replace hard-coded filename!
           send_data pdf.render, filename: 'foo.pdf', type: 'application/pdf'
         end
-
       end
     end
 
     private
+
+    def load_report
+      @report = Report.find(params[:id])
+    end
 
     def report_params
       params.require(:report).permit(self.class.report_attributes)

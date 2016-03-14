@@ -45,6 +45,8 @@ module API
 
     validate :check_models
 
+    delegate :id, :persisted?, to: :report
+
     def self.find(id)
       new(report: ::Report.find(id))
     end
@@ -68,10 +70,6 @@ module API
       hash.each do |key, value|
         send("#{key}=", value)
       end
-    end
-
-    def id
-      report.id
     end
 
     def patient

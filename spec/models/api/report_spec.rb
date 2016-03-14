@@ -235,13 +235,6 @@ module API
       expect{subject.save}.to change(::Report, :count).by(1)
     end
 
-    describe '#id' do
-      it 'gets delegated to ::Report#id' do
-        allow(subject).to receive(:report).and_return( double(id: 42) )
-        expect(subject.id).to eq 42
-      end
-    end
-
     describe '#patient_sex' do
       it { expect(subject).to allow_value('m', 'M', 'w', 'W', 'u', 'U', nil, '').
         for(:patient_sex) }
@@ -281,6 +274,18 @@ module API
         }
         expect(subject.patient_first_name).to eq 'Chunky'
         expect(subject.patient_last_name).to eq 'Bacon'
+      end
+    end
+
+    %i(id persisted?).each do |method|
+      describe "##{method}" do
+        let(:report) { double('report') }
+        before { allow(subject).to receive(:report).and_return(report) }
+
+        it 'is delegated to report' do
+          allow(report).to receive(method).and_return(:chunky_bacon)
+          expect(subject.send(method)).to eq(:chunky_bacon)
+        end
       end
     end
 
