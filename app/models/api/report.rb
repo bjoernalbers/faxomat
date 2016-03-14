@@ -20,7 +20,7 @@ module API
       :recipient_city,
       :recipient_fax_number,
       :study,
-      :study_date,
+      :study_date, # TODO: Fix this!
       :anamnesis,
       :diagnosis,
       :findings,
@@ -38,8 +38,8 @@ module API
       :anamnesis,
       :evaluation,
       :procedure,
-      :study,
-      :study_date
+      :study #,
+      #:study_date # TODO: Fix this!
 
     validates_format_of :patient_sex, with: /\A(m|w|u)\z/i, allow_blank: true
 
@@ -132,8 +132,15 @@ module API
 
     def report_attributes
       # NOTE: Evil hack to capture study date from study.
-      if study_date.blank? && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
-        self.study_date, self.study = match.captures
+      #if study_date.blank? && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
+        #self.study_date, self.study = match.captures
+      #end
+      if study_date.blank?
+        if match = study.match(%r{^([0-9.-]+):\s+(.+)$})
+          self.study_date, self.study = match.captures
+        else
+          self.study_date = Time.zone.now
+        end
       end
 
       {
