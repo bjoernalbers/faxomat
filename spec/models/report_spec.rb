@@ -82,6 +82,12 @@ describe Report do
         expect(report).to be_verified
       end
 
+      it 'can be updated to :verified' do
+        report.save
+        expect(report.update(status: :verified)).to eq true
+        expect(report).to be_verified
+      end
+
       it 'can not be changed to :canceled' do
         report.status = :canceled
         expect(report).to be_pending
@@ -116,6 +122,12 @@ describe Report do
 
       it 'can be changed to :canceled' do
         report.status = :canceled
+        expect(report).to be_canceled
+      end
+
+      it 'can be updated to :canceled' do
+        report.save
+        expect(report.update(status: :canceled)).to eq true
         expect(report).to be_canceled
       end
 
@@ -221,46 +233,33 @@ describe Report do
     end
   end
 
-  describe '#destroy' do
-    context 'when pending' do
-      let!(:report) { create(:pending_report) }
+  context 'when pending' do
+    let!(:report) { create(:pending_report) }
 
-      it 'destroys report' do
-        expect {
-          report.destroy
-        }.to change(Report, :count).by(-1)
-      end
+    it 'is destroyable' do
+      expect { report.destroy }.to change(Report, :count).by(-1)
+      expect(report).to be_deletable
     end
 
-    %w(verified canceled).each do |status|
-      context "when #{status}" do
-        let!(:report) { create("#{status}_report") }
-
-        it 'does not destroy report' do
-          expect {
-            report.destroy
-          }.to change(Report, :count).by(0)
-        end
-
-        it 'adds error to base' do
-          report.destroy
-          expect(report.errors[:base]).to be_present
-        end
-      end
+    it 'is updatable' do
+      expect(report.update(attributes_for(:report))).to eq true
     end
   end
 
-  describe '#deletable?' do
-    it 'is true when pending' do
-      expect(build(:pending_report)).to be_deletable
-    end
+  %w(verified canceled).each do |status|
+    context "when #{status}" do
+      let!(:report) { create("#{status}_report") }
 
-    it 'is false when verified' do
-      expect(build(:verified_report)).not_to be_deletable
-    end
+      it 'is not destroyable' do
+        expect { report.destroy }.to change(Report, :count).by(0)
+        expect(report.errors[:base]).to be_present
+        expect(report).not_to be_deletable
+      end
 
-    it 'is false when canceled' do
-      expect(build(:canceled_report)).not_to be_deletable
+      it 'is not updatable' do
+        expect(report.update(attributes_for(:report))).to eq false
+        expect(report.errors[:base]).to be_present
+      end
     end
   end
 

@@ -17,7 +17,8 @@ class Report < ActiveRecord::Base
   scope :without_completed_print_job, -> { where.not(id: PrintJob.completed.select(:report_id)) }
 
   before_save :replace_carriage_returns
-  before_destroy :allow_destroy_only_when_pending
+  before_destroy :check_if_destroyable
+  before_update :check_if_updatable
 
   def status
     if canceled_at.present?
@@ -76,10 +77,21 @@ class Report < ActiveRecord::Base
     end
   end
 
-  def allow_destroy_only_when_pending
+  def check_if_destroyable
     unless pending?
-      errors.add(:base, 'Ein vidierter oder stornierter Arztbrief kann nicht gelöscht werden!')
+      errors.add(:base, 'Arztbrief darf nicht mehr gelöscht werden!')
       false
     end
+  end
+
+  def check_if_updatable
+    unless pending? || only_status_changed?
+      errors.add(:base, 'Arztbrief darf nicht mehr verändert werden!')
+      false
+    end
+  end
+
+  def only_status_changed?
+    changed.all? { |c| %w(verified_at canceled_at updated_at).include?(c) }
   end
 end
