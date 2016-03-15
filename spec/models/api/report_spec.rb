@@ -197,21 +197,21 @@ module API
       end
     end
 
-    context 'on save when study includes date prefix' do
-      let(:subject) { build(:api_report,
-                           study_date: nil,
-                           study:      '01.12.1980: Party: Yes!') }
+    describe '#study_date' do
+      context 'when prefixed in study' do
+        let(:subject) { build(:api_report,
+                             study_date: nil,
+                             study:      '01.12.1980: Party: Yes!') }
 
-      before do
-        subject.save
-      end
+        it 'splits study and study date on validation' do
+          subject.validate
+          expect(subject.study_date).to eq '01.12.1980'
+          expect(subject.study).to eq 'Party: Yes!'
+        end
 
-      it 'stores the date as study date' do
-        expect(subject.study_date).to eq '01.12.1980'
-      end
-
-      it 'removes the date prefix from study' do
-        expect(subject.study).to eq 'Party: Yes!'
+        it 'is valid' do
+          expect(subject).to be_valid
+        end
       end
     end
 
