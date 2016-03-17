@@ -8,6 +8,24 @@ describe Report do
 
   it { expect(report).to have_many(:print_jobs) }
 
+  it 'is translated' do
+    expect(described_class.model_name.human).to eq 'Bericht'
+    {
+      user:       'Arzt',
+      patient:    'Patient',
+      recipient:  'Überweiser',
+      study:      'Untersuchung',
+      study_date: 'Untersuchungsdatum',
+      anamnesis:  'Indikation',
+      findings:   'Befund',
+      evaluation: 'Beurteilung',
+      procedure:  'Methode',
+      clinic:     'Klinik'
+    }.each do |attr,translation|
+      expect(described_class.human_attribute_name(attr)).to eq translation
+    end
+  end
+
   # Required attributes
   [
     :user,

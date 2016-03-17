@@ -1,11 +1,52 @@
 de:
   activerecord:
     models:
-      template: 'Vorlage'
+      template: Vorlage
+      report: Bericht
+      api/report: Bericht
+      recipient: Überweiser
+      user: Arzt
+      patient: Patient
     attributes:
+      patient:
+        first_name: Vorname
+        last_name: Nachname
+        date_of_birth: Geburtsdatum
+        title: Titel
+        suffix: Namenszusatz
+        sex: Geschlecht
+        number: Nummer
+      recipient:
+        first_name: Vorname
+        last_name: Nachname
+        title: Titel
+        suffix: Namenszusatz
+        address: Adresse
+        zip: Postleitzahl
+        city: Ort
+        salutation: Anrede
+        fax_number: Faxnummer
       report:
+        recipient: Überweiser
+        user: Arzt
+        patient: Patient
         subject: Betreff
         study: Untersuchung
+        study_date: Untersuchungsdatum
+        anamnesis: Indikation
+        diagnosis: Diagnose
+        findings: Befund
+        evaluation: Beurteilung
+        procedure: Methode
+        clinic: Klinik
+      api/report:
+        report: Bericht
+        recipient: Überweiser
+        user: Arzt
+        patient: Patient
+        subject: Betreff
+        study: Untersuchung
+        study_date: Untersuchungsdatum
         anamnesis: Indikation
         diagnosis: Diagnose
         findings: Befund

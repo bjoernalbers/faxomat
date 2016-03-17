@@ -41,7 +41,7 @@ describe PrintJob do
           print_job.fax_number = fax_number
           expect(print_job).to be_invalid
           expect(print_job.errors[:fax_number]).to be_present
-          expect(print_job.errors[:fax_number]).to include('has no area code')
+          expect(print_job.errors[:fax_number]).to include('ist keine gültige nationale Faxnummer mit Vorwahl')
         end
       end
       

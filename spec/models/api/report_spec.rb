@@ -7,28 +7,32 @@ module API
       expect(subject).to be_valid
     end
 
-    it 'validates patient' do
-      patient = build(:patient, last_name: nil)
-      subject.patient = patient
-      expect(patient).to be_invalid
-      expect(subject).to be_invalid
-      expect(subject.errors[:patient]).to be_present
+    it 'is translated' do
+      expect(described_class.model_name.human).to eq 'Bericht'
+      {
+        user:       'Arzt',
+        patient:    'Patient',
+        recipient:  'Überweiser',
+        study:      'Untersuchung',
+        study_date: 'Untersuchungsdatum',
+        anamnesis:  'Indikation',
+        findings:   'Befund',
+        evaluation: 'Beurteilung',
+        procedure:  'Methode',
+        clinic:     'Klinik',
+        report:     'Bericht'
+      }.each do |attr,translation|
+        expect(described_class.human_attribute_name(attr)).to eq translation
+      end
     end
 
-    it 'validates recipient' do
-      recipient = build(:recipient, last_name: nil)
-      subject.recipient = recipient
-      expect(recipient).to be_invalid
-      expect(subject).to be_invalid
-      expect(subject.errors[:recipient]).to be_present
-    end
-
-    it 'validates report' do
-      report = build(:report, study: nil)
-      subject.report = report
-      expect(report).to be_invalid
-      expect(subject).to be_invalid
-      expect(subject.errors[:report]).to be_present
+    %i(patient recipient report).each do |association|
+      it "validates #{association}" do
+        object = association.to_s.capitalize.constantize.new
+        subject.send("#{association}=", object)
+        expect(subject).to be_invalid unless object.valid?
+        expect(subject.errors[association].count).to eq(object.errors.count)
+      end
     end
 
     describe '.find' do
@@ -208,26 +212,17 @@ module API
           expect(subject.study_date).to eq '01.12.1980'
           expect(subject.study).to eq 'Party: Yes!'
         end
+      end
 
-        it 'is valid' do
-          expect(subject).to be_valid
+      context 'when missing and study date is nil' do
+        let(:subject) { build(:api_report,
+                             study_date: nil,
+                             study:      nil) }
+
+        it 'does not raise error' do
+          expect { subject.validate }.not_to raise_error
         end
       end
-    end
-
-    # Required attributes
-    [
-      :patient_number,
-      :patient_first_name,
-      :patient_last_name,
-      :patient_date_of_birth,
-      :anamnesis,
-      :evaluation,
-      :procedure,
-      :study,
-      :study_date
-    ].each do |attr|
-      it { expect(subject).to validate_presence_of(attr) }
     end
 
     it 'saves report' do

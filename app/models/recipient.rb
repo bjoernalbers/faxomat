@@ -1,17 +1,11 @@
 class Recipient < ActiveRecord::Base
-  MINIMUM_PHONE_LENGTH = 8
-  AREA_CODE_REGEX = %r{\A0[1-9]}
-
   validates_presence_of :last_name
 
   before_validation :strip_nondigits_from_fax_number
 
   has_many :reports
 
-  validates :fax_number,
-    length: {minimum: MINIMUM_PHONE_LENGTH},
-    format: {with: AREA_CODE_REGEX, message: 'has no area code'},
-    if: :fax_number
+  validates :fax_number, fax: true, if: :fax_number
 
   def full_name
     [ title, first_name, last_name ].compact.join(' ')

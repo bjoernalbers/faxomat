@@ -11,6 +11,23 @@ describe Recipient do
 
   it { expect(recipient).to have_many(:reports) }
 
+  it 'is translated' do
+    expect(described_class.model_name.human).to eq 'Überweiser'
+    {
+      first_name:    'Vorname',
+      last_name:     'Nachname',
+      title:         'Titel',
+      suffix:        'Namenszusatz',
+      address:       'Adresse',
+      zip:           'Postleitzahl',
+      city:          'Ort',
+      salutation:    'Anrede',
+      fax_number:    'Faxnummer'
+    }.each do |attr,translation|
+      expect(described_class.human_attribute_name(attr)).to eq translation
+    end
+  end
+
   describe '#full_name' do
     it 'joins title, first and last name' do
       recipient = build(:recipient,

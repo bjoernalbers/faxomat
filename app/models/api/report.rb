@@ -3,6 +3,14 @@ module API
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
 
+    # Required for translating model names and their attributes
+    # See: http://stackoverflow.com/questions/8835215/how-to-handle-translations-for-an-activemodel
+    class << self
+      def i18n_scope
+        :activerecord
+      end
+    end
+
     attr_accessor :user,
       :patient_number,
       :patient_first_name,
@@ -31,20 +39,11 @@ module API
 
     attr_writer :patient, :recipient, :report
 
-    validates_presence_of :user,
-      :patient_number,
-      :patient_first_name,
-      :patient_last_name,
-      :patient_date_of_birth,
-      :anamnesis,
-      :evaluation,
-      :procedure,
-      :study,
-      :study_date
+    validates_presence_of :user
 
     validates_format_of :patient_sex, with: /\A(m|w|u)\z/i, allow_blank: true
 
-    validate :check_models
+    validate :check_associations
 
     before_validation :split_study_and_study_date
 
@@ -52,7 +51,7 @@ module API
     # Tomedo, which is Karteieintrag "Untersuchung" (UNT).
     # Thats why both fields are joined and must be split afterwards.
     def split_study_and_study_date
-      if study_date.blank? && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
+      if study_date.blank? && study && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
         self.study_date, self.study = match.captures
       end
     end
@@ -158,9 +157,13 @@ module API
       }
     end
 
-    def check_models
-      %i(patient recipient report).each do |model|
-        errors.add(model, 'ist ungültig') unless send(model).valid?
+    def check_associations
+      %i(patient recipient report).each do |association|
+        unless send(association).valid?
+          send(association).errors.full_messages.each do |message|
+            errors.add(association, message)
+          end
+        end
       end
     end
   end

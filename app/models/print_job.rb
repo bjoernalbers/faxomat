@@ -1,8 +1,5 @@
 # Keeps track of print jobs.
 class PrintJob < ActiveRecord::Base
-  MINIMUM_PHONE_LENGTH = 8
-  AREA_CODE_REGEX = %r{\A0[1-9]}
-
   enum status: { active: 0, completed: 1, aborted: 2 }
 
   belongs_to :printer
@@ -24,11 +21,7 @@ class PrintJob < ActiveRecord::Base
     presence: true,
     content_type: { content_type: 'application/pdf' }
 
-  validates :fax_number,
-    presence: true,
-    length:   { minimum: MINIMUM_PHONE_LENGTH },
-    format:   { with: AREA_CODE_REGEX, message: 'has no area code' },
-    if: :belongs_to_fax_printer?
+  validates :fax_number, presence: true, fax: true, if: :belongs_to_fax_printer?
 
   #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
   #before_save :print, unless: :cups_job_id

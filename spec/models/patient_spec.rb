@@ -11,6 +11,21 @@ describe Patient do
     it { expect(patient).not_to validate_presence_of(attr) }
   end
 
+  it 'is translated' do
+    expect(described_class.model_name.human).to eq 'Patient'
+    {
+      first_name:    'Vorname',
+      last_name:     'Nachname',
+      date_of_birth: 'Geburtsdatum',
+      title:         'Titel',
+      suffix:        'Namenszusatz',
+      sex:           'Geschlecht',
+      number:        'Nummer'
+    }.each do |attr,translation|
+      expect(described_class.human_attribute_name(attr)).to eq translation
+    end
+  end
+
   describe '#sex' do
     it 'accepts 0 as male' do
       patient.sex = 0
