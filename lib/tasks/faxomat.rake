@@ -26,6 +26,9 @@ namespace :faxomat do
         unless File.exists?(destination)
           FileUtils.cp(source, destination, verbose: true)
         end
+        if Rails.env.production?
+          system "rsync -rv '#{dir}/' rgp@sauron:'/Shared\ Items/evkexport'"
+        end
     end
   end
 end
