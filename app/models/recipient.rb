@@ -1,11 +1,10 @@
 class Recipient < ActiveRecord::Base
-  validates_presence_of :last_name
+  has_many :reports
 
   before_validation :strip_nondigits_from_fax_number
 
-  has_many :reports
-
-  validates :fax_number, fax: true, if: :fax_number
+  validates_presence_of :last_name
+  validates :fax_number, fax: true
 
   def full_name
     [ title, first_name, last_name ].compact.join(' ')

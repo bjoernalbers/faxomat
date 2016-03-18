@@ -18,10 +18,10 @@ class PrintJob < ActiveRecord::Base
   validates_absence_of :cups_job_id, unless: :status
 
   validates_attachment :document,
-    presence: true,
-    content_type: { content_type: 'application/pdf' }
+    presence: true, content_type: { content_type: 'application/pdf' }
 
-  validates :fax_number, presence: true, fax: true, if: :belongs_to_fax_printer?
+  validates :fax_number,
+    presence: true, fax: true, if: :belongs_to_fax_printer?
 
   #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
   #before_save :print, unless: :cups_job_id
