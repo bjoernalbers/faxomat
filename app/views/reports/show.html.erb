@@ -3,8 +3,8 @@
     <div class="btn-group">
       <%= link_to 'Öffnen', report_path(@report, format: :pdf), class: 'btn btn-default' %>
       <% if @report.verified? %>
-        <% button_class = (@report.verified? && !@report.delivered?) ? 'btn btn-primary' : 'btn btn-default' %>
-        <%= link_to 'Senden', new_report_printing_path(@report), class: button_class %>
+        <%= link_to 'Senden', new_report_printing_path(@report), class:
+          (@report.undelivered? ? 'btn btn-primary' : 'btn btn-default') %>
       <% end %>
     </div>
 

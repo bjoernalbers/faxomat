@@ -212,10 +212,10 @@ describe Report do
       expect(Report.undelivered).not_to include report
     end
 
-    it 'includes verified reports with active print_job' do
+    it 'excludes verified reports with active print_job' do
       report = create(:verified_report)
       create(:active_print_job, report: report)
-      expect(Report.undelivered).to include report
+      expect(Report.undelivered).not_to include report
     end
 
     it 'includes verified reports with aborted print_job' do
@@ -231,23 +231,27 @@ describe Report do
     end
   end
 
-  describe '#delivered?' do
+  describe '#undelivered?' do
     let(:report) { create(:verified_report) }
 
-    it 'without print_job is false' do
+    it 'without print_job is true' do
       expect(report.print_jobs).to be_empty
-      expect(report).not_to be_delivered
+      expect(report).to be_undelivered
     end
 
-    it 'without completed print_job is false' do
-      create(:active_print_job, report: report)
+    it 'with aborted print job is true' do
       create(:aborted_print_job, report: report)
-      expect(report).not_to be_delivered
+      expect(report).to be_undelivered
     end
 
-    it 'with completed print_job is true' do
+    it 'with active print_job is false' do
+      create(:active_print_job, report: report)
+      expect(report).not_to be_undelivered
+    end
+
+    it 'with completed print_job is false' do
       create(:completed_print_job, report: report)
-      expect(report).to be_delivered
+      expect(report).not_to be_undelivered
     end
   end
 
