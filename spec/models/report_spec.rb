@@ -201,53 +201,53 @@ describe Report do
     end
   end
 
-  describe '.unsent' do
+  describe '.undelivered' do
     it 'excludes pending reports' do
       report = create(:pending_report)
-      expect(Report.unsent).not_to include report
+      expect(Report.undelivered).not_to include report
     end
 
     it 'excludes canceled reports' do
       report = create(:canceled_report)
-      expect(Report.unsent).not_to include report
+      expect(Report.undelivered).not_to include report
     end
 
     it 'includes verified reports with active print_job' do
       report = create(:verified_report)
       create(:active_print_job, report: report)
-      expect(Report.unsent).to include report
+      expect(Report.undelivered).to include report
     end
 
     it 'includes verified reports with aborted print_job' do
       report = create(:verified_report)
       create(:aborted_print_job, report: report)
-      expect(Report.unsent).to include report
+      expect(Report.undelivered).to include report
     end
 
     it 'excludes reports with completed print_job' do
       report = create(:verified_report)
       create(:completed_print_job, report: report)
-      expect(Report.unsent).not_to include report
+      expect(Report.undelivered).not_to include report
     end
   end
 
-  describe '#sent?' do
+  describe '#delivered?' do
     let(:report) { create(:verified_report) }
 
     it 'without print_job is false' do
       expect(report.print_jobs).to be_empty
-      expect(report).not_to be_sent
+      expect(report).not_to be_delivered
     end
 
     it 'without completed print_job is false' do
       create(:active_print_job, report: report)
       create(:aborted_print_job, report: report)
-      expect(report).not_to be_sent
+      expect(report).not_to be_delivered
     end
 
     it 'with completed print_job is true' do
       create(:completed_print_job, report: report)
-      expect(report).to be_sent
+      expect(report).to be_delivered
     end
   end
 

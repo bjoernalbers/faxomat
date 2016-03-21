@@ -12,7 +12,7 @@ class Report < ActiveRecord::Base
 
   scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
   scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
-  scope :unsent, -> { verified.without_completed_print_job }
+  scope :undelivered, -> { verified.without_completed_print_job }
   # Taken from: http://stackoverflow.com/questions/5319400/want-to-find-records-with-no-associated-records-in-rails-3
   scope :without_completed_print_job, -> { where.not(id: PrintJob.completed.select(:report_id)) }
 
@@ -58,7 +58,7 @@ class Report < ActiveRecord::Base
     ReportFaxer.deliver(self)
   end
 
-  def sent?
+  def delivered?
     print_jobs.completed.present?
   end
 
