@@ -32,11 +32,11 @@ feature 'Deliver report' do
     expect(page).to have_content('Druckauftrag wird gesendet')
   end
 
-  scenario 'with active fax is not possible' do
+  scenario 'with active fax' do
     report = create(:verified_report, user: user)
     create(:active_print_job, report: report)
     visit report_url(report)
-    expect(page).not_to have_link send_report
+    expect(page).to have_link send_report
     expect(page).to have_content('Druckauftrag aktiv') # Label
   end
 
