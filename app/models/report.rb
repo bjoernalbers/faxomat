@@ -56,7 +56,15 @@ class Report < ActiveRecord::Base
   end
 
   def deliver_as_fax
-    ReportFaxer.deliver(self)
+    if printer = Printer.fax_printer
+      if recipient_fax_number.present? # TODO: Move this into Printing-model!
+        Report::Printing.new(report: self, printer: printer).save
+      else
+        false
+      end
+    else
+      false
+    end
   end
 
   def undelivered?

@@ -285,11 +285,44 @@ describe Report do
     end
   end
 
-  describe '#deliver_as_print_job' do
-    it 'delivers itself as print_job' do
-      allow(ReportFaxer).to receive(:deliver)
-      report.deliver_as_fax
-      expect(ReportFaxer).to have_received(:deliver).with(report)
+  describe '#deliver_as_fax' do
+    context 'without fax printer' do
+      it 'returns false' do
+        expect(Printer.fax_printer).to be nil
+        expect(report.deliver_as_fax).to eq false
+      end
+    end
+
+    context 'with fax printer' do
+      before do
+        Rails.application.load_seed # To make the fax printer available!
+      end
+
+      context 'but without fax number' do
+        let(:recipient) { create(:recipient, fax_number: nil) }
+        let(:report) { create(:verified_report, recipient: recipient) }
+
+        it 'returns false' do
+          expect(report.deliver_as_fax).to eq false
+        end
+
+        it 'creates no fax print job' do
+          expect { report.deliver_as_fax }.to change(PrintJob, :count).by(0)
+        end
+      end
+
+      context 'and with fax number' do
+        let(:recipient) { create(:recipient, fax_number: '032472384234') }
+        let(:report) { create(:verified_report, recipient: recipient) }
+
+        it 'returns true' do
+          expect(report.deliver_as_fax).to eq true
+        end
+
+        it 'creates a fax print job' do
+          expect { report.deliver_as_fax }.to change(PrintJob, :count).by(1)
+        end
+      end
     end
   end
 

@@ -32,8 +32,7 @@ class ReportsController < ApplicationController
     load_user_report
     if @report.pending?
       @report.update!(status: :verified)
-      if @report.recipient_fax_number.present?
-        Report::Printing.new(report:  @report, printer: Printer.fax_printer).save
+      if @report.deliver_as_fax
         redirect_to @report, notice: "Arztbrief erfolgreich vidiert und Fax-Auftrag angelegt."
       else
         redirect_to @report, notice: "Arztbrief erfolgreich vidiert."
