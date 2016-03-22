@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   root 'print_jobs#index'
 
   resources :reports, only: [:index, :show, :destroy, :update] do
+    patch :verify, on: :member
     resources :printings, only: [:new, :create]
   end
 

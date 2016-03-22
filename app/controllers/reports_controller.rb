@@ -28,6 +28,21 @@ class ReportsController < ApplicationController
     end
   end
 
+  def verify
+    load_user_report
+    if @report.pending?
+      @report.update!(status: :verified)
+      if @report.recipient_fax_number.present?
+        Report::Printing.new(report:  @report, printer: Printer.fax_printer).save
+        redirect_to @report, notice: "Arztbrief erfolgreich vidiert und Fax-Auftrag angelegt."
+      else
+        redirect_to @report, notice: "Arztbrief erfolgreich vidiert."
+      end
+    else
+      render :show
+    end
+  end
+
   def destroy
     load_user_report
     if @report.destroy

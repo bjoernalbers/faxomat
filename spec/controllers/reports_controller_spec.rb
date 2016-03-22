@@ -10,6 +10,8 @@ describe ReportsController do
     user = FactoryGirl.create(:user)
     sign_in user
     user
+
+    Rails.application.load_seed # To make the fax printer available!
   end
 
   describe 'DELETE #destroy' do
@@ -112,6 +114,89 @@ describe ReportsController do
       it 'raises error' do
         expect {
           do_patch
+        }.to raise_error ActiveRecord::RecordNotFound
+      end
+    end
+  end
+
+  describe 'PATCH #verify' do
+    def do_verify
+      patch :verify, id: report
+    end
+
+    context 'with pending report' do
+      let(:report) { create(:pending_report, user: current_user) }
+
+      it 'verifies report' do
+        do_verify
+        report.reload
+        expect(report).to be_verified
+      end
+
+      context 'when faxable' do
+        let(:recipient) { create(:recipient, fax_number: '0724634562234') }
+        let(:report) { create(:pending_report, user: current_user, recipient: recipient) }
+
+        it 'creates print job' do
+          expect { do_verify }.to change(Printer.fax_printer.print_jobs, :count).by(1)
+          expect(Printer.fax_printer.print_jobs.last.fax_number).to eq recipient.fax_number
+        end
+
+        it 'redirects to report' do
+          do_verify
+          expect(response).to redirect_to report_url(report)
+        end
+
+        it 'sets flash message' do
+          do_verify
+          expect(flash[:notice]).to eq 'Arztbrief erfolgreich vidiert und Fax-Auftrag angelegt.'
+        end
+      end
+
+      context 'when not faxable' do
+        let(:recipient) { create(:recipient, fax_number: nil) }
+        let(:report) { create(:pending_report, user: current_user, recipient: recipient) }
+
+        it 'creates no print job' do
+          expect { do_verify }.to change(PrintJob, :count).by(0)
+        end
+
+        it 'redirects to report' do
+          do_verify
+          expect(response).to redirect_to report_url(report)
+        end
+
+        it 'sets flash message' do
+          do_verify
+          expect(flash[:notice]).to eq 'Arztbrief erfolgreich vidiert.'
+        end
+      end
+    end
+
+    context 'with verified report' do
+      let(:report) { create(:verified_report, user: current_user) }
+
+      it 'renders show template' do
+        do_verify
+        expect(response).to render_template :show
+      end
+    end
+
+    context 'with canceled report' do
+      let(:report) { create(:canceled_report, user: current_user) }
+
+      it 'renders show template' do
+        do_verify
+        expect(response).to render_template :show
+      end
+    end
+
+    context 'with report from other user' do
+      let!(:report) { create(:pending_report) }
+
+      it 'raises error' do
+        expect {
+          do_verify
         }.to raise_error ActiveRecord::RecordNotFound
       end
     end
