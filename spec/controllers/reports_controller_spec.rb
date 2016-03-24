@@ -138,8 +138,8 @@ describe ReportsController do
         let(:report) { create(:pending_report, user: current_user, recipient: recipient) }
 
         it 'creates print job' do
-          expect { do_verify }.to change(Printer.fax_printer.print_jobs, :count).by(1)
-          expect(Printer.fax_printer.print_jobs.last.fax_number).to eq recipient.fax_number
+          expect { do_verify }.to change(FaxPrinter.default.print_jobs, :count).by(1)
+          expect(FaxPrinter.default.print_jobs.last.fax_number).to eq recipient.fax_number
         end
 
         it 'redirects to report' do

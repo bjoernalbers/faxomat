@@ -5,5 +5,5 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-Printer.find_or_create_by(name: 'Fax').
-  update!(label: 'Faxgerät', is_fax_printer: true)
+
+FaxPrinter.find_or_create_by(name: 'Fax').update!(label: 'Faxgerät')

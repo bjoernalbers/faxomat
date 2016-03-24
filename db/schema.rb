@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160310145129) do
+ActiveRecord::Schema.define(version: 20160323111454) do
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",    null: false
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 20160310145129) do
     t.integer  "dialout_prefix"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
-    t.boolean  "is_fax_printer"
+    t.string   "type"
   end
 
   add_index "printers", ["name"], name: "index_printers_on_name", unique: true

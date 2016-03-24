@@ -2,10 +2,13 @@ FactoryGirl.define do
   factory :printer do
     name { "Printer-#{Faker::Number.number(5)}" }
     label { Faker::StarWars.droid }
-    dialout_prefix { [0, 1, 2, 3, nil].sample }
 
-    factory :fax_printer do
-      is_fax_printer true
+    factory :fax_printer, class: FaxPrinter do
+      dialout_prefix { Faker::Number.digit }
+    end
+
+    factory :paper_printer, class: PaperPrinter do
+      dialout_prefix { nil }
     end
   end
 end

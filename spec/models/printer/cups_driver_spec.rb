@@ -1,5 +1,5 @@
 describe Printer::CupsDriver do
-  let(:printer) { build(:printer, name: 'ChunkyPrinter', dialout_prefix: 6) }
+  let(:printer) { build(:printer) }
   let(:driver) { Printer::CupsDriver.new(printer) }
 
   describe '#print' do
@@ -18,27 +18,23 @@ describe Printer::CupsDriver do
     end
 
     context 'with fax printer' do
-      before do
-        printer.is_fax_printer = true
-      end
+      let(:printer) { build(:fax_printer) }
 
       it 'prints as CUPS fax print_job' do
         driver.print(print_job)
         expect(Cups::PrintJob).to have_received(:new).
-          with('chunky_bacon.pdf', 'ChunkyPrinter', {'phone' => '6012456789'})
+          with('chunky_bacon.pdf', printer.name, {'phone' => "#{printer.dialout_prefix}#{print_job.fax_number}"})
         expect(cups_job).to have_received(:print)
       end
     end
 
-    context 'without fax printer' do
-      before do
-        printer.is_fax_printer = false
-      end
+    context 'with paper printer' do
+      let(:printer) { build(:paper_printer) }
 
       it 'prints as CUPS print_job' do
         driver.print(print_job)
         expect(Cups::PrintJob).to have_received(:new).
-          with('chunky_bacon.pdf', 'ChunkyPrinter')
+          with('chunky_bacon.pdf', printer.name)
         expect(cups_job).to have_received(:print)
       end
     end
@@ -141,7 +137,7 @@ describe Printer::CupsDriver do
 
     it 'queries statuses from CUPS' do
       driver.send(:cups_job_statuses)
-      expect(Cups).to have_received(:all_jobs).with('ChunkyPrinter')
+      expect(Cups).to have_received(:all_jobs).with(printer.name)
     end
 
     it 'returns CUPS status by id' do

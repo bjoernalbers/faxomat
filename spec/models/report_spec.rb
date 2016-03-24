@@ -288,7 +288,7 @@ describe Report do
   describe '#deliver_as_fax' do
     context 'without fax printer' do
       it 'returns false' do
-        expect(Printer.fax_printer).to be nil
+        expect(FaxPrinter.default).to be nil
         expect(report.deliver_as_fax).to eq false
       end
     end

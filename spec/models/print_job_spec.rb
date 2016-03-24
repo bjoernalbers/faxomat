@@ -56,8 +56,8 @@ describe PrintJob do
       end
     end
 
-    context 'without fax printer' do
-      let(:print_job) { build(:print_job, printer: create(:printer)) }
+    context 'with paper printer' do
+      let(:print_job) { build(:print_job, printer: create(:paper_printer)) }
       
       it { expect(print_job).not_to validate_presence_of(:fax_number) }
     end

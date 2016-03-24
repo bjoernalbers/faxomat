@@ -43,12 +43,12 @@ describe 'Create fax' do
     end
 
     it 'creates a new print job' do
-      expect{ do_post }.to change(Printer.fax_printer.print_jobs, :count).by(1)
+      expect{ do_post }.to change(FaxPrinter.default.print_jobs, :count).by(1)
     end
 
     it 'saves the content' do
       do_post
-      print_job = Printer.fax_printer.print_jobs.first
+      print_job = FaxPrinter.default.print_jobs.first
       expect(File.read(print_job.document.path)).to eq File.read(path)
     end
   end

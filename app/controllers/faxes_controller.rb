@@ -24,6 +24,6 @@ class FaxesController < ApplicationController
   end
 
   def faxes
-    Printer.fax_printer.print_jobs
+    FaxPrinter.default.print_jobs
   end
 end

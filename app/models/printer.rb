@@ -21,14 +21,14 @@ class Printer < ActiveRecord::Base
     def update_active_print_jobs
       find_each { |printer| printer.update_active_print_jobs }
     end
-
-    def fax_printer
-      find_by(is_fax_printer: true)
-    end
   end
 
   def update_active_print_jobs
     driver.check(active_print_jobs)
+  end
+
+  def is_fax_printer?
+    false
   end
 
   # Print print job.
