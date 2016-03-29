@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160323111454) do
+ActiveRecord::Schema.define(version: 20160329140716) do
+
+  create_table "documents", force: :cascade do |t|
+    t.string   "title",             null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.string   "file_fingerprint"
+  end
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",    null: false
