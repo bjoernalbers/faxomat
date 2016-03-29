@@ -1,0 +1,19 @@
+<p>
+  <%= recipient.title %>
+  <%= recipient.first_name %>
+  <%= recipient.last_name %>
+  <%= recipient.suffix %>
+  <br>
+  <%= recipient.address %>
+  <br>
+  <%= recipient.zip %>
+  <%= recipient.city %>
+  <br>
+  <% if recipient.fax_number %>
+    Fax: <%= recipient.fax_number %>
+  <% else %>
+    <strong>
+      ACHTUNG: Faxnummer fehlt!
+    </strong>
+  <% end %>
+</p>

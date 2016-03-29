@@ -27,10 +27,14 @@
       <% p = @report.patient %>
       <h1>
         <%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %><br>
-        <small>
-          <%= @report.subject %>
-        </small>
       </h1>
+      <h2>
+        Überweiser
+      </h2>
+      <%= render @report.recipient %>
+      <h2>
+        <%= @report.subject %>
+      </h2>
       <div class="label-group">
         <% if @report.verified? %>
           <span class="label label-info">

@@ -1,6 +1,13 @@
 describe Recipient do
   let(:recipient) { build(:recipient) }
 
+  it 'has valid factory' do
+    expect(recipient).to be_valid
+    %i(title first_name last_name suffix address city zip fax_number salutation).each do |attr|
+      expect(recipient.send(attr)).to be_present
+    end
+  end
+
   # Required attributes
   it { expect(recipient).to validate_presence_of(:last_name) }
 
