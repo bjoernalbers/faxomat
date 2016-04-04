@@ -92,7 +92,9 @@ module API
     end
 
     def report
-      @report ||= build_report
+      @report ||= ::Report.new
+      @report.attributes = report_attributes
+      @report
     end
 
     def username=(username)
@@ -107,12 +109,6 @@ module API
 
     def find_or_create_recipient
       Recipient.find_or_create_by(recipient_attributes)
-    end
-
-    def build_report
-      rep = @report || ::Report.new
-      rep.attributes = report_attributes
-      rep
     end
 
     def patient_attributes

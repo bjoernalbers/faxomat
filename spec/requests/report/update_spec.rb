@@ -21,11 +21,18 @@ describe 'PUT /api/reports/:id' do
       attributes_for(:api_report).merge(username: username).to_json
     end
 
+    it 'updates report' do
+      old_findings = report.findings
+      do_post
+      report.reload
+      expect(report.findings).not_to eq old_findings
+    end
+
     it 'does not create new report in database' do
       expect { do_post }.to change(Report, :count).by(0)
     end
 
-    it 'returns HTTP status 201' do
+    it 'returns HTTP status 200' do
       do_post
       expect(response.status).to eq 200
     end

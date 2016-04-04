@@ -26,13 +26,20 @@ module API
       end
     end
 
-    %i(patient recipient report).each do |association|
+    %i(patient recipient).each do |association|
       it "validates #{association}" do
         object = association.to_s.capitalize.constantize.new
         subject.send("#{association}=", object)
-        expect(subject).to be_invalid unless object.valid?
+        expect(subject).to be_invalid
         expect(subject.errors[association].count).to eq(object.errors.count)
       end
+    end
+
+    it 'validates report' do
+      subject = build(:api_report, study: nil, anamnesis: nil, findings: nil,
+                      evaluation: nil, procedure: nil, clinic: nil)
+      expect(subject).to be_invalid
+      expect(subject.errors[:report]).to be_present
     end
 
     describe '.find' do
@@ -104,44 +111,30 @@ module API
       end
     end
 
-    describe '#build_report' do
-      context 'without report' do
-        before { subject.report = nil }
+    describe '#report' do
+      context 'when present' do
+        let(:report) { build(:report) }
+        let(:subject) { build(:api_report, report: report) }
+
+        it 'returns report' do
+          expect(subject.report).to eq report
+        end
+      end
+
+      context 'when missing' do
+        let(:report) { build(:report) }
+        before { allow(::Report).to receive(:new).and_return(report) }
 
         it 'returns new report' do
-          expect(subject.send(:build_report)).to be_new_record
+          expect(subject.report).to eq report
+        end
+
+        it 'assigns report' do
+          expect(subject.report).to eq subject.report
         end
       end
 
-      context 'with report' do
-        let(:report) { build(:report) }
-        before { subject.report = report }
-
-        it 'returns assigned report' do
-          expect(subject.send(:build_report)).to eq report
-        end
-      end
-
-      it 'assigns reports attributes to report' do
-        allow(subject).to receive(:report_attributes).
-          and_return({findings: 'nix'})
-        expect(subject.send(:build_report).findings).to eq 'nix'
-      end
-    end
-
-    describe '#report' do
-      let(:report) { build(:report) }
-
-      before { allow(subject).to receive(:build_report).and_return(report) }
-
-      it 'builds report' do
-        expect(report).to eq report
-      end
-
-      it 'caches report' do
-        2.times { subject.report }
-        expect(subject).to have_received(:build_report).once
-      end
+      it 'assigns reports attributes to report'
     end
 
     describe '#patient' do
