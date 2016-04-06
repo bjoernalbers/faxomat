@@ -38,6 +38,18 @@ feature 'Verify report' do
     expect(page).not_to have_button 'Vidieren'
   end
 
+  scenario 'when not logged in' do
+    patient = create(:patient,
+                     first_name:    'Chuck',
+                     last_name:     'Norris',
+                     date_of_birth: '1940-03-10')
+    report = create(:report, user: user, patient: patient)
+    logout(:user)
+    visit report_url(report)
+    expect(page).to have_content 'Norris'
+    expect(page).not_to have_button 'Vidieren'
+  end
+
   scenario 'when faxable' do
     recipient = create(:recipient, fax_number: '0123456789')
     report = create(:pending_report, user: user, recipient: recipient)

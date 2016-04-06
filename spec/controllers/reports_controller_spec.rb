@@ -14,6 +14,20 @@ describe ReportsController do
     Rails.application.load_seed # To make the fax printer available!
   end
 
+  describe 'GET #show' do
+    let!(:report) { create(:report, user: current_user) }
+
+    def do_get
+      get :show, id: report
+    end
+
+    it 'does not require authentication' do
+      sign_out current_user
+      do_get
+      expect(response).to be_success
+    end
+  end
+
   describe 'DELETE #destroy' do
     def do_delete
       delete :destroy, id: report
