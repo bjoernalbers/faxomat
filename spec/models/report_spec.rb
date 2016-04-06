@@ -188,6 +188,33 @@ describe Report do
     end
   end
 
+  describe '#report_date' do
+    it 'returns report creation date' do
+      allow(report).to receive(:created_at).and_return(Time.zone.parse('2015-09-18'))
+      expect(report.report_date).to eq '18.9.2015'
+    end
+  end
+
+  describe '#physician_name' do
+    let(:user) { build(:user) }
+
+    before do
+      allow(user).to receive(:full_name).and_return('Dr. Gregory House')
+      report.user = user
+    end
+
+    it 'returns full recipient name' do
+      expect(report.physician_name).to eq 'Dr. Gregory House'
+    end
+  end
+
+
+  describe '#valediction' do
+    it 'returns default value' do
+      expect(report.valediction).to eq 'Mit freundlichen Grüßen'
+    end
+  end
+
   describe '#subject' do
     it 'joins study and study date' do
       report = build(:report, study: 'MRT des Kopfes', study_date: '2016-01-01')
@@ -354,6 +381,100 @@ describe Report do
         report[text_attribute] = nil
         expect{ report.save!(validate: false) }.not_to raise_error NoMethodError
       end
+    end
+  end
+
+  describe '#patient_name' do
+    let(:patient) { build(:patient) }
+
+    before { report.patient = patient }
+
+    it 'returns patient display name' do
+      expect(report.patient_name).to eq patient.display_name
+    end
+  end
+
+  describe '#recipient_name' do
+    let(:recipient) { build(:recipient) }
+
+    before { report.recipient = recipient }
+
+    it 'returns full recipient name' do
+      expect(report.recipient_name).to eq recipient.full_name
+    end
+  end
+
+  describe '#recipient_address' do
+    let(:recipient) { build(:recipient) }
+
+    before { report.recipient = recipient }
+
+    it 'returns full recipient address' do
+      expect(report.recipient_address).to eq recipient.full_address
+    end
+  end
+
+  describe '#salutation' do
+    context 'when missing' do
+      let(:recipient) { build(:recipient, salutation: nil) }
+
+      before { report.recipient = recipient }
+
+      it 'returns default salutation' do
+        expect(report.salutation).to eq 'Sehr geehrte Kollegen,'
+      end
+    end
+
+    context 'when present' do
+      let(:recipient) { build(:recipient, salutation: 'Hallo Leute,') }
+
+      before { report.recipient = recipient }
+
+      it 'returns recipient salutation' do
+        expect(report.salutation).to eq 'Hallo Leute,'
+      end
+    end
+  end
+
+  describe '#signature_path' do
+    let(:user) { build(:user) }
+
+    before do
+      allow(user).to receive(:signature_path).and_return('signature.png')
+      report.user = user
+    end
+
+    it 'returns path to user signature' do
+      expect(report.signature_path).to eq 'signature.png'
+    end
+  end
+
+  describe '#watermark' do
+    it 'with pending report returns "ENTWURF"' do
+      report = build(:pending_report)
+      expect(report.watermark).to eq 'ENTWURF'
+    end
+
+    it 'with verified report returns nil' do
+      report = build(:verified_report)
+      expect(report.watermark).to be nil
+    end
+
+    it 'with canceled report' do
+      report = build(:canceled_report)
+      expect(report.watermark).to eq 'STORNIERT'
+    end
+  end
+
+  describe '#include_signature?' do
+    it 'is true with report verification' do
+      report = build(:verified_report)
+      expect(report.include_signature?).to be true
+    end
+
+    it 'is false without report verification' do
+      report = build(:pending_report)
+      expect(report.include_signature?).to be false
     end
   end
 end

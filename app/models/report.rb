@@ -46,6 +46,7 @@ class Report < ActiveRecord::Base
     end
   end
   alias_method :deletable?, :pending?
+  alias_method :include_signature?, :verified?
 
   def subject
     "#{study} vom #{study_date.strftime('%-d.%-m.%Y')}"
@@ -73,6 +74,45 @@ class Report < ActiveRecord::Base
 
   def recipient_fax_number
     recipient.try(:fax_number)
+  end
+
+  def patient_name
+    patient.try(:display_name)
+  end
+
+  def recipient_name
+    recipient.try(:full_name)
+  end
+
+  def recipient_address
+    recipient.try(:full_address)
+  end
+
+  def salutation
+    recipient.try(:salutation) || 'Sehr geehrte Kollegen,'
+  end
+
+  def report_date
+    created_at.strftime('%-d.%-m.%Y') if created_at
+  end
+
+  def valediction
+    'Mit freundlichen Grüßen'
+  end
+
+  def physician_name
+    user.try(:full_name)
+  end
+
+  def signature_path
+    user.try(:signature_path)
+  end
+
+  def watermark
+    case status
+    when :pending  then 'ENTWURF'
+    when :canceled then 'STORNIERT'
+    end
   end
 
   private

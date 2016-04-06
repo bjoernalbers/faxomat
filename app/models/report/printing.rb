@@ -69,6 +69,6 @@ class Report::Printing
 
   # TODO: Test this!
   def rendered_report_pdf
-    ReportPdf.new(ReportPresenter.new(report, ActionView::Base.new)).render
+    ReportPdf.new(report).render
   end
 end

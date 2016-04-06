@@ -1,8 +1,5 @@
 describe ReportPdf do
-  include ActionView::TestCase::Behavior # Makes `view` available for presenter.
-
-  #let(:report)     { build(:report) }
-  let(:report) { ReportPresenter.new(build(:report), view) }
+  let(:report)     { build(:report) }
   let(:report_pdf) { ReportPdf.new(report) }
 
   def report_pdf_strings
