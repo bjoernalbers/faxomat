@@ -13,8 +13,7 @@ class ReportsController < ApplicationController
       # TODO: Test this stuff!
       format.pdf do
         pdf = ReportPdf.new(@report)
-        #TODO: Replace hard-coded filename!
-        send_data pdf.render, filename: "Arztbrief-#{@report.id}.pdf", type: 'application/pdf'
+        send_data pdf.render, filename: pdf.filename, type: 'application/pdf'
       end
     end
   end

@@ -449,23 +449,6 @@ describe Report do
     end
   end
 
-  describe '#watermark' do
-    it 'with pending report returns "ENTWURF"' do
-      report = build(:pending_report)
-      expect(report.watermark).to eq 'ENTWURF'
-    end
-
-    it 'with verified report returns nil' do
-      report = build(:verified_report)
-      expect(report.watermark).to be nil
-    end
-
-    it 'with canceled report' do
-      report = build(:canceled_report)
-      expect(report.watermark).to eq 'STORNIERT'
-    end
-  end
-
   describe '#include_signature?' do
     it 'is true with report verification' do
       report = build(:verified_report)

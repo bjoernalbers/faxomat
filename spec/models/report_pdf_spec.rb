@@ -66,4 +66,43 @@ describe ReportPdf do
       it 'includes signature'
     end
   end
+
+  describe '#watermark' do
+    it 'with pending report returns "ENTWURF"' do
+      subject = described_class.new(build(:pending_report))
+      expect(subject.watermark).to eq 'ENTWURF'
+    end
+
+    it 'with verified report returns nil' do
+      subject = described_class.new(build(:verified_report))
+      expect(subject.watermark).to be nil
+    end
+
+    it 'with canceled report returns "STORNIERT"' do
+      subject = described_class.new(build(:canceled_report))
+      expect(subject.watermark).to eq 'STORNIERT'
+    end
+  end
+
+  describe '#filename' do
+    let(:report) { create(:report) }
+    let(:subject) { described_class.new(report) }
+
+    it 'begins with human model name' do
+      expect(subject.filename).to match %r{^Bericht}
+    end
+
+    it 'includes report id' do
+      expect(subject.filename).to include report.id.to_s
+    end
+
+    it 'includes watermark text' do
+      allow(subject).to receive(:watermark).and_return('chunky')
+      expect(subject.filename).to include 'chunky'
+    end
+
+    it 'ends with pdf' do
+      expect(subject.filename).to match /.pdf$/
+    end
+  end
 end

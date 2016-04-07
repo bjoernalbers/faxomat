@@ -108,13 +108,6 @@ class Report < ActiveRecord::Base
     user.try(:signature_path)
   end
 
-  def watermark
-    case status
-    when :pending  then 'ENTWURF'
-    when :canceled then 'STORNIERT'
-    end
-  end
-
   private
 
   # NOTE: Tomedo somehow sends both carriage return and newlines. We're

@@ -24,10 +24,10 @@ class ReportPdf
   def build_report
     set_default_font
 
-    if report.watermark
+    if watermark
       create_stamp("stamp") do
         fill_color "cc0000"
-        text_box report.watermark,
+        text_box watermark,
           :size   => 2.cm,
           :width  => bounds.width,
           :height => bounds.height,
@@ -168,6 +168,17 @@ class ReportPdf
       image report.signature_path, height: 4*font.height if report.signature_path.present?
       text report.physician_name, size: 11.pt
     end
+  end
+
+  def watermark
+    case report.status
+    when :pending  then 'ENTWURF'
+    when :canceled then 'STORNIERT'
+    end
+  end
+
+  def filename
+    [report.model_name.human, report.id, watermark].compact.join('-') + '.pdf'
   end
 
   private
