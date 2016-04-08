@@ -84,6 +84,19 @@ describe ReportPdf do
     end
   end
 
+  describe '#path' do
+    let(:subject) { described_class.new(report) }
+
+    before do
+      allow(subject).to receive(:filename).and_return('chunky_bacon.pdf')
+    end
+
+    it 'joins tmp dir with filename' do
+      expect(subject.send(:path)).
+        to eq "#{Rails.root.join('tmp')}/chunky_bacon.pdf"
+    end
+  end
+
   describe '#filename' do
     let(:report) { create(:report) }
     let(:subject) { described_class.new(report) }

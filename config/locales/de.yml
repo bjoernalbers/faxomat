@@ -8,6 +8,7 @@ de:
         printer: Drucker
   activerecord:
     models:
+      document: Dokument
       template: Vorlage
       report: Bericht
       api/report: Bericht
@@ -15,6 +16,10 @@ de:
       user: Arzt
       patient: Patient
     attributes:
+      document:
+        title: Titel
+        file: Datei
+        file_fingerprint: Dateiprüfsumme
       patient:
         first_name: Vorname
         last_name: Nachname

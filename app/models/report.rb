@@ -2,6 +2,8 @@ class Report < ActiveRecord::Base
   belongs_to :user, required: true
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
+
+  has_one :document
   has_many :print_jobs
 
   validates_presence_of :anamnesis,
@@ -18,8 +20,13 @@ class Report < ActiveRecord::Base
   scope :without_active_print_job, -> { where.not(id: PrintJob.active.select(:report_id)) }
 
   before_save :replace_carriage_returns
-  before_destroy :check_if_destroyable
   before_update :check_if_updatable
+  before_destroy :check_if_destroyable
+
+  after_create :create_report_document
+  after_update :update_report_document, if: :changed?
+  #after_save :create_document_when_verified
+  #after_save :update_document_when_canceled
 
   def status
     if canceled_at.present?
@@ -108,6 +115,10 @@ class Report < ActiveRecord::Base
     user.try(:signature_path)
   end
 
+  def to_pdf
+    ReportPdf.new(self)
+  end
+
   private
 
   # NOTE: Tomedo somehow sends both carriage return and newlines. We're
@@ -127,13 +138,44 @@ class Report < ActiveRecord::Base
   end
 
   def check_if_updatable
-    unless pending? || only_status_changed?
+    if has_forbidden_changes?
       errors.add(:base, 'Arztbrief darf nicht mehr verändert werden!')
       false
     end
   end
 
-  def only_status_changed?
-    changed.all? { |c| %w(verified_at canceled_at updated_at).include?(c) }
+  def has_forbidden_changes?
+    allowed_fields = %w(verified_at canceled_at updated_at)
+    !pending? && !changed.all? { |c| allowed_fields.include?(c) }
+  end
+
+  # TODO: Remove!
+  def create_document_when_verified
+    if verified_at? && verified_at_changed?
+      to_pdf.to_file do |file|
+        create_document!(title: title, file: file)
+      end
+    end
+  end
+
+  # TODO: Remove!
+  def update_document_when_canceled
+    if canceled_at? && canceled_at_changed?
+      to_pdf.to_file do |file|
+        document.update!(title: title, file: file)
+      end
+    end
+  end
+
+  def create_report_document
+    to_pdf.to_file do |file|
+      create_document!(title: title, file: file)
+    end
+  end
+
+  def update_report_document
+    to_pdf.to_file do |file|
+      document.update!(title: title, file: file)
+    end
   end
 end

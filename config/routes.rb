@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     resources :printings, only: [:new, :create]
   end
 
+  resources :documents, only: [:show]
+
   resources :attendances, only: [:new]
 
   resources :report_faxes, only: [:create]

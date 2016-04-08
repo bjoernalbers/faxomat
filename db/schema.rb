@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160329140716) do
+ActiveRecord::Schema.define(version: 20160408154713) do
 
   create_table "documents", force: :cascade do |t|
     t.string   "title",             null: false
@@ -22,7 +22,10 @@ ActiveRecord::Schema.define(version: 20160329140716) do
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
     t.string   "file_fingerprint"
+    t.integer  "report_id"
   end
+
+  add_index "documents", ["report_id"], name: "index_documents_on_report_id", unique: true
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",    null: false

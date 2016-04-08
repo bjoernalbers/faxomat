@@ -1,12 +1,14 @@
 describe Report do
-  let(:report) { build(:report) }
+  let(:subject) { build(:report) }
 
   # Associations
   [ :user, :patient, :recipient ].each do |association|
-    it { expect(report).to belong_to(association) }
+    it { expect(subject).to belong_to(association) }
   end
 
-  it { expect(report).to have_many(:print_jobs) }
+  it { expect(subject).to have_many(:print_jobs) }
+
+  it { expect(subject).to have_one(:document) }
 
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
@@ -37,7 +39,7 @@ describe Report do
     :study,
     :study_date
   ].each do |attribute|
-    it { expect(report).to validate_presence_of(attribute) }
+    it { expect(subject).to validate_presence_of(attribute) }
   end
 
   # Optional attributes
@@ -48,7 +50,7 @@ describe Report do
     :verified_at,
     :canceled_at
   ].each do |attribute|
-    it { expect(report).not_to validate_presence_of(attribute) }
+    it { expect(subject).not_to validate_presence_of(attribute) }
   end
 
   describe '.pending' do
@@ -75,123 +77,123 @@ describe Report do
 
   describe '#status' do
     context 'when :pending' do
-      let(:report) { build(:pending_report) }
+      let(:subject) { build(:pending_report) }
 
       it 'returns status as symbol' do
-        expect(report.status).to eq :pending
+        expect(subject.status).to eq :pending
       end
 
       it 'is pending, but not verified or canceled' do
-        expect(report).to be_pending
-        expect(report).not_to be_verified
-        expect(report).not_to be_canceled
+        expect(subject).to be_pending
+        expect(subject).not_to be_verified
+        expect(subject).not_to be_canceled
       end
 
       it 'has no verified_at' do
-        expect(report.verified_at).to be nil
+        expect(subject.verified_at).to be nil
       end
 
       it 'has no canceled_at' do
-        expect(report.canceled_at).to be nil
+        expect(subject.canceled_at).to be nil
       end
 
       it 'can be changed to :verified' do
-        report.status = :verified
-        expect(report).to be_verified
+        subject.status = :verified
+        expect(subject).to be_verified
       end
 
       it 'can be updated to :verified' do
-        report.save
-        expect(report.update(status: :verified)).to eq true
-        expect(report).to be_verified
+        subject.save
+        expect(subject.update(status: :verified)).to eq true
+        expect(subject).to be_verified
       end
 
       it 'can not be changed to :canceled' do
-        report.status = :canceled
-        expect(report).to be_pending
+        subject.status = :canceled
+        expect(subject).to be_pending
       end
 
       it 'can not be changed to unknown status' do
-        report.status = :chunky_bacon
-        expect(report).to be_pending
+        subject.status = :chunky_bacon
+        expect(subject).to be_pending
       end
     end
 
     context 'when :verified' do
-      let(:report) { build(:verified_report) }
+      let(:subject) { build(:verified_report) }
 
       it 'returns status an symbol' do
-        expect(report.status).to eq :verified
+        expect(subject.status).to eq :verified
       end
 
       it 'is verified, but not pending or canceled' do
-        expect(report).to be_verified
-        expect(report).not_to be_pending
-        expect(report).not_to be_canceled
+        expect(subject).to be_verified
+        expect(subject).not_to be_pending
+        expect(subject).not_to be_canceled
       end
 
       it 'has verified_at' do
-        expect(report.verified_at).not_to be nil
+        expect(subject.verified_at).not_to be nil
       end
 
       it 'has no canceled_at' do
-        expect(report.canceled_at).to be nil
+        expect(subject.canceled_at).to be nil
       end
 
       it 'can be changed to :canceled' do
-        report.status = :canceled
-        expect(report).to be_canceled
+        subject.status = :canceled
+        expect(subject).to be_canceled
       end
 
       it 'can be updated to :canceled' do
-        report.save
-        expect(report.update(status: :canceled)).to eq true
-        expect(report).to be_canceled
+        subject.save
+        expect(subject.update(status: :canceled)).to eq true
+        expect(subject).to be_canceled
       end
 
       it 'can not be changed to :pending' do
-        report.status = :pending
-        expect(report).to be_verified
+        subject.status = :pending
+        expect(subject).to be_verified
       end
     end
 
     context 'when :canceled' do
-      let(:report) { build(:canceled_report) }
+      let(:subject) { build(:canceled_report) }
 
       it 'returns status as symbol' do
-        expect(report.status).to eq :canceled
+        expect(subject.status).to eq :canceled
       end
 
       it 'is canceled, but not pending or canceled' do
-        expect(report).to be_canceled
-        expect(report).not_to be_verified
-        expect(report).not_to be_pending
+        expect(subject).to be_canceled
+        expect(subject).not_to be_verified
+        expect(subject).not_to be_pending
       end
 
       it 'has verified_at' do
-        expect(report.verified_at).not_to be nil
+        expect(subject.verified_at).not_to be nil
       end
 
       it 'has canceled_at' do
-        expect(report.canceled_at).not_to be nil
+        expect(subject.canceled_at).not_to be nil
       end
 
       it 'can not be changed to :pending' do
-        report.status = :pending
-        expect(report).to be_canceled
+        subject.status = :pending
+        expect(subject).to be_canceled
       end
 
       it 'can not be changed to :verified' do
-        report.status = :verified
-        expect(report).to be_canceled
+        subject.status = :verified
+        expect(subject).to be_canceled
       end
     end
   end
 
   describe '#report_date' do
     it 'returns report creation date' do
-      allow(report).to receive(:created_at).and_return(Time.zone.parse('2015-09-18'))
-      expect(report.report_date).to eq '18.9.2015'
+      allow(subject).to receive(:created_at).and_return(Time.zone.parse('2015-09-18'))
+      expect(subject.report_date).to eq '18.9.2015'
     end
   end
 
@@ -200,114 +202,114 @@ describe Report do
 
     before do
       allow(user).to receive(:full_name).and_return('Dr. Gregory House')
-      report.user = user
+      subject.user = user
     end
 
     it 'returns full recipient name' do
-      expect(report.physician_name).to eq 'Dr. Gregory House'
+      expect(subject.physician_name).to eq 'Dr. Gregory House'
     end
   end
 
 
   describe '#valediction' do
     it 'returns default value' do
-      expect(report.valediction).to eq 'Mit freundlichen Grüßen'
+      expect(subject.valediction).to eq 'Mit freundlichen Grüßen'
     end
   end
 
   describe '#subject' do
     it 'joins study and study date' do
-      report = build(:report, study: 'MRT des Kopfes', study_date: '2016-01-01')
-      expect(report.subject).to eq 'MRT des Kopfes vom 1.1.2016'
+      subject = build(:report, study: 'MRT des Kopfes', study_date: '2016-01-01')
+      expect(subject.subject).to eq 'MRT des Kopfes vom 1.1.2016'
     end
   end
 
   describe '#title' do
     it 'returns patient display name' do
-      expect(report.title).to eq report.patient.display_name
+      expect(subject.title).to eq subject.patient.display_name
     end
   end
 
   describe '.undelivered' do
     it 'excludes pending reports' do
-      report = create(:pending_report)
-      expect(Report.undelivered).not_to include report
+      subject = create(:pending_report)
+      expect(Report.undelivered).not_to include subject
     end
 
     it 'excludes canceled reports' do
-      report = create(:canceled_report)
-      expect(Report.undelivered).not_to include report
+      subject = create(:canceled_report)
+      expect(Report.undelivered).not_to include subject
     end
 
     it 'excludes verified reports with active print_job' do
-      report = create(:verified_report)
-      create(:active_print_job, report: report)
-      expect(Report.undelivered).not_to include report
+      subject = create(:verified_report)
+      create(:active_print_job, report: subject)
+      expect(Report.undelivered).not_to include subject
     end
 
     it 'includes verified reports with aborted print_job' do
-      report = create(:verified_report)
-      create(:aborted_print_job, report: report)
-      expect(Report.undelivered).to include report
+      subject = create(:verified_report)
+      create(:aborted_print_job, report: subject)
+      expect(Report.undelivered).to include subject
     end
 
     it 'excludes reports with completed print_job' do
-      report = create(:verified_report)
-      create(:completed_print_job, report: report)
-      expect(Report.undelivered).not_to include report
+      subject = create(:verified_report)
+      create(:completed_print_job, report: subject)
+      expect(Report.undelivered).not_to include subject
     end
   end
 
   describe '#undelivered?' do
-    let(:report) { create(:verified_report) }
+    let(:subject) { create(:verified_report) }
 
     it 'without print_job is true' do
-      expect(report.print_jobs).to be_empty
-      expect(report).to be_undelivered
+      expect(subject.print_jobs).to be_empty
+      expect(subject).to be_undelivered
     end
 
     it 'with aborted print job is true' do
-      create(:aborted_print_job, report: report)
-      expect(report).to be_undelivered
+      create(:aborted_print_job, report: subject)
+      expect(subject).to be_undelivered
     end
 
     it 'with active print_job is false' do
-      create(:active_print_job, report: report)
-      expect(report).not_to be_undelivered
+      create(:active_print_job, report: subject)
+      expect(subject).not_to be_undelivered
     end
 
     it 'with completed print_job is false' do
-      create(:completed_print_job, report: report)
-      expect(report).not_to be_undelivered
+      create(:completed_print_job, report: subject)
+      expect(subject).not_to be_undelivered
     end
   end
 
   context 'when pending' do
-    let!(:report) { create(:pending_report) }
+    let!(:subject) { create(:pending_report) }
 
     it 'is destroyable' do
-      expect { report.destroy }.to change(Report, :count).by(-1)
-      expect(report).to be_deletable
+      expect { subject.destroy }.to change(Report, :count).by(-1)
+      expect(subject).to be_deletable
     end
 
     it 'is updatable' do
-      expect(report.update(attributes_for(:report))).to eq true
+      expect(subject.update(attributes_for(:report))).to eq true
     end
   end
 
   %w(verified canceled).each do |status|
     context "when #{status}" do
-      let!(:report) { create("#{status}_report") }
+      let!(:subject) { create("#{status}_report") }
 
       it 'is not destroyable' do
-        expect { report.destroy }.to change(Report, :count).by(0)
-        expect(report.errors[:base]).to be_present
-        expect(report).not_to be_deletable
+        expect { subject.destroy }.to change(Report, :count).by(0)
+        expect(subject.errors[:base]).to be_present
+        expect(subject).not_to be_deletable
       end
 
       it 'is not updatable' do
-        expect(report.update(attributes_for(:report))).to eq false
-        expect(report.errors[:base]).to be_present
+        expect(subject.update(attributes_for(:report))).to eq false
+        expect(subject.errors[:base]).to be_present
       end
     end
   end
@@ -316,7 +318,7 @@ describe Report do
     context 'without fax printer' do
       it 'returns false' do
         expect(FaxPrinter.default).to be nil
-        expect(report.deliver_as_fax).to eq false
+        expect(subject.deliver_as_fax).to eq false
       end
     end
 
@@ -327,27 +329,27 @@ describe Report do
 
       context 'but without fax number' do
         let(:recipient) { create(:recipient, fax_number: nil) }
-        let(:report) { create(:verified_report, recipient: recipient) }
+        let(:subject) { create(:verified_report, recipient: recipient) }
 
         it 'returns false' do
-          expect(report.deliver_as_fax).to eq false
+          expect(subject.deliver_as_fax).to eq false
         end
 
         it 'creates no fax print job' do
-          expect { report.deliver_as_fax }.to change(PrintJob, :count).by(0)
+          expect { subject.deliver_as_fax }.to change(PrintJob, :count).by(0)
         end
       end
 
       context 'and with fax number' do
         let(:recipient) { create(:recipient, fax_number: '032472384234') }
-        let(:report) { create(:verified_report, recipient: recipient) }
+        let(:subject) { create(:verified_report, recipient: recipient) }
 
         it 'returns true' do
-          expect(report.deliver_as_fax).to eq true
+          expect(subject.deliver_as_fax).to eq true
         end
 
         it 'creates a fax print job' do
-          expect { report.deliver_as_fax }.to change(PrintJob, :count).by(1)
+          expect { subject.deliver_as_fax }.to change(PrintJob, :count).by(1)
         end
       end
     end
@@ -355,13 +357,13 @@ describe Report do
 
   describe '#recipient_fax_number' do
     it 'returns fax number of recipient' do
-      report.recipient.fax_number = '02342342354'
-      expect(report.recipient_fax_number).to eq '02342342354'
+      subject.recipient.fax_number = '02342342354'
+      expect(subject.recipient_fax_number).to eq '02342342354'
     end
 
     it 'returns nil when recipient missing' do
-      report.recipient = nil
-      expect(report.recipient_fax_number).to be nil
+      subject.recipient = nil
+      expect(subject.recipient_fax_number).to be nil
     end
   end
 
@@ -370,16 +372,16 @@ describe Report do
 
     it 'converts carriage returns into new lines' do
       text_attributes.each do |text_attribute|
-        report[text_attribute] = "Text with some\r carriage\rreturns."
-        report.save
-        expect(report[text_attribute]).to eq "Text with some\n carriage\nreturns."
+        subject[text_attribute] = "Text with some\r carriage\rreturns."
+        subject.save
+        expect(subject[text_attribute]).to eq "Text with some\n carriage\nreturns."
       end
     end
 
     it 'does not fail when nil' do
       text_attributes.each do |text_attribute|
-        report[text_attribute] = nil
-        expect{ report.save!(validate: false) }.not_to raise_error NoMethodError
+        subject[text_attribute] = nil
+        expect{ subject.save!(validate: false) }.not_to raise_error NoMethodError
       end
     end
   end
@@ -387,30 +389,30 @@ describe Report do
   describe '#patient_name' do
     let(:patient) { build(:patient) }
 
-    before { report.patient = patient }
+    before { subject.patient = patient }
 
     it 'returns patient display name' do
-      expect(report.patient_name).to eq patient.display_name
+      expect(subject.patient_name).to eq patient.display_name
     end
   end
 
   describe '#recipient_name' do
     let(:recipient) { build(:recipient) }
 
-    before { report.recipient = recipient }
+    before { subject.recipient = recipient }
 
     it 'returns full recipient name' do
-      expect(report.recipient_name).to eq recipient.full_name
+      expect(subject.recipient_name).to eq recipient.full_name
     end
   end
 
   describe '#recipient_address' do
     let(:recipient) { build(:recipient) }
 
-    before { report.recipient = recipient }
+    before { subject.recipient = recipient }
 
     it 'returns full recipient address' do
-      expect(report.recipient_address).to eq recipient.full_address
+      expect(subject.recipient_address).to eq recipient.full_address
     end
   end
 
@@ -418,21 +420,38 @@ describe Report do
     context 'when missing' do
       let(:recipient) { build(:recipient, salutation: nil) }
 
-      before { report.recipient = recipient }
+      before { subject.recipient = recipient }
 
       it 'returns default salutation' do
-        expect(report.salutation).to eq 'Sehr geehrte Kollegen,'
+        expect(subject.salutation).to eq 'Sehr geehrte Kollegen,'
       end
     end
 
     context 'when present' do
       let(:recipient) { build(:recipient, salutation: 'Hallo Leute,') }
 
-      before { report.recipient = recipient }
+      before { subject.recipient = recipient }
 
       it 'returns recipient salutation' do
-        expect(report.salutation).to eq 'Hallo Leute,'
+        expect(subject.salutation).to eq 'Hallo Leute,'
       end
+    end
+  end
+
+  describe '#to_pdf' do
+    let(:pdf) { double('ReportPdf instance') }
+
+    before do
+      allow(ReportPdf).to receive(:new).and_return(pdf)
+    end
+
+    it 'returns PDF instance' do
+      expect(subject.to_pdf).to eq pdf
+    end
+
+    it 'instantiates PDF with self' do
+      subject.to_pdf
+      expect(ReportPdf).to have_received(:new).with(subject)
     end
   end
 
@@ -441,23 +460,55 @@ describe Report do
 
     before do
       allow(user).to receive(:signature_path).and_return('signature.png')
-      report.user = user
+      subject.user = user
     end
 
     it 'returns path to user signature' do
-      expect(report.signature_path).to eq 'signature.png'
+      expect(subject.signature_path).to eq 'signature.png'
     end
   end
 
   describe '#include_signature?' do
     it 'is true with report verification' do
-      report = build(:verified_report)
-      expect(report.include_signature?).to be true
+      subject = build(:verified_report)
+      expect(subject.include_signature?).to be true
     end
 
     it 'is false without report verification' do
-      report = build(:pending_report)
-      expect(report.include_signature?).to be false
+      subject = build(:pending_report)
+      expect(subject.include_signature?).to be false
+    end
+  end
+
+  describe 'when created' do
+    let(:subject) { build(:pending_report) }
+
+    it 'creates new document' do
+      expect {
+        subject.save
+      }.to change(Document, :count).by(1)
+      expect(subject.document).to be_present
+    end
+
+    it 'sets document title' do
+      subject.save
+      expect(subject.document.title).to eq subject.title
+    end
+  end
+
+  describe 'when updated' do
+    let!(:subject) { create(:pending_report) }
+
+    it 'updates document when changed' do
+      expect {
+        subject.update(status: :verified)
+      }.to change { subject.document.file_fingerprint }
+    end
+
+    it 'does not update document when nothing has changed' do
+      expect {
+        subject.save
+      }.not_to change { subject.document.file_fingerprint }
     end
   end
 end

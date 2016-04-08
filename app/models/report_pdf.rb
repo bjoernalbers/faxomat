@@ -181,7 +181,24 @@ class ReportPdf
     [report.model_name.human, report.id, watermark].compact.join('-') + '.pdf'
   end
 
+  # TODO: Add tests!
+  def to_file
+    render_file(path)
+    file = File.open(path)
+    if block_given?
+      yield file
+      File.delete(path)
+      nil
+    else
+      file
+    end
+  end
+
   private
+
+  def path
+    @path ||= Rails.root.join('tmp', filename).to_s
+  end
 
   def set_default_font
     font_families.update 'DejaVuSans' => {

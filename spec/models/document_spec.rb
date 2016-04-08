@@ -5,23 +5,44 @@ describe Document do
     expect(subject).to be_valid
   end
 
+  it { expect(subject).to belong_to(:report) }
+
   it { expect(subject).to validate_presence_of(:title) }
 
-  it { should have_attached_file(:file) }
+  it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }
 
-  it { should validate_attachment_presence(:file) }
+  describe '#file' do
+    it { should have_attached_file(:file) }
 
-  it { should validate_attachment_content_type(:file).
-    allowing('application/pdf').
-    rejecting('image/jpeg', 'image/png') }
+    it { should validate_attachment_presence(:file) }
 
-  describe '#file_fingerprint' do
-    it 'gets stored on save' do
-      #expect(subject.file_fingerprint).not_to be_present
-      subject.save
-      expect(subject.file_fingerprint).to be_present
-      expect(subject.file_fingerprint).
-        to eq Digest::MD5.file(subject.file.path).to_s
+    it { should validate_attachment_content_type(:file).
+      allowing('application/pdf').
+      rejecting('image/jpeg', 'image/png') }
+  end
+
+  %i(path content_type fingerprint).each do |method|
+    describe "##{method}" do
+      it "returns #{method} from file" do
+        expect(subject).to delegate_method(method).to(:file)
+      end
+    end
+  end
+
+  describe '#filename' do
+    it 'returns filename' do
+      expect(subject.filename).to eq subject.file_file_name
+    end
+  end
+
+  it 'is translated' do
+    expect(described_class.model_name.human).to eq 'Dokument'
+    {
+      title:            'Titel',
+      file:             'Datei',
+      file_fingerprint: 'Dateiprüfsumme',
+    }.each do |attr,translation|
+      expect(described_class.human_attribute_name(attr)).to eq translation
     end
   end
 end

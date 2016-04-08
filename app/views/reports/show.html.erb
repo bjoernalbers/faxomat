@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="btn-group">
-      <%= link_to 'Öffnen', report_path(@report, format: :pdf), class: 'btn btn-default' %>
+      <%= link_to 'Öffnen', document_path(@report.document), class: 'btn btn-default' if @report.document %>
       <% if @report.verified? %>
         <%= link_to 'Senden', new_report_printing_path(@report), class:
           (@report.undelivered? ? 'btn btn-primary' : 'btn btn-default') %>
