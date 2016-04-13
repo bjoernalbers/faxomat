@@ -49,7 +49,7 @@ describe 'Create fax' do
     it 'saves the content' do
       do_post
       print_job = FaxPrinter.default.print_jobs.first
-      expect(File.read(print_job.document.path)).to eq File.read(path)
+      expect(File.read(print_job.path)).to eq File.read(path)
     end
   end
 

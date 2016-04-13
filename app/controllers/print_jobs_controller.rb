@@ -7,7 +7,7 @@ class PrintJobsController < ApplicationController
 
   def show
     print_job = PrintJob.find(params[:id])
-    send_file print_job.document.path, type: print_job.document.content_type
+    send_file print_job.path, type: print_job.content_type
   end
 
   def create

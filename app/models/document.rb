@@ -1,5 +1,6 @@
 class Document < ActiveRecord::Base
   belongs_to :report
+  has_many :print_jobs
 
   has_attached_file :file,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'

@@ -14,7 +14,7 @@ namespace :faxomat do
     PrintJob.where('fax_number LIKE ?', '02941671%').where.not(report: nil).
       find_each do |fax|
         patient = fax.report.patient
-        source = fax.document.path
+        source = fax.path
         fingerprint = Digest::MD5.file(source).hexdigest
         filename = [
           patient.last_name,

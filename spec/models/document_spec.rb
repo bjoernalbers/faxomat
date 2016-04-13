@@ -7,6 +7,8 @@ describe Document do
 
   it { expect(subject).to belong_to(:report) }
 
+  it { expect(subject).to have_many(:print_jobs) }
+
   it { expect(subject).to validate_presence_of(:title) }
 
   it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }

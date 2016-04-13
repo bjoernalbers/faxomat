@@ -25,13 +25,11 @@ class Report::Printing
 
   def save
     if valid?
-      self.print_job = report.print_jobs.create(
+      self.print_job = report.print_jobs.new(
         printer:    printer,
-        title:      report.title,
         fax_number: report.recipient_fax_number,
-        document:   report_pdf_file)
-      report_pdf_file.close! if report_pdf_file # Close and unlink temp. file.
-      true
+        document:   report.document)
+      self.print_job.save
     else
       false
     end
@@ -47,28 +45,5 @@ class Report::Printing
     if report.present? && !report.verified?
       errors.add(:report, 'ist noch nicht vidiert')
     end
-  end
-
-  # TODO: Test this!
-  def report_pdf_file
-    tmpdir  = Rails.root.join('tmp')
-    tmpfile = %w(faxomat .pdf) # Prefix and suffix for temp filename.
-
-    # NOTE: This would return a File instead of of Tempfile (due to re-opening it).
-    #Tempfile.open tmpfile, tmpdir, binmode: true do |file|
-      #file.write rendered_report_pdf
-      #file
-    #end.open
-
-    file = Tempfile.open tmpfile, tmpdir, binmode: true
-    file.write rendered_report_pdf
-    file.flush
-    file.rewind
-    file
-  end
-
-  # TODO: Test this!
-  def rendered_report_pdf
-    ReportPdf.new(report).render
   end
 end

@@ -26,21 +26,21 @@ describe PrintJobsController do
 
     context 'with invalid params' do
       it 'renders new template' do
-        post :create, print_job: attributes_for(:print_job, title: nil)
+        post :create, print_job: attributes_for(:print_job, document: nil)
         expect(response).to render_template :new
       end
     end
   end
 
   describe 'GET #show' do
-    it 'sends the pdf document' do
+    it 'sends document' do
       # NOTE: This fixes the missing template error
       # (see http://stackoverflow.com/questions/4701108/rspec-send-file-testing)
       allow(controller).to receive(:render)
 
       print_job = create(:print_job)
       expect(controller).to receive(:send_file).
-        with(print_job.document.path, type: 'application/pdf')
+        with(print_job.path, type: 'application/pdf')
       get :show, id: print_job
     end
   end

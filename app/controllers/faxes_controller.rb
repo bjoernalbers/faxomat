@@ -2,9 +2,7 @@ class FaxesController < ApplicationController
   protect_from_forgery except: [:create]
 
   def create
-    p = fax_params
-    p[:fax_number] = p.delete(:phone)
-    @fax = faxes.new(p)
+    build_fax
     respond_to do |format|
       if @fax.save
         flash[:notice] = 'Fax wird gesendet.'
@@ -19,11 +17,12 @@ class FaxesController < ApplicationController
 
   private
 
-  def fax_params
-    params.require(:fax).permit(:title, :phone, :document)
+  def build_fax
+    @fax = Fax.new(fax_params)
+    @fax.printer = FaxPrinter.default
   end
 
-  def faxes
-    FaxPrinter.default.print_jobs
+  def fax_params
+    params.require(:fax).permit(:title, :phone, :document)
   end
 end

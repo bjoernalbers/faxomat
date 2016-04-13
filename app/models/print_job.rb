@@ -2,23 +2,15 @@
 class PrintJob < ActiveRecord::Base
   enum status: { active: 0, completed: 1, aborted: 2 }
 
-  belongs_to :printer
-  belongs_to :report
-
-  has_attached_file :document,
-    path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
+  belongs_to :printer, required: true
+  belongs_to :report # TODO: Remove!
+  belongs_to :document, required: true
 
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
-
-  validates :title,
-    presence: true
 
   validates_uniqueness_of :cups_job_id, allow_nil: true
   validates_presence_of :cups_job_id, if: :status
   validates_absence_of :cups_job_id, unless: :status
-
-  validates_attachment :document,
-    presence: true, content_type: { content_type: 'application/pdf' }
 
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
@@ -49,7 +41,7 @@ class PrintJob < ActiveRecord::Base
     result = all
 
     if params[:title].present?
-      result = result.where('title LIKE ?', "%#{params[:title]}%")
+      result = result.joins(:document).where('documents.title LIKE ?', "%#{params[:title]}%")
     end
 
     if params[:fax_number].present?
@@ -68,13 +60,10 @@ class PrintJob < ActiveRecord::Base
     result
   end
 
+  delegate :title, :path, :content_type, to: :document
+
   def to_s
     title
-  end
-
-  # Returns the document path
-  def path
-    document.path
   end
 
   # TODO: Test this!
