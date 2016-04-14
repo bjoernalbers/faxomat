@@ -90,7 +90,7 @@ describe Report::Printing do
         expect(print_job.printer).to eq printing.printer
         expect(print_job.title).to eq report.title
         expect(print_job.fax_number).to eq report.recipient_fax_number
-        expect(print_job.document).to be_present # TODO: Test if document has expected content!
+        expect(print_job.document).to eq report.document
       end
 
       it 'returns true' do

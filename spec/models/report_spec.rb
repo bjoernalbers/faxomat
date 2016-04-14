@@ -6,7 +6,7 @@ describe Report do
     it { expect(subject).to belong_to(association) }
   end
 
-  it { expect(subject).to have_many(:print_jobs) }
+  it { expect(subject).to have_many(:print_jobs).through(:document) }
 
   it { expect(subject).to have_one(:document) }
 
@@ -231,34 +231,31 @@ describe Report do
   end
 
   describe '.undelivered' do
-    it 'excludes pending reports' do
-      subject = create(:pending_report)
-      expect(Report.undelivered).not_to include subject
+    let(:subject) { described_class.undelivered }
+
+    it 'excludes pending report' do
+      report = create(:pending_report)
+      expect(subject).not_to include report
     end
 
-    it 'excludes canceled reports' do
-      subject = create(:canceled_report)
-      expect(Report.undelivered).not_to include subject
+    it 'excludes canceled report' do
+      report = create(:canceled_report)
+      expect(subject).not_to include report
     end
 
-    it 'excludes verified reports with active print_job' do
-      subject = create(:verified_report)
-      create(:active_print_job, report: subject)
-      expect(Report.undelivered).not_to include subject
+    it 'excludes verified report with completed print job' do
+      report = create(:verified_report)
+      create(:completed_print_job, document: report.document)
+      expect(subject).not_to include report
     end
 
-    it 'includes verified reports with aborted print_job' do
-      subject = create(:verified_report)
-      create(:aborted_print_job, report: subject)
-      expect(Report.undelivered).to include subject
-    end
-
-    it 'excludes reports with completed print_job' do
-      subject = create(:verified_report)
-      create(:completed_print_job, report: subject)
-      expect(Report.undelivered).not_to include subject
+    it 'includes verified report without completed print job' do
+      report = create(:verified_report)
+      expect(subject).to include report
     end
   end
+
+  it { expect(subject).to delegate_method(:to_deliver?).to(:document) }
 
   describe '#undelivered?' do
     let(:subject) { create(:verified_report) }
@@ -269,17 +266,17 @@ describe Report do
     end
 
     it 'with aborted print job is true' do
-      create(:aborted_print_job, report: subject)
+      create(:aborted_print_job, document: subject.document)
       expect(subject).to be_undelivered
     end
 
     it 'with active print_job is false' do
-      create(:active_print_job, report: subject)
+      create(:active_print_job, document: subject.document)
       expect(subject).not_to be_undelivered
     end
 
     it 'with completed print_job is false' do
-      create(:completed_print_job, report: subject)
+      create(:completed_print_job, document: subject.document)
       expect(subject).not_to be_undelivered
     end
   end

@@ -3,7 +3,6 @@ class PrintJob < ActiveRecord::Base
   enum status: { active: 0, completed: 1, aborted: 2 }
 
   belongs_to :printer, required: true
-  belongs_to :report # TODO: Remove!
   belongs_to :document, required: true
 
   before_validation :strip_nondigits_from_fax_number, if: :fax_number

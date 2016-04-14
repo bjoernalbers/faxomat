@@ -14,10 +14,6 @@ describe PrintJob do
     expect(build(:aborted_print_job)).to be_aborted
   end
 
-  describe '#report' do
-    it { expect(subject).to belong_to(:report) }
-  end
-
   describe '#document' do
     it { expect(subject).to belong_to(:document) }
     it { expect(subject).to validate_presence_of(:document) }

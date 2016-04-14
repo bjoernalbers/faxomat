@@ -5,6 +5,17 @@ describe Document do
     expect(subject).to be_valid
   end
 
+  it 'is translated' do
+    expect(described_class.model_name.human).to eq 'Dokument'
+    {
+      title:            'Titel',
+      file:             'Datei',
+      file_fingerprint: 'Dateiprüfsumme',
+    }.each do |attr,translation|
+      expect(described_class.human_attribute_name(attr)).to eq translation
+    end
+  end
+
   it { expect(subject).to belong_to(:report) }
 
   it { expect(subject).to have_many(:print_jobs) }
@@ -12,6 +23,30 @@ describe Document do
   it { expect(subject).to validate_presence_of(:title) }
 
   it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }
+
+  describe '.undelivered' do
+    let(:subject) { described_class.undelivered }
+    let!(:document) { create(:document) }
+
+    it 'includes document without print jobs' do
+      expect(subject).to include document
+    end
+
+    it 'includes document with active print job' do
+      create(:active_print_job, document: document)
+      expect(subject).to include document
+    end
+
+    it 'includes document with aborted print job' do
+      create(:aborted_print_job, document: document)
+      expect(subject).to include document
+    end
+
+    it 'excludes document with completed print job' do
+      create(:completed_print_job, document: document)
+      expect(subject).not_to include document
+    end
+  end
 
   describe '#file' do
     it { should have_attached_file(:file) }
@@ -37,14 +72,26 @@ describe Document do
     end
   end
 
-  it 'is translated' do
-    expect(described_class.model_name.human).to eq 'Dokument'
-    {
-      title:            'Titel',
-      file:             'Datei',
-      file_fingerprint: 'Dateiprüfsumme',
-    }.each do |attr,translation|
-      expect(described_class.human_attribute_name(attr)).to eq translation
+  describe '#to_deliver?' do
+    let(:subject) { create(:document) }
+
+    it 'is true without print jobs' do
+      expect(subject).to be_to_deliver
+    end
+
+    it 'is true with aborted print job' do
+      create(:aborted_print_job, document: subject)
+      expect(subject).to be_to_deliver
+    end
+
+    it 'is false with active print job' do
+      create(:active_print_job, document: subject)
+      expect(subject).not_to be_to_deliver
+    end
+
+    it 'is false with completed print job' do
+      create(:completed_print_job, document: subject)
+      expect(subject).not_to be_to_deliver
     end
   end
 end

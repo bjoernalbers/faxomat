@@ -34,7 +34,7 @@ feature 'Deliver report' do
 
   scenario 'with active fax' do
     report = create(:verified_report, user: user)
-    create(:active_print_job, report: report)
+    create(:active_print_job, document: report.document)
     visit report_url(report)
     expect(page).to have_link send_report
     expect(page).to have_content('Druckauftrag aktiv') # Label
@@ -42,7 +42,7 @@ feature 'Deliver report' do
 
   scenario 'with completed fax' do
     report = create(:verified_report, user: user)
-    create(:completed_print_job, report: report)
+    create(:completed_print_job, document: report.document)
     visit report_url(report)
     expect(page).to have_link send_report
     expect(page).to have_content('Druckauftrag abgeschlossen') # Label
@@ -50,7 +50,7 @@ feature 'Deliver report' do
 
   scenario 'with aborted fax' do
     report = create(:verified_report, user: user)
-    create(:aborted_print_job, report: report)
+    create(:aborted_print_job, document: report.document)
     visit report_url(report)
     expect(page).to have_link send_report
     expect(page).to have_content('Druckauftrag abgebrochen') # Label
@@ -73,7 +73,7 @@ feature 'Deliver report' do
 
   scenario 'when delivered' do
     report = create(:verified_report, user: user)
-    print_job = create(:completed_print_job, report: report)
+    print_job = create(:completed_print_job, document: report.document)
 
     visit reports_url
     click_link 'Ungesendet'

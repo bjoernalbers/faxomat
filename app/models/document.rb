@@ -11,9 +11,15 @@ class Document < ActiveRecord::Base
     presence: true,
     content_type: { content_type: 'application/pdf' }
 
+  scope :undelivered, -> { where.not(id: PrintJob.completed.select(:document_id)) }
+
   delegate :path, :content_type, :fingerprint, to: :file
 
   def filename
     self.file_file_name
+  end
+
+  def to_deliver?
+    print_jobs.completed.empty? && print_jobs.active.empty?
   end
 end
