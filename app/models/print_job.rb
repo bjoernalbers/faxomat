@@ -5,20 +5,42 @@ class PrintJob < ActiveRecord::Base
   belongs_to :printer, required: true
   belongs_to :document, required: true
 
-  before_validation :strip_nondigits_from_fax_number, if: :fax_number
-
-  validates_uniqueness_of :cups_job_id, allow_nil: true
-  validates_presence_of :cups_job_id, if: :status
-  validates_absence_of :cups_job_id, unless: :status
-
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
 
-  #NOTE: `before_save` does not work since attachments are only persisted and available after(!) save!
-  #before_save :print, unless: :cups_job_id
-  after_commit :print, on: :create, unless: :cups_job_id
-
+  before_validation :strip_nondigits_from_fax_number, if: :fax_number
+  before_create :print, unless: :job_id
   before_destroy :check_if_aborted
+
+  class << self
+    # Updates status of active print jobs.
+    def update_active
+      Printer.active.find_each do |printer|
+        statuses_by_job_id = driver_class.statuses(printer.name)
+        printer.print_jobs.active.find_each do |print_job|
+          if status = statuses_by_job_id[print_job.job_id]
+            print_job.update!(status: status)
+          end
+        end
+      end
+    end
+
+    def active_or_completed
+      where(status: %w(active completed).map { |status| statuses[status] })
+    end
+
+    def fake_printing?
+      !!@fake_printing
+    end
+
+    def fake_printing=(true_or_false)
+      @fake_printing = true_or_false
+    end
+
+    def driver_class
+      fake_printing? ? self::TestDriver : self::CupsDriver
+    end
+  end
 
   def self.updated_today
     where('updated_at >= ?', DateTime.current.beginning_of_day)
@@ -65,12 +87,11 @@ class PrintJob < ActiveRecord::Base
     title
   end
 
-  # TODO: Test this!
-  def print
-    printer.print(self)
-  end
-
   private
+
+  def print
+    driver.print ? self.job_id = driver.job_id : false
+  end
 
   # Helper class to strip down a search query string.
   class Query
@@ -115,5 +136,9 @@ class PrintJob < ActiveRecord::Base
 
   def belongs_to_fax_printer?
     printer && printer.is_fax_printer?
+  end
+
+  def driver
+    @driver ||= self.class.driver_class.new(self)
   end
 end

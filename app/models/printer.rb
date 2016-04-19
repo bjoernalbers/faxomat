@@ -8,47 +8,15 @@ class Printer < ActiveRecord::Base
     presence: true
 
   class << self
-    # Returns CUPS driver if not set.
-    def default_driver_class
-      @default_driver_class || Printer::CupsDriver
+    # Returns distinct printers with active print jobs.
+    def active
+      joins(:print_jobs).
+        where(id: PrintJob.active.select(:printer_id)).
+        distinct
     end
-
-    # Set default driver.
-    def default_driver_class=(driver_class)
-      @default_driver_class = driver_class
-    end
-
-    def update_active_print_jobs
-      find_each { |printer| printer.update_active_print_jobs }
-    end
-  end
-
-  def update_active_print_jobs
-    driver.check(active_print_jobs)
   end
 
   def is_fax_printer?
     false
-  end
-
-  # Print print job.
-  def print(print_job)
-    print_job = PrintJob.find(print_job.id)
-    cups_job_id = driver.print(print_job)
-    print_job.update cups_job_id: cups_job_id, status: :active
-  end
-
-  def driver
-    driver_class.new(self)
-  end
-
-  def driver_class
-    self.class.default_driver_class
-  end
-
-  private
-
-  def active_print_jobs
-    print_jobs.active.all
   end
 end

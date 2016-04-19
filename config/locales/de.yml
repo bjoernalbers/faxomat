@@ -28,6 +28,8 @@ de:
         suffix: Namenszusatz
         sex: Geschlecht
         number: Nummer
+      print_job:
+        job_id: Auftragsnummer
       recipient:
         first_name: Vorname
         last_name: Nachname

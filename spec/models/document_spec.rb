@@ -24,16 +24,11 @@ describe Document do
 
   it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }
 
-  describe '.undelivered' do
-    let(:subject) { described_class.undelivered }
+  describe '.to_deliver' do
+    let(:subject) { described_class.to_deliver }
     let!(:document) { create(:document) }
 
     it 'includes document without print jobs' do
-      expect(subject).to include document
-    end
-
-    it 'includes document with active print job' do
-      create(:active_print_job, document: document)
       expect(subject).to include document
     end
 
@@ -42,8 +37,25 @@ describe Document do
       expect(subject).to include document
     end
 
+    it 'excludes document with active print job' do
+      create(:active_print_job, document: document)
+      expect(subject).not_to include document
+    end
+
     it 'excludes document with completed print job' do
       create(:completed_print_job, document: document)
+      expect(subject).not_to include document
+    end
+
+    it 'excludes document with active and aborted print job' do
+      create(:active_print_job, document: document)
+      create(:aborted_print_job, document: document)
+      expect(subject).not_to include document
+    end
+
+    it 'excludes document with completed and aborted print job' do
+      create(:completed_print_job, document: document)
+      create(:aborted_print_job, document: document)
       expect(subject).not_to include document
     end
   end

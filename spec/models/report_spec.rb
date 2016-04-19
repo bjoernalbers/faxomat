@@ -230,8 +230,8 @@ describe Report do
     end
   end
 
-  describe '.undelivered' do
-    let(:subject) { described_class.undelivered }
+  describe '.to_deliver' do
+    let(:subject) { described_class.to_deliver }
 
     it 'excludes pending report' do
       report = create(:pending_report)
@@ -249,35 +249,58 @@ describe Report do
       expect(subject).not_to include report
     end
 
-    it 'includes verified report without completed print job' do
+    it 'excludes verified report with active print job' do
       report = create(:verified_report)
+      create(:active_print_job, document: report.document)
+      expect(subject).not_to include report
+    end
+
+    it 'includes verified report without print job' do
+      report = create(:verified_report)
+      expect(report.print_jobs).to be_empty
+      expect(subject).to include report
+    end
+
+    it 'includes verified report with aborted print job' do
+      report = create(:verified_report)
+      create(:aborted_print_job, document: report.document)
       expect(subject).to include report
     end
   end
 
-  it { expect(subject).to delegate_method(:to_deliver?).to(:document) }
-
-  describe '#undelivered?' do
-    let(:subject) { create(:verified_report) }
-
-    it 'without print_job is true' do
-      expect(subject.print_jobs).to be_empty
-      expect(subject).to be_undelivered
+  describe '#to_deliver?' do
+    it 'when pending is false' do
+      subject = create(:pending_report)
+      expect(subject).not_to be_to_deliver
     end
 
-    it 'with aborted print job is true' do
-      create(:aborted_print_job, document: subject.document)
-      expect(subject).to be_undelivered
+    it 'when canceled is false' do
+      subject = create(:canceled_report)
+      expect(subject).not_to be_to_deliver
     end
 
-    it 'with active print_job is false' do
-      create(:active_print_job, document: subject.document)
-      expect(subject).not_to be_undelivered
-    end
+    context 'when verified' do
+      let(:subject) { create(:verified_report) }
 
-    it 'with completed print_job is false' do
-      create(:completed_print_job, document: subject.document)
-      expect(subject).not_to be_undelivered
+      it 'with completed print job is false' do
+        create(:completed_print_job, document: subject.document)
+        expect(subject).not_to be_to_deliver
+      end
+
+      it 'with active print job is false' do
+        create(:active_print_job, document: subject.document)
+        expect(subject).not_to be_to_deliver
+      end
+
+      it 'without print job is true' do
+        expect(subject.print_jobs).to be_empty
+        expect(subject).to be_to_deliver
+      end
+
+      it 'with aborted print job is true' do
+        create(:aborted_print_job, document: subject.document)
+        expect(subject).to be_to_deliver
+      end
     end
   end
 

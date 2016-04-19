@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160414094751) do
+ActiveRecord::Schema.define(version: 20160418215418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,15 +45,15 @@ ActiveRecord::Schema.define(version: 20160414094751) do
   create_table "print_jobs", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status"
-    t.integer  "cups_job_id"
+    t.integer  "status",      default: 0, null: false
+    t.integer  "job_id",                  null: false
     t.string   "fax_number"
-    t.integer  "printer_id",  null: false
-    t.integer  "document_id", null: false
+    t.integer  "printer_id",              null: false
+    t.integer  "document_id",             null: false
   end
 
-  add_index "print_jobs", ["cups_job_id"], name: "index_print_jobs_on_cups_job_id", unique: true, using: :btree
   add_index "print_jobs", ["document_id"], name: "index_print_jobs_on_document_id", using: :btree
+  add_index "print_jobs", ["job_id"], name: "index_print_jobs_on_job_id", unique: true, using: :btree
 
   create_table "printers", force: :cascade do |t|
     t.string   "name"

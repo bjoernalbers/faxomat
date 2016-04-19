@@ -21,10 +21,12 @@ class Report < ActiveRecord::Base
 
   scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
   scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
-  scope :undelivered, -> { verified.with_undelivered_documents }
-  scope :with_undelivered_documents, -> { where(id: Document.undelivered.select(:report_id)) }
 
-  delegate :to_deliver?, to: :document
+  class << self
+    def to_deliver
+      verified.where(id: Document.to_deliver.select(:report_id))
+    end
+  end
 
   def status
     if canceled_at.present?
@@ -73,8 +75,8 @@ class Report < ActiveRecord::Base
     end
   end
 
-  def undelivered?
-    print_jobs.completed.empty? && print_jobs.active.empty?
+  def to_deliver?
+    verified? && document.try(:to_deliver?)
   end
 
   def recipient_fax_number
@@ -145,24 +147,6 @@ class Report < ActiveRecord::Base
   def has_forbidden_changes?
     allowed_fields = %w(verified_at canceled_at updated_at)
     !pending? && !changed.all? { |c| allowed_fields.include?(c) }
-  end
-
-  # TODO: Remove!
-  def create_document_when_verified
-    if verified_at? && verified_at_changed?
-      to_pdf.to_file do |file|
-        create_document!(title: title, file: file)
-      end
-    end
-  end
-
-  # TODO: Remove!
-  def update_document_when_canceled
-    if canceled_at? && canceled_at_changed?
-      to_pdf.to_file do |file|
-        document.update!(title: title, file: file)
-      end
-    end
   end
 
   def create_report_document

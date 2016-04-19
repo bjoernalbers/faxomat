@@ -1,17 +1,104 @@
 describe PrintJob do
   let(:subject) { build(:print_job) }
 
+  it 'has valid factory' do
+    expect(subject).to be_valid
+    expect(subject).to be_active
+    expect(subject.job_id).not_to be_present
+  end
+
   it 'has factory for active print_job' do
-    expect(build(:active_print_job)).to be_active
-    expect(build(:print_job)).to be_active
+    subject = build(:active_print_job)
+    expect(subject).to be_valid
+    expect(subject).to be_active
+    expect(subject.job_id).to be_present
   end
 
   it 'has factory for completed print_job' do
-    expect(build(:completed_print_job)).to be_completed
+    subject = build(:completed_print_job)
+    expect(subject).to be_valid
+    expect(subject).to be_completed
+    expect(subject.job_id).to be_present
   end
 
   it 'has factory for aborted print_job' do
-    expect(build(:aborted_print_job)).to be_aborted
+    subject = build(:aborted_print_job)
+    expect(subject).to be_valid
+    expect(subject).to be_aborted
+    expect(subject.job_id).to be_present
+  end
+
+  describe '.update_active' do
+    let(:subject) { described_class }
+    let(:driver_class) { double('driver class') }
+    let(:printer) { create(:printer) }
+
+    before do
+      allow(driver_class).to receive(:statuses).and_return({})
+      allow(subject).to receive(:driver_class).and_return(driver_class)
+    end
+
+    it 'groups status queries by printer' do
+      create_list(:active_print_job, 2, printer: printer)
+      subject.update_active
+      expect(driver_class).to have_received(:statuses).with(printer.name).once
+    end
+
+    it 'updates active print jobs' do
+      print_job = create(:active_print_job, printer: printer)
+      allow(driver_class).to receive(:statuses).
+        and_return({print_job.job_id => :completed})
+      subject.update_active
+      print_job.reload
+      expect(print_job).to be_completed
+    end
+  end
+
+  describe '.active_or_completed' do
+    let(:subject) { described_class.active_or_completed }
+
+    it 'includes active print job' do
+      print_job = create(:active_print_job)
+      expect(subject).to include print_job
+    end
+
+    it 'includes completed print job' do
+      print_job = create(:completed_print_job)
+      expect(subject).to include print_job
+    end
+
+    it 'excludes aborted print job' do
+      print_job = create(:aborted_print_job)
+      expect(subject).not_to include print_job
+    end
+  end
+
+  describe '.driver_class' do
+    let(:subject) { described_class }
+
+    it 'is test driver in current environment' do
+      expect(subject.driver_class).to eq described_class::TestDriver
+    end
+
+    context 'with fake_printing enabled' do
+      before do
+        allow(subject).to receive(:fake_printing?).and_return(true)
+      end
+
+      it 'returns test driver' do
+        expect(subject.driver_class).to eq described_class::TestDriver
+      end
+    end
+
+    context 'with fake_printing disabled' do
+      before do
+        allow(subject).to receive(:fake_printing?).and_return(false)
+      end
+
+      it 'returns CUPS driver' do
+        expect(subject.driver_class).to eq described_class::CupsDriver
+      end
+    end
   end
 
   describe '#document' do
@@ -65,60 +152,102 @@ describe PrintJob do
     end
   end
 
-  describe '#cups_job_id' do
-    context 'without status' do
-      let(:subject) { build(:print_job, status: nil) }
+  describe '#job_id' do
+    before do
+      allow(subject).to receive(:print)
+    end
 
-      it { expect(subject).to validate_absence_of(:cups_job_id) }
+    it 'is translated' do
+      translation = subject.class.human_attribute_name(:job_id)
+      expect(translation).to eq 'Auftragsnummer'
+    end
 
-      context 'and when nil but non-unique' do
-        before do
-          create(:print_job, status: nil, cups_job_id: nil)
-          subject.cups_job_id = nil
-        end
+    it 'does not validates presence' do
+      expect(subject).not_to validate_presence_of(:job_id)
+    end
 
-        it 'is valid' do
-          expect(subject).to be_valid
-        end
+    it 'validates presence in database' do
+      expect{ subject.save!(validate: false) }.
+        to raise_error(ActiveRecord::ActiveRecordError)
+    end
 
-        it 'can be saved' do
-          expect{ subject.save!(validate: false) }.not_to raise_error
-        end
+    it 'does not validate uniqueness' do
+      expect(subject).not_to validate_uniqueness_of(:job_id)
+    end
+
+    it 'validates uniqueness in database' do
+      subject.job_id = create(:completed_print_job).job_id
+      expect{ subject.save!(validate: false) }.
+        to raise_error(ActiveRecord::ActiveRecordError)
+    end
+  end
+
+  describe '#status' do
+    it 'is active by default' do
+      expect(subject).to be_active
+    end
+
+    it 'validates presence in database' do
+      subject.status = nil
+      expect{ subject.save!(validate: false) }.
+        to raise_error(ActiveRecord::ActiveRecordError)
+    end
+  end
+
+  describe 'on create' do
+    let(:driver) { double('driver') }
+
+    before do
+      allow(subject).to receive(:driver).and_return(driver)
+    end
+
+    context 'when printable' do
+      before do
+        allow(driver).to receive(:print).and_return(true)
+        allow(driver).to receive(:job_id).and_return(42)
+      end
+
+      it 'assigns job_id' do
+        subject.save
+        expect(subject.job_id).to eq 42
+      end
+
+      it 'is active' do
+        subject.save
+        expect(subject).to be_active
       end
     end
 
-    context 'with status' do
-      let(:subject) { build(:print_job, status: :active) }
+    context 'when not printable' do
+      before do
+        allow(driver).to receive(:print).and_return(false)
+      end
+      
+      it 'can not be saved' do
+        expect(subject.save).to eq false
+      end
 
-      it { expect(subject).to validate_presence_of(:cups_job_id) }
+      it 'does not assign job_id' do
+        subject.save
+        expect(subject.job_id).to be nil
+      end
 
-      it { expect(subject).to validate_uniqueness_of(:cups_job_id) }
-    end
-  end
-
-  context 'when saved without cups_job_id and status' do
-    let(:subject) { build(:print_job, cups_job_id: nil, status: nil) }
-
-    before do
-      allow(subject).to receive(:print)
-      subject.save!
-    end
-
-    it 'prints itself' do
-      expect(subject).to have_received(:print)
-    end
-  end
-
-  context 'when saved with cups_job_id and status' do
-    let(:subject) { build(:completed_print_job) }
-
-    before do
-      allow(subject).to receive(:print)
-      subject.save!
+      it 'is active' do
+        subject.save
+        expect(subject).to be_active
+      end
     end
 
-    it 'does not print itself' do
-      expect(subject).not_to have_received(:print)
+    context 'with existing job_id' do
+      before do
+        subject.job_id = 42
+        allow(driver).to receive(:print)
+      end
+
+      it 'does not print job' do
+        subject.save
+        expect(driver).not_to have_received(:print)
+      end
     end
   end
 
@@ -270,6 +399,27 @@ describe PrintJob do
       subject.destroy
       expect(subject).not_to be_destroyed
       expect(subject.errors[:base]).to include(message)
+    end
+  end
+
+  describe '#driver' do
+    let(:driver_class) { double('driver_class') }
+
+    before do
+      allow(driver_class).to receive(:new)
+      allow(described_class).to receive(:driver_class).
+        and_return(driver_class)
+    end
+
+    it 'initializes driver' do
+      subject.send(:driver)
+      expect(driver_class).to have_received(:new).with(subject)
+    end
+
+    it 'returns cached driver' do
+      allow(driver_class).to receive(:new).and_return(:a_driver)
+      2.times { expect(subject.send(:driver)).to eq :a_driver }
+      expect(driver_class).to have_received(:new).once
     end
   end
 end

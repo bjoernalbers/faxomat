@@ -64,19 +64,19 @@ feature 'Deliver report' do
     expect(current_path).to eq report_path(report)
   end
 
-  scenario 'when undelivered' do
+  scenario 'when to deliver' do
     report = create(:verified_report, user: user)
     visit reports_url
-    click_link 'Ungesendet'
+    click_link 'Zu senden'
     expect(page).to have_content report.subject
   end
 
-  scenario 'when delivered' do
+  scenario 'when not to deliver' do
     report = create(:verified_report, user: user)
     print_job = create(:completed_print_job, document: report.document)
 
     visit reports_url
-    click_link 'Ungesendet'
+    click_link 'Zu senden'
     expect(page).not_to have_content report.subject
   end
 end
