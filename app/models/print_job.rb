@@ -1,5 +1,5 @@
 # Keeps track of print jobs.
-class PrintJob < ActiveRecord::Base
+class PrintJob < Delivery
   enum status: { active: 0, completed: 1, aborted: 2 }
 
   belongs_to :printer, required: true

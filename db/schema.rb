@@ -11,10 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160418215418) do
+ActiveRecord::Schema.define(version: 20160425072944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "deliveries", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "status",      default: 0, null: false
+    t.integer  "job_id",                  null: false
+    t.string   "fax_number"
+    t.integer  "printer_id",              null: false
+    t.integer  "document_id",             null: false
+    t.string   "type"
+  end
+
+  add_index "deliveries", ["document_id"], name: "index_deliveries_on_document_id", using: :btree
+  add_index "deliveries", ["job_id"], name: "index_deliveries_on_job_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "title",             null: false
@@ -41,19 +55,6 @@ ActiveRecord::Schema.define(version: 20160418215418) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end
-
-  create_table "print_jobs", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "status",      default: 0, null: false
-    t.integer  "job_id",                  null: false
-    t.string   "fax_number"
-    t.integer  "printer_id",              null: false
-    t.integer  "document_id",             null: false
-  end
-
-  add_index "print_jobs", ["document_id"], name: "index_print_jobs_on_document_id", using: :btree
-  add_index "print_jobs", ["job_id"], name: "index_print_jobs_on_job_id", unique: true, using: :btree
 
   create_table "printers", force: :cascade do |t|
     t.string   "name"
@@ -138,6 +139,6 @@ ActiveRecord::Schema.define(version: 20160418215418) do
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
+  add_foreign_key "deliveries", "documents"
   add_foreign_key "documents", "reports"
-  add_foreign_key "print_jobs", "documents"
 end
