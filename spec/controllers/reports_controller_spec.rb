@@ -156,9 +156,9 @@ describe ReportsController do
           expect(FaxPrinter.default.print_jobs.last.fax_number).to eq recipient.fax_number
         end
 
-        it 'redirects to report' do
+        it 'redirects to reports path' do
           do_verify
-          expect(response).to redirect_to report_url(report)
+          expect(response).to redirect_to reports_url
         end
 
         it 'sets flash message' do
@@ -175,9 +175,9 @@ describe ReportsController do
           expect { do_verify }.to change(PrintJob, :count).by(0)
         end
 
-        it 'redirects to report' do
+        it 'redirects to reports path' do
           do_verify
-          expect(response).to redirect_to report_url(report)
+          expect(response).to redirect_to reports_url
         end
 
         it 'sets flash message' do
