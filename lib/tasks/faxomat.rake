@@ -15,8 +15,8 @@ namespace :faxomat do
       merge(Document.where.not(report: nil)).  # ...where document has report
       where('fax_number LIKE ?', '02941671%'). # and was send to EVK.
       find_each do |fax|
-        patient = fax.report.patient
-        source = fax.path
+        patient = fax.document.report.patient
+        source = fax.document.path
         fingerprint = Digest::MD5.file(source).hexdigest
         filename = [
           patient.last_name,
