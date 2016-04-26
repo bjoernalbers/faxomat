@@ -16,13 +16,11 @@ describe Document do
     end
   end
 
-  it { expect(subject).to belong_to(:report) }
+  it { expect(subject).to have_one(:report) }
 
   it { expect(subject).to have_many(:print_jobs) }
 
   it { expect(subject).to validate_presence_of(:title) }
-
-  it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }
 
   describe '.to_deliver' do
     let(:subject) { described_class.to_deliver }
@@ -56,6 +54,22 @@ describe Document do
     it 'excludes document with completed and aborted print job' do
       create(:completed_print_job, document: document)
       create(:aborted_print_job, document: document)
+      expect(subject).not_to include document
+    end
+  end
+
+  describe '.with_report' do
+    let(:subject) { described_class.with_report }
+
+    it 'includes document with report' do
+      document = create(:report).document
+      expect(document.report).not_to be nil
+      expect(subject).to include document
+    end
+
+    it 'excludes document without report' do
+      document = create(:document)
+      expect(document.report).to be nil
       expect(subject).not_to include document
     end
   end

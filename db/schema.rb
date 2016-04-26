@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160425072944) do
+ActiveRecord::Schema.define(version: 20160426110123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,10 +39,7 @@ ActiveRecord::Schema.define(version: 20160425072944) do
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
     t.string   "file_fingerprint"
-    t.integer  "report_id"
   end
-
-  add_index "documents", ["report_id"], name: "index_documents_on_report_id", unique: true, using: :btree
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",    null: false
@@ -97,8 +94,10 @@ ActiveRecord::Schema.define(version: 20160425072944) do
     t.date     "study_date",   null: false
     t.datetime "verified_at"
     t.datetime "canceled_at"
+    t.integer  "document_id",  null: false
   end
 
+  add_index "reports", ["document_id"], name: "index_reports_on_document_id", unique: true, using: :btree
   add_index "reports", ["user_id"], name: "index_reports_on_user_id", using: :btree
 
   create_table "templates", force: :cascade do |t|
@@ -140,5 +139,5 @@ ActiveRecord::Schema.define(version: 20160425072944) do
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   add_foreign_key "deliveries", "documents"
-  add_foreign_key "documents", "reports"
+  add_foreign_key "reports", "documents"
 end

@@ -6,9 +6,9 @@ describe Report do
     it { expect(subject).to belong_to(association) }
   end
 
-  it { expect(subject).to have_many(:print_jobs).through(:document) }
+  it { expect(subject).to belong_to(:document).dependent(:destroy) }
 
-  it { expect(subject).to have_one(:document).dependent(:destroy) }
+  it { expect(subject).to have_many(:print_jobs).through(:document) }
 
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
@@ -51,6 +51,13 @@ describe Report do
     :canceled_at
   ].each do |attribute|
     it { expect(subject).not_to validate_presence_of(attribute) }
+  end
+
+  it 'validates uniqueness of document' do
+    other = create(:report)
+    subject = build(:report, document: other.document)
+    expect(subject).to be_invalid
+    expect(subject.errors[:document_id]).to be_present
   end
 
   describe '.pending' do

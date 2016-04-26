@@ -2,8 +2,8 @@ class Report < ActiveRecord::Base
   belongs_to :user, required: true
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
+  belongs_to :document, dependent: :destroy
 
-  has_one :document, dependent: :destroy
   has_many :print_jobs, through: :document
 
   validates_presence_of :anamnesis,
@@ -11,20 +11,21 @@ class Report < ActiveRecord::Base
     :procedure,
     :study,
     :study_date
+  validates_uniqueness_of :document_id, allow_nil: true
+  validate :check_if_updatable, on: :update
 
   before_save :replace_carriage_returns
-  before_update :check_if_updatable
   before_destroy :check_if_destroyable
 
-  after_create :create_report_document
-  after_update :update_report_document, if: :changed?
+  before_create :create_report_document
+  before_update :update_report_document, if: :changed?
 
   scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
   scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
 
   class << self
     def to_deliver
-      verified.where(id: Document.to_deliver.select(:report_id))
+      verified.where(document_id: Document.to_deliver.select(:id))
     end
   end
 
@@ -140,7 +141,6 @@ class Report < ActiveRecord::Base
   def check_if_updatable
     if has_forbidden_changes?
       errors.add(:base, 'Arztbrief darf nicht mehr verändert werden!')
-      false
     end
   end
 
@@ -150,14 +150,16 @@ class Report < ActiveRecord::Base
   end
 
   def create_report_document
-    to_pdf.to_file do |file|
-      create_document!(title: title, file: file)
+    unless self.document # TODO: Test this condition!
+      to_pdf.to_file do |file|
+        self.document = Document.create!(title: title, file: file) # breaks!
+      end
     end
   end
 
   def update_report_document
     to_pdf.to_file do |file|
-      document.update!(title: title, file: file)
+      self.document.update!(title: title, file: file)
     end
   end
 end

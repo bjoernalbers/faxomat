@@ -12,8 +12,8 @@ namespace :faxomat do
       FileUtils.mkdir(dir, verbose: true)
     end
     PrintJob.joins(:document).
-      merge(Document.where.not(report: nil)).  # ...where document has report
-      where('fax_number LIKE ?', '02941671%'). # and was send to EVK.
+      where(document_id: Document.with_report.select(:id)). # ...from reports
+      where('fax_number LIKE ?', '02941671%').              # and sent to EVK.
       find_each do |fax|
         patient = fax.document.report.patient
         source = fax.document.path
