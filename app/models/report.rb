@@ -3,7 +3,7 @@ class Report < ActiveRecord::Base
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
 
-  has_one :document
+  has_one :document, dependent: :destroy
   has_many :print_jobs, through: :document
 
   validates_presence_of :anamnesis,

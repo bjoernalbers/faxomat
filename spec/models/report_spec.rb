@@ -8,7 +8,7 @@ describe Report do
 
   it { expect(subject).to have_many(:print_jobs).through(:document) }
 
-  it { expect(subject).to have_one(:document) }
+  it { expect(subject).to have_one(:document).dependent(:destroy) }
 
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
