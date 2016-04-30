@@ -56,6 +56,15 @@ describe ReportPdf do
       end
     end
 
+    %w(title subtitle short_title slogan return_address contact_infos owners).each do |text|
+      it "includes template #{text}" do
+        template = build(:template)
+        allow(Template).to receive(:default).and_return(template)
+        #expect(report_pdf_strings).to include template.send(text)
+        expect(report_pdf_strings.join("\n")).to include template.send(text)
+      end
+    end
+
     context 'with pending report' do
       it 'includes watermark'
       it 'include no signature'
@@ -64,6 +73,14 @@ describe ReportPdf do
     context 'with verified report' do
       it 'includes no watermark'
       it 'includes signature'
+    end
+  end
+
+  describe '#template' do
+    it 'returns default template' do
+      template = build(:template)
+      allow(Template).to receive(:default).and_return(template)
+      expect(report_pdf.template).to eq template
     end
   end
 

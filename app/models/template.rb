@@ -1,7 +1,15 @@
+class EmptyTemplate
+  include ActiveModel::Model
+
+  def method_missing(method_name, *args)
+    ''
+  end
+end
+
 class Template < ActiveRecord::Base
   # Returns default template
   def self.default
-    first
+    first || EmptyTemplate.new
   end
 
   has_attached_file :logo,

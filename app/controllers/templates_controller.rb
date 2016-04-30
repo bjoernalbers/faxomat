@@ -32,12 +32,12 @@ class TemplatesController < ApplicationController
   private
 
   def set_template
-    @template = Template.first
+    @template = Template.default
   end
 
   def template_params
     params.require(:template).permit(:title, :subtitle, :short_title, :slogan,
-                                     :address, :zip, :city, :phone, :fax,
-                                     :email, :homepage, :owners, :logo)
+                                     :return_address, :contact_infos, :owners,
+                                     :logo)
   end
 end

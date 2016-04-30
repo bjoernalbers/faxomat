@@ -3,10 +3,11 @@ require 'prawn/measurement_extensions'
 class ReportPdf
   include Prawn::View
 
-  attr_reader :report
+  attr_reader :report, :template
 
-  def initialize(report)
+  def initialize(report, template = Template.default)
     @report = report
+    @template = template
 
     # NOTE: This sets the default page size and stuff.
     # See: https://github.com/prawnpdf/prawn/issues/802
@@ -46,69 +47,36 @@ class ReportPdf
     #bounding_box [80.mm, bounds.absolute_top - 10.mm], width: 100.mm, height: 35.mm do
     bounding_box [0, bounds.absolute_top - 10.mm], width: 80.mm, height: 35.mm do
       #stroke_bounds
-      text %{Radiologische Gemeinschaftspraxis},
-        size: 10, style: :bold
-      text %{im Evangelischen Krankenhaus Lippstadt},
-        align: :left,
-        size: 10
-      text %{Zertifiziert nach DIN EN ISO 9001:2008},
-        align: :left,
-        size: 8.pt,
-        style: :italic
+      text template.title, size: 10, style: :bold
+      text template.subtitle, align: :left, size: 10
+      text template.short_title, align: :left, size: 8.pt, style: :italic
 
       move_down font.height * 0.5
 
-      text [
-        'Offenes Hochfeld-MRT',
-        'Mehrzeilen-Spiral-CT',
-        'Digitale 3D-Mammographie',
-        'Digitales Röntgen / Sonographie',
-        'Digitale Subtraktionsangiographie (DSA)'
-      ].join(" \u00b7 "), size: 8.pt, align: :left
-
+      text template.slogan, size: 8.pt, aligh: :left
     end
 
 
-    text_box %{Dipl.-Med. Jost Porrmann
-      Dr. med. Lars Rühe
-      Dr. med. Peter Prodehl
-      Ulrike Müller},
-      at: [80.mm, bounds.absolute_top - 10.mm],
-      #at: [0, bounds.absolute_top - 10.mm],
-      #align: :right,
-      width: 65.mm,
-      height: 35.mm,
-      #align: :left,
-      align: :right,
-      #style: :bold,
-      size: 12
+    text_box template.owners, at: [80.mm, bounds.absolute_top - 10.mm],
+      width: 65.mm, height: 35.mm, align: :right, size: 12
 
     # Logo
     bounding_box [145.mm, bounds.absolute_top - 10.mm], width: 25.mm, height: 25.mm do
-      image Rails.root.join('app', 'assets', 'images', 'logo.png'),
-        width: 25.mm,
-        align: :center,
-        valign: :top
+      if template.logo.present?
+        #image Rails.root.join('app', 'assets', 'images', 'logo.png'),
+        image template.logo.path, width: 25.mm, align: :center, valign: :top
+      end
     end
 
     move_down font.height * 0.5
 
-    text [
-      'Tel: 02941 15015-0',
-      'Fax: 02941 15015-11',
-      'info@radiologie-lippstadt.de',
-      'www.radiologie-lippstadt.de'
-    ].join(" \u00b7 "), align: :center, size: 9.pt
+    text template.contact_infos, align: :center, size: 9.pt
 
     stroke_horizontal_rule
 
     # Return address
     bounding_box [0, bounds.absolute_top - 45.mm], width: 80.mm do
-      text [
-        'Radiol. GP im EVK',
-        'Wiedenbrücker Str. 33',
-        '59555 LP'
-      ].join(" \u00b7 "), align: :center, size: 8.pt
+      text template.return_address, align: :center, size: 8.pt
       line_width 0.5.pt
       stroke_horizontal_rule
     end

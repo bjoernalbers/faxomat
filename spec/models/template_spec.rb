@@ -1,19 +1,36 @@
 describe Template do
-  let(:template) { build(:template) }
+  let(:subject) { build(:template) }
 
   it 'has valid factory' do
-    expect(template).to be_valid
+    expect(subject).to be_valid
   end
 
   describe '.default' do
-    it 'returns first template' do
-      2.times { create(:template) }
-      expect(Template.default).to eq Template.first
+    let(:subject) { described_class.default }
+
+    context 'without templates' do
+      it 'returns empty template' do
+        build(:template).attributes.keys.each do |attr|
+          #expect(subject.send(attr.to_sym)).to be nil
+          expect(subject.send(attr.to_sym)).to eq ''
+        end
+      end
+    end
+
+    context 'with templates' do
+      let!(:first) { create(:template) }
+      let!(:second) { create(:template) }
+
+      it 'returns first template' do
+        expect(subject).to eq first
+      end
     end
   end
 
-  it { expect(template).to have_attached_file(:logo) }
+  describe '#logo' do
+    it { expect(subject).to have_attached_file(:logo) }
 
-  it { expect(template).to validate_attachment_content_type(:logo).
-    allowing('image/png').rejecting('application/pdf') }
+    it { expect(subject).to validate_attachment_content_type(:logo).
+      allowing('image/png').rejecting('application/pdf') }
+  end
 end
