@@ -46,6 +46,7 @@ module API
     validate :check_associations
 
     before_validation :split_study_and_study_date
+    before_validation :strip_nondigits_from_fax_number
 
     # NOTE: I found no way to send the study date independent from the study in
     # Tomedo, which is Karteieintrag "Untersuchung" (UNT).
@@ -161,6 +162,11 @@ module API
           end
         end
       end
+    end
+
+    def strip_nondigits_from_fax_number
+      self.recipient_fax_number =
+        self.recipient_fax_number.present? ? self.recipient_fax_number.gsub(/[^0-9]/, '') : nil
     end
   end
 end

@@ -326,6 +326,22 @@ module API
         expect(recipient.fax_number).to eq '0123456789'
       end
 
+      it 'creates no duplicate recipient' do
+        first, second = build_pair(:api_report,
+                       recipient_last_name:  'House',
+                       recipient_first_name: 'Gregory',
+                       recipient_salutation: 'Hallihallo,',
+                       recipient_title:      'Dr.',
+                       recipient_suffix:     'MD',
+                       recipient_address:    'Sesamstraße 42',
+                       recipient_zip:        '98765',
+                       recipient_city:       'Hollywood',
+                       recipient_fax_number: '') # Faxnumber must be blank for this test!
+
+        expect { first.save!  }.to change(Recipient, :count).by(1)
+        expect { second.save! }.to change(Recipient, :count).by(0)
+      end
+
       it 'creates report' do
         subject = build(:api_report, findings: 'chunky')
         expect { subject.save! }.to change(::Report, :count).by(1)
