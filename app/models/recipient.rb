@@ -3,7 +3,6 @@ class Recipient < ActiveRecord::Base
 
   before_validation :strip_nondigits_from_fax_number
 
-  validates_presence_of :last_name
   validates :fax_number, fax: true
 
   def full_name

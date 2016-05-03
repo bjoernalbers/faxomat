@@ -30,8 +30,9 @@ module API
       it "validates #{association}" do
         object = association.to_s.capitalize.constantize.new
         subject.send("#{association}=", object)
-        expect(subject).to be_invalid
-        expect(subject.errors[association].count).to eq(object.errors.count)
+        if subject.invalid?
+          expect(subject.errors[association].count).to eq(object.errors.count)
+        end
       end
     end
 

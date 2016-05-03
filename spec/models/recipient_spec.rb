@@ -8,11 +8,8 @@ describe Recipient do
     end
   end
 
-  # Required attributes
-  it { expect(recipient).to validate_presence_of(:last_name) }
-
   # Optional attributes
-  [ :first_name, :title, :suffix, :salutation, :address, :zip, :city, :fax_number ].each do |attr|
+  [ :first_name, :last_name, :title, :suffix, :salutation, :address, :zip, :city, :fax_number ].each do |attr|
     it { expect(recipient).not_to validate_presence_of(attr) }
   end
 
