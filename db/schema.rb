@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160503193712) do
+ActiveRecord::Schema.define(version: 20160504093707) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,7 +39,10 @@ ActiveRecord::Schema.define(version: 20160503193712) do
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
     t.string   "file_fingerprint"
+    t.integer  "recipient_id",      null: false
   end
+
+  add_index "documents", ["recipient_id"], name: "index_documents_on_recipient_id", using: :btree
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",    null: false
@@ -134,5 +137,6 @@ ActiveRecord::Schema.define(version: 20160503193712) do
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   add_foreign_key "deliveries", "documents"
+  add_foreign_key "documents", "recipients"
   add_foreign_key "reports", "documents"
 end

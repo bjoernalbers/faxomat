@@ -1,4 +1,5 @@
 class Document < ActiveRecord::Base
+  belongs_to :recipient, required: true
   has_one :report
   has_many :print_jobs
 

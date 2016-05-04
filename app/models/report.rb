@@ -152,14 +152,18 @@ class Report < ActiveRecord::Base
   def create_report_document
     unless self.document # TODO: Test this condition!
       to_pdf.to_file do |file|
-        self.document = Document.create!(title: title, file: file) # breaks!
+        self.document = Document.create!(title: title,
+                                         file: file,
+                                         recipient: recipient)
       end
     end
   end
 
   def update_report_document
     to_pdf.to_file do |file|
-      self.document.update!(title: title, file: file)
+      self.document.update!(title: title,
+                            file: file,
+                            recipient: recipient)
     end
   end
 end

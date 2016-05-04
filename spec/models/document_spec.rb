@@ -22,6 +22,11 @@ describe Document do
 
   it { expect(subject).to validate_presence_of(:title) }
 
+  describe '#recipient' do
+    it { expect(subject).to belong_to(:recipient) }
+    it { expect(subject).to validate_presence_of(:recipient) }
+  end
+
   describe '.to_deliver' do
     let(:subject) { described_class.to_deliver }
     let!(:document) { create(:document) }
