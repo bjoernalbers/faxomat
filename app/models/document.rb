@@ -22,6 +22,7 @@ class Document < ActiveRecord::Base
   end
 
   delegate :path, :content_type, :fingerprint, to: :file
+  delegate :fax_number, to: :recipient
 
   def filename
     self.file_file_name

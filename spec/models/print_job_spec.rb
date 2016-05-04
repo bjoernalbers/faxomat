@@ -115,7 +115,25 @@ describe PrintJob do
     context 'with fax printer' do
       let(:subject) { build(:print_job, printer: create(:fax_printer)) }
 
-      it { expect(subject).to validate_presence_of(:fax_number) }
+      it 'validates presence' do
+        # NOTE: This little hack is required to avoid that the print job copies
+        # the fax number from recipient before validation.
+        recipient_without_fax_number = create(:recipient, fax_number: nil)
+        document = create(:document, recipient: recipient_without_fax_number)
+        subject = build(:print_job, document: document)
+        subject.fax_number = nil
+
+        expect(subject.fax_number).to be nil
+        expect(subject).to be_invalid
+        expect(subject.errors[:fax_number]).to be_present
+      end
+
+      it 'gets assigned from document on create' do
+        subject.fax_number = nil
+        subject.save!
+        expect(subject.fax_number).to be_present
+        expect(subject.fax_number).to eq subject.document.fax_number
+      end
 
       it 'validates minimum length' do
         subject.fax_number = '0123456'

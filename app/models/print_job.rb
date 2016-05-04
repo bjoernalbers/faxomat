@@ -8,6 +8,7 @@ class PrintJob < Delivery
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
 
+  before_validation :assign_fax_number, unless: :fax_number, if: :belongs_to_fax_printer?, on: :create
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
   before_create :print, unless: :job_id
   before_destroy :check_if_aborted
@@ -121,6 +122,10 @@ class PrintJob < Delivery
   end
 
   private
+
+  def assign_fax_number
+    self.fax_number = self.document.fax_number if self.document
+  end
 
   def strip_nondigits_from_fax_number
     self.fax_number =

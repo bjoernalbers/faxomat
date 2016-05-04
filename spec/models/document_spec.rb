@@ -79,6 +79,10 @@ describe Document do
     end
   end
 
+  describe '#fax_number' do
+    it { expect(subject).to delegate_method(:fax_number).to(:recipient) }
+  end
+
   describe '#file' do
     it { should have_attached_file(:file) }
 
