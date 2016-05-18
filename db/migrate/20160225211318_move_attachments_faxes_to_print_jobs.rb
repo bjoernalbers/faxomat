@@ -1,14 +1,18 @@
 class MoveAttachmentsFaxesToPrintJobs < ActiveRecord::Migration
   def up
-    if File.directory?(destination)
-      FileUtils.mv(Dir.glob("#{source}/*"), destination) && FileUtils.rmdir(source)
-    else
-      FileUtils.mv source, destination
+    if File.directory?(source)
+      if File.directory?(destination)
+        FileUtils.mv(Dir.glob("#{source}/*"), destination) && FileUtils.rmdir(source)
+      else
+        FileUtils.mv source, destination
+      end
     end
   end
 
   def down
-    FileUtils.mv(destination, source)
+    if File.directory?(destination)
+      FileUtils.mv(destination, source)
+    end
   end
 
   def attachments_path
