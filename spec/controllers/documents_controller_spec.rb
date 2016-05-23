@@ -1,5 +1,5 @@
 describe DocumentsController do
-  describe 'GET #show' do
+  describe 'GET #download' do
     let!(:document) { create(:document) }
 
     before do
@@ -11,7 +11,7 @@ describe DocumentsController do
     end
 
     it 'sends document' do
-      get :show, id: document
+      get :download, id: document
       expect(controller).to have_received(:send_file).
         with(document.path, type: 'application/pdf')
     end

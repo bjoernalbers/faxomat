@@ -1,5 +1,5 @@
 class DocumentsController < ApplicationController
-  def show
+  def download
     load_document
     send_file @document.path, type: @document.content_type
   end
