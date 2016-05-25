@@ -15,7 +15,7 @@ class PrintJobsController < ApplicationController
     respond_to do |format|
       if @print_job.save
         flash[:notice] = 'Druckauftrag wird gesendet.'
-        format.html { redirect_to(@print_job) }
+        format.html { redirect_to(@print_job.document) }
         format.json { render json: 'OK', status: :created } #TODO: Return more infos about the new print_job!
       else
         format.html { render action: 'new' }
@@ -64,7 +64,7 @@ class PrintJobsController < ApplicationController
   private
 
   def print_job_params
-    params.require(:print_job).permit(:title, :fax_number, :document)
+    params.require(:print_job).permit(:printer_id, :document_id)
   end
 
   def print_jobs

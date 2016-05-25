@@ -12,6 +12,10 @@ class Document < ActiveRecord::Base
     content_type: { content_type: 'application/pdf' }
 
   class << self
+    def deliverable
+      where.not(id: Report.not_verified.select(:document_id))
+    end
+
     def to_deliver
       where.not(id: PrintJob.active_or_completed.select(:document_id))
     end
@@ -28,7 +32,16 @@ class Document < ActiveRecord::Base
     self.file_file_name
   end
 
+  # TODO: Remove(?)!
   def to_deliver?
     print_jobs.active_or_completed.empty?
+  end
+
+  def undelivered?
+    print_jobs.completed.empty?
+  end
+
+  def deliverable?
+    report.blank? || report.verified?
   end
 end

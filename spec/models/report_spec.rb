@@ -61,24 +61,45 @@ describe Report do
   end
 
   describe '.pending' do
-    let(:now) { Time.zone.now }
-
     it 'returns all pending reports' do
       pending = create(:pending_report)
       verified = create(:verified_report)
       canceled = create(:canceled_report)
-      expect(Report.pending.all).to eq  [ pending ]
+      expect(described_class.pending.all).to eq  [ pending ]
     end
   end
 
   describe '.verified' do
-    let(:now) { Time.zone.now }
-
     it 'returns all verified reports' do
       pending = create(:pending_report)
       verified = create(:verified_report)
       canceled = create(:canceled_report)
-      expect(Report.verified.all).to eq  [ verified ]
+      expect(described_class.verified.all).to eq  [ verified ]
+    end
+  end
+
+  describe '.canceled' do
+    it 'includes only canceled reports' do
+      pending = create(:pending_report)
+      verified = create(:verified_report)
+      canceled = create(:canceled_report)
+      expect(described_class.canceled.all).to eq  [ canceled ]
+    end
+  end
+
+  describe '.not_verified' do
+    let(:subject) { described_class.not_verified }
+
+    it 'includes pending report' do
+      expect(subject).to include create(:pending_report)
+    end
+
+    it 'includes canceled report' do
+      expect(subject).to include create(:canceled_report)
+    end
+
+    it 'excludes verified report' do
+      expect(subject).not_to include create(:verified_report)
     end
   end
 

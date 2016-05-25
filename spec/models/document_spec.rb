@@ -27,6 +27,30 @@ describe Document do
     it { expect(subject).to validate_presence_of(:recipient) }
   end
 
+  describe '.deliverable' do
+    let(:subject) { described_class.deliverable }
+    let!(:document) { create(:document) }
+
+    it 'includes document without report' do
+      expect(subject).to include document
+    end
+
+    it 'includes document with verified report' do
+      create(:verified_report, document: document)
+      expect(subject).to include document
+    end
+
+    it 'excludes document with pending report' do
+      create(:pending_report, document: document)
+      expect(subject).not_to include document
+    end
+
+    it 'excludes document with canceled report' do
+      create(:canceled_report, document: document)
+      expect(subject).not_to include document
+    end
+  end
+
   describe '.to_deliver' do
     let(:subject) { described_class.to_deliver }
     let!(:document) { create(:document) }
@@ -81,6 +105,44 @@ describe Document do
 
   describe '#fax_number' do
     it { expect(subject).to delegate_method(:fax_number).to(:recipient) }
+  end
+
+  describe '#undelivered?' do
+    let(:subject) { create(:document) }
+
+    it 'is true without completed print job' do
+      create(:active_print_job, document: subject)
+      create(:aborted_print_job, document: subject)
+      expect(subject).to be_undelivered
+    end
+
+    it 'is false with completed print job' do
+      create(:completed_print_job, document: subject)
+      expect(subject).not_to be_undelivered
+    end
+  end
+
+  describe '#deliverable?' do
+    let(:subject) { create(:document) }
+
+    it 'is true without report' do
+      expect(subject).to be_deliverable
+    end
+
+    it 'is true with verified report' do
+      create(:verified_report, document: subject)
+      expect(subject).to be_deliverable
+    end
+
+    it 'is false with pending report' do
+      create(:pending_report, document: subject)
+      expect(subject).not_to be_deliverable
+    end
+
+    it 'is false with canceled report' do
+      create(:canceled_report, document: subject)
+      expect(subject).not_to be_deliverable
+    end
   end
 
   describe '#file' do

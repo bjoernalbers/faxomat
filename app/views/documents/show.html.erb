@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="page-header">
+      <%= @document.title %>
+      <% if @document.undelivered? %>
+        <span class="label label-danger">ungesendet</span>
+      <% else %>
+        <span class="label label-success">gesendet</span>
+      <% end %>
+    </h1>
+
+    <div class="btn-group">
+      <%= link_to 'Herunterladen', download_document_path(@document), class: 'btn btn-default' %>
+      <% if @document.deliverable? %>
+        <% if fax_printer = FaxPrinter.default %>
+          <%= button_to 'Faxen', print_jobs_path, method: :post,
+            params: { 'print_job[printer_id]' => fax_printer.id, 'print_job[document_id]' => @document.id },
+            class: 'btn btn-primary' %>
+        <% end %>
+        <% if paper_printer = PaperPrinter.default %>
+          <%= button_to 'Drucken', print_jobs_path, method: :post,
+            params: { 'print_job[printer_id]' => paper_printer.id, 'print_job[document_id]' => @document.id },
+            class: 'btn btn-primary' %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">
+          <%= PrintJob.model_name.human(count: @document.print_jobs.count) %>
+        </h2>
+      </div>
+      <table class="table">
+        <tr>
+          <th>
+            <%= PrintJob.human_attribute_name(:created_at) %>
+          </th>
+          <th>
+            <%= Printer.model_name.human %>
+          </th>
+          <th>
+            <%= PrintJob.human_attribute_name(:fax_number) %>
+          </th>
+          <th>
+            <%= PrintJob.human_attribute_name(:status) %>
+          </th>
+        </tr>
+        <% @document.print_jobs.order(:created_at).each do |print_job| %>
+          <tr class="<%= print_job_status_class(print_job) %>">
+            <td>
+              <%= l print_job.created_at %>
+            </td>
+            <td>
+              <%= print_job.printer.name %>
+            </td>
+            <td>
+              <%= print_job.fax_number %>
+            </td>
+            <td>
+              <%= t print_job.status, scope: 'activerecord.attributes.print_job.statuses' %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>

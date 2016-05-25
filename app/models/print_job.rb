@@ -8,6 +8,8 @@ class PrintJob < Delivery
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
 
+  validate :document_must_be_deliverable, if: :document, on: :create
+
   before_validation :assign_fax_number, unless: :fax_number, if: :belongs_to_fax_printer?, on: :create
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
   before_create :print, unless: :job_id
@@ -136,6 +138,12 @@ class PrintJob < Delivery
     unless aborted?
       self.errors[:base] << 'Nur abgebrochene Druckaufträge können gelöscht werden.'
       false
+    end
+  end
+
+  def document_must_be_deliverable
+    unless document.deliverable?
+      self.errors[:document] << 'darf nicht versendet werden.'
     end
   end
 

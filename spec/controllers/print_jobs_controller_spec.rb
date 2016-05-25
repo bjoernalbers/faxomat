@@ -18,10 +18,22 @@ describe PrintJobsController do
   end
 
   describe 'POST #create' do
+    def do_post
+      post :create, print_job: params
+    end
+
     context 'with valid params' do
-      it 'redirects to print_jobs'
-      it 'returns successfully created'
-      it 'saves print_job'
+      let(:params) { build(:print_job).attributes.
+        slice('printer_id', 'document_id') }
+
+      it 'creates print_job' do
+        expect { do_post }.to change(PrintJob, :count).by(1)
+      end
+
+      it 'redirects to document' do
+        do_post
+        expect(response).to redirect_to document_path(Document.last)
+      end
     end
 
     context 'with invalid params' do

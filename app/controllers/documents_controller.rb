@@ -1,6 +1,10 @@
 class DocumentsController < ApplicationController
+  before_action :load_document, only: [ :show, :download ]
+
+  def show
+  end
+
   def download
-    load_document
     send_file @document.path, type: @document.content_type
   end
 

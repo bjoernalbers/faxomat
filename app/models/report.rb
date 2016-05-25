@@ -20,10 +20,24 @@ class Report < ActiveRecord::Base
   before_create :create_report_document
   before_update :update_report_document, if: :changed?
 
-  scope :pending,  -> { where(verified_at: nil).where(canceled_at: nil) }
-  scope :verified, -> { where.not(verified_at: nil).where(canceled_at: nil) }
-
   class << self
+    def pending
+      where('verified_at IS NULL')
+    end
+
+    def verified
+      where('verified_at IS NOT NULL AND canceled_at IS NULL')
+    end
+
+    def canceled
+      where('canceled_at IS NOT NULL')
+    end
+
+    def not_verified
+      where('verified_at IS NULL OR canceled_at IS NOT NULL')
+    end
+
+    # TODO: Remove(?)!
     def to_deliver
       verified.where(document_id: Document.to_deliver.select(:id))
     end
