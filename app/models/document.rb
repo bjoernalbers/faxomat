@@ -12,11 +12,19 @@ class Document < ActiveRecord::Base
     content_type: { content_type: 'application/pdf' }
 
   class << self
-    def deliverable
-      where.not(id: Report.not_verified.select(:document_id))
+    def created_today
+      where('created_at > ?', Time.zone.now.beginning_of_day)
     end
 
     def to_deliver
+      released_for_delivery.without_active_or_completed_print_job
+    end
+
+    def released_for_delivery
+      where.not(id: Report.not_verified.select(:document_id))
+    end
+
+    def without_active_or_completed_print_job
       where.not(id: PrintJob.active_or_completed.select(:document_id))
     end
 
@@ -37,11 +45,11 @@ class Document < ActiveRecord::Base
     print_jobs.active_or_completed.empty?
   end
 
-  def undelivered?
-    print_jobs.completed.empty?
+  def delivered?
+    print_jobs.completed.present?
   end
 
-  def deliverable?
+  def released_for_delivery?
     report.blank? || report.verified?
   end
 end

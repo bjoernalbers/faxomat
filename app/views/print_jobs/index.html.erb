@@ -24,11 +24,6 @@
       <%= content_tag(:td, print_job.fax_number, class: 'fax_number') %>
       <%= content_tag(:td, print_job.created_at, class: 'created_at') %>
       <%= content_tag(:td, print_job.status, class: 'status') %>
-      <% if print_job.aborted? %>
-        <td>
-          <%= link_to 'löschen', print_job_path(print_job), method: :delete, class: 'btn btn-danger btn-xs', data: { confirm: 'Wirklich löschen?' } %>
-        </td>
-      <% end %>
     <% end %>
   <% end %>
 </table>

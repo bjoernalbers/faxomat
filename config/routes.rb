@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     resources :printings, only: [:new, :create]
   end
 
-  resources :documents, only: [:show] do
+  resources :documents, only: [:index, :show] do
     member do
       get :download
     end

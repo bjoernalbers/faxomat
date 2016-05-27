@@ -2,16 +2,14 @@
   <div class="col-md-12">
     <h1 class="page-header">
       <%= @document.title %>
-      <% if @document.undelivered? %>
-        <span class="label label-danger">ungesendet</span>
-      <% else %>
+      <% if @document.delivered? %>
         <span class="label label-success">gesendet</span>
       <% end %>
     </h1>
 
     <div class="btn-group">
       <%= link_to 'Herunterladen', download_document_path(@document), class: 'btn btn-default' %>
-      <% if @document.deliverable? %>
+      <% if @document.released_for_delivery? %>
         <% if fax_printer = FaxPrinter.default %>
           <%= button_to 'Faxen', print_jobs_path, method: :post,
             params: { 'print_job[printer_id]' => fax_printer.id, 'print_job[document_id]' => @document.id },

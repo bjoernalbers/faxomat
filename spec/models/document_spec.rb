@@ -27,8 +27,40 @@ describe Document do
     it { expect(subject).to validate_presence_of(:recipient) }
   end
 
-  describe '.deliverable' do
-    let(:subject) { described_class.deliverable }
+  describe '.created_today' do
+    let(:today) { Time.zone.now.beginning_of_day + 1.second }
+    let(:yesterday) { Time.zone.yesterday.end_of_day }
+    let(:subject) { described_class.created_today }
+
+    it 'includes document from today' do
+      document = create(:document, created_at: today)
+      expect(subject).to include(document)
+    end
+
+    it 'excludes document from yesterday' do
+      document = create(:document, created_at: yesterday)
+      expect(subject).not_to include(document)
+    end
+  end
+
+  describe '.to_deliver' do
+    let(:documents) { [ build(:document) ] }
+    let(:subject) { described_class.to_deliver }
+
+    before do
+      allow(described_class).to receive_message_chain(
+        :released_for_delivery,
+        :without_active_or_completed_print_job
+      ) { documents }
+    end
+
+    it 'returns all documents which are released for delivery and without active or completed print jobs' do
+      expect(subject).to eq documents
+    end
+  end
+
+  describe '.released_for_delivery' do
+    let(:subject) { described_class.released_for_delivery }
     let!(:document) { create(:document) }
 
     it 'includes document without report' do
@@ -51,8 +83,11 @@ describe Document do
     end
   end
 
-  describe '.to_deliver' do
-    let(:subject) { described_class.to_deliver }
+  describe '.without_active_or_completed_print_job' do
+    let(:subject) do
+      described_class.send(:without_active_or_completed_print_job)
+    end
+
     let!(:document) { create(:document) }
 
     it 'includes document without print jobs' do
@@ -107,41 +142,41 @@ describe Document do
     it { expect(subject).to delegate_method(:fax_number).to(:recipient) }
   end
 
-  describe '#undelivered?' do
+  describe '#delivered?' do
     let(:subject) { create(:document) }
 
-    it 'is true without completed print job' do
-      create(:active_print_job, document: subject)
-      create(:aborted_print_job, document: subject)
-      expect(subject).to be_undelivered
+    it 'is true with completed print job' do
+      create(:completed_print_job, document: subject)
+      expect(subject).to be_delivered
     end
 
-    it 'is false with completed print job' do
-      create(:completed_print_job, document: subject)
-      expect(subject).not_to be_undelivered
+    it 'is false without completed print job' do
+      create(:active_print_job, document: subject)
+      create(:aborted_print_job, document: subject)
+      expect(subject).not_to be_delivered
     end
   end
 
-  describe '#deliverable?' do
+  describe '#released_for_delivery?' do
     let(:subject) { create(:document) }
 
     it 'is true without report' do
-      expect(subject).to be_deliverable
+      expect(subject).to be_released_for_delivery
     end
 
     it 'is true with verified report' do
       create(:verified_report, document: subject)
-      expect(subject).to be_deliverable
+      expect(subject).to be_released_for_delivery
     end
 
     it 'is false with pending report' do
       create(:pending_report, document: subject)
-      expect(subject).not_to be_deliverable
+      expect(subject).not_to be_released_for_delivery
     end
 
     it 'is false with canceled report' do
       create(:canceled_report, document: subject)
-      expect(subject).not_to be_deliverable
+      expect(subject).not_to be_released_for_delivery
     end
   end
 

@@ -1,6 +1,10 @@
 class DocumentsController < ApplicationController
   before_action :load_document, only: [ :show, :download ]
 
+  def index
+    @documents = Document.created_today
+  end
+
   def show
   end
 

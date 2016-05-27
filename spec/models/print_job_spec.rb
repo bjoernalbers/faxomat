@@ -105,20 +105,20 @@ describe PrintJob do
     it { expect(subject).to belong_to(:document) }
     it { expect(subject).to validate_presence_of(:document) }
     
-    it 'validates document is deliverable on create' do
+    it 'validates document is released for delivery on create' do
       report = create(:pending_report)
       subject = build(:print_job, document: report.document)
-      expect(report.document).not_to be_deliverable
+      expect(report.document).not_to be_released_for_delivery
       expect(subject).to be_invalid
       expect(subject.errors[:document]).to be_present
 
       report.update! status: :verified
-      expect(report.document).to be_deliverable
+      expect(report.document).to be_released_for_delivery
       expect(subject).to be_valid
       
       subject.save
       report.update! status: :canceled
-      expect(report.document).not_to be_deliverable
+      expect(report.document).not_to be_released_for_delivery
       expect(subject).to be_valid
     end
   end

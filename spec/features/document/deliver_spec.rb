@@ -12,7 +12,7 @@ feature 'Deliver document' do
 
   scenario 'when not deliverable' do
     document = create(:pending_report).document
-    expect(document).not_to be_deliverable
+    expect(document).not_to be_released_for_delivery
 
     visit document_url(document)
 
@@ -21,11 +21,10 @@ feature 'Deliver document' do
 
   scenario 'when deliverable' do
     document = create(:verified_report).document
-    expect(document).to be_deliverable
+    expect(document).to be_released_for_delivery
 
     visit document_url(document)
 
-    #expect(page).to have_button('Faxen')
     expect {
       click_button 'Faxen'
     }.to change(PrintJob, :count).by(1)

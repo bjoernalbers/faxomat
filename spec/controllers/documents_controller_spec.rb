@@ -1,4 +1,25 @@
 describe DocumentsController do
+  describe 'GET #index' do
+    let(:documents) { [ build(:document) ] }
+
+    before do
+      allow(Document).to receive(:created_today).and_return(documents)
+      get :index
+    end
+
+    it 'renders index template' do
+      expect(response).to render_template('index')
+    end
+
+    it 'assigns documents' do
+      expect(assigns(:documents)).to eq documents
+    end
+
+    it 'responds with success' do
+      expect(response).to be_success
+    end
+  end
+
   describe 'GET #download' do
     let!(:document) { create(:document) }
 

@@ -8,7 +8,7 @@ class PrintJob < Delivery
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
 
-  validate :document_must_be_deliverable, if: :document, on: :create
+  validate :document_is_released_for_delivery, if: :document, on: :create
 
   before_validation :assign_fax_number, unless: :fax_number, if: :belongs_to_fax_printer?, on: :create
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
@@ -141,8 +141,8 @@ class PrintJob < Delivery
     end
   end
 
-  def document_must_be_deliverable
-    unless document.deliverable?
+  def document_is_released_for_delivery
+    unless document.released_for_delivery?
       self.errors[:document] << 'darf nicht versendet werden.'
     end
   end
