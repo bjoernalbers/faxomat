@@ -1,0 +1,13 @@
+<h1>Dokumente</h1>
+
+<ul id="documents_nav" class="nav nav-tabs">
+  <li role="presentation" class='<%= 'active' if controller_name == 'documents' %>'>
+    <%= link_to 'Heute', documents_path %>
+  </li>
+  <li role="presentation" class='<%= 'active' if controller_name == 'deliver_documents' %>'>
+    <%= link_to(deliver_documents_path) do %>
+      <%= content_tag(:span, 'Zu senden') %>
+      <%= content_tag(:span, deliver_documents_count, class: 'badge') %>
+    <% end %>
+  </li>
+</ul>

@@ -1,0 +1,25 @@
+<% if @documents.empty? %>
+  <p class="lead">
+    Heute wurde noch kein Dokument angelegt.
+  </p>
+<% else %>
+  <div class="list-group">
+    <% @documents.each do |document| %>
+      <%= link_to document, class: 'list-group-item' do %>
+        <p class="list-group-item-heading">
+          <strong>
+            <%= document.title %>
+          </strong>
+          <% if document.delivered? %>
+            <span class="label label-success">gesendet</span>
+          <% end %>
+        </p>
+        <!--
+        <p class="list-group-item-text">
+          some text...
+        </p>
+        -->
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

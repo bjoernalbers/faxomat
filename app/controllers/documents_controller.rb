@@ -1,8 +1,8 @@
 class DocumentsController < ApplicationController
   before_action :load_document, only: [ :show, :download ]
+  before_action :load_documents, only: :index
 
   def index
-    @documents = Document.created_today
   end
 
   def show
@@ -16,5 +16,9 @@ class DocumentsController < ApplicationController
 
   def load_document
     @document = Document.find(params[:id])
+  end
+
+  def load_documents
+    @documents = Document.created_today
   end
 end

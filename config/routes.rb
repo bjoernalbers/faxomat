@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       get :download
     end
   end
+  resources :deliver_documents, only: :index
 
   resources :attendances, only: [:new]
 

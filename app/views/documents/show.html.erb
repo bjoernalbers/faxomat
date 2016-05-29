@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-12">
-    <h1 class="page-header">
-      <%= @document.title %>
+    <h1>
+      Dokument: <%= @document.title %>
       <% if @document.delivered? %>
         <span class="label label-success">gesendet</span>
       <% end %>
@@ -23,44 +23,50 @@
       <% end %>
     </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h2 class="panel-title">
-          <%= PrintJob.model_name.human(count: @document.print_jobs.count) %>
-        </h2>
-      </div>
-      <table class="table">
-        <tr>
-          <th>
-            <%= PrintJob.human_attribute_name(:created_at) %>
-          </th>
-          <th>
-            <%= Printer.model_name.human %>
-          </th>
-          <th>
-            <%= PrintJob.human_attribute_name(:fax_number) %>
-          </th>
-          <th>
-            <%= PrintJob.human_attribute_name(:status) %>
-          </th>
-        </tr>
-        <% @document.print_jobs.order(:created_at).each do |print_job| %>
-          <tr class="<%= print_job_status_class(print_job) %>">
-            <td>
-              <%= l print_job.created_at %>
-            </td>
-            <td>
-              <%= print_job.printer.name %>
-            </td>
-            <td>
-              <%= print_job.fax_number %>
-            </td>
-            <td>
-              <%= t print_job.status, scope: 'activerecord.attributes.print_job.statuses' %>
-            </td>
+    <% if @document.print_jobs.present? %>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">
+            <%= PrintJob.model_name.human(count: @document.print_jobs.count) %>
+          </h2>
+        </div>
+        <table class="table">
+          <tr>
+            <th>
+              <%= PrintJob.human_attribute_name(:created_at) %>
+            </th>
+            <th>
+              <%= Printer.model_name.human %>
+            </th>
+            <th>
+              <%= PrintJob.human_attribute_name(:fax_number) %>
+            </th>
+            <th>
+              <%= PrintJob.human_attribute_name(:status) %>
+            </th>
           </tr>
-        <% end %>
-      </table>
-    </div>
+          <% @document.print_jobs.order(:created_at).each do |print_job| %>
+            <tr class="<%= print_job_status_class(print_job) %>">
+              <td>
+                <%= l print_job.created_at %>
+              </td>
+              <td>
+                <%= print_job.printer.name %>
+              </td>
+              <td>
+                <%= print_job.fax_number %>
+              </td>
+              <td>
+                <%= t print_job.status, scope: 'activerecord.attributes.print_job.statuses' %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    <% else %>
+      <p class="lead">
+        Hoppla, zu diesem Dokument gibt es noch keine Druckaufträge.
+      </p>
+    <% end %>
   </div>
 </div>
