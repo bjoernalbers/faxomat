@@ -19,8 +19,8 @@
             <li>
               <%= link_to 'Arztbriefe', reports_path %>
             </li>
-            <li>
-              <%= link_to 'Dokumente', documents_path %>
+            <li class="<%= 'active' if controller_name =~ /documents$/ %>">
+              <%= link_to 'Versendungen', documents_path %>
             </li>
           </ul>
 

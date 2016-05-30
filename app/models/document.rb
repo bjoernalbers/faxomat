@@ -12,8 +12,10 @@ class Document < ActiveRecord::Base
     content_type: { content_type: 'application/pdf' }
 
   class << self
-    def created_today
-      where('created_at > ?', Time.zone.now.beginning_of_day)
+    def delivered_today
+      includes(:print_jobs).
+        where('deliveries.created_at > ?', Time.zone.now.beginning_of_day).
+        order('deliveries.created_at DESC').distinct
     end
 
     def to_deliver

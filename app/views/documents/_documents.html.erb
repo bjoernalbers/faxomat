@@ -1,6 +1,6 @@
 <% if @documents.empty? %>
   <p class="lead">
-    Heute wurde noch kein Dokument angelegt.
+    Heute wurde noch nichts versendet.
   </p>
 <% else %>
   <div class="list-group">
@@ -14,11 +14,9 @@
             <span class="label label-success">gesendet</span>
           <% end %>
         </p>
-        <!--
         <p class="list-group-item-text">
-          some text...
+          <%= l document.created_at %>
         </p>
-        -->
       <% end %>
     <% end %>
   </div>

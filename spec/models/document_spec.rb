@@ -22,24 +22,36 @@ describe Document do
 
   it { expect(subject).to validate_presence_of(:title) }
 
-  describe '#recipient' do
-    it { expect(subject).to belong_to(:recipient) }
-    it { expect(subject).to validate_presence_of(:recipient) }
-  end
-
-  describe '.created_today' do
+  describe '.delivered_today' do
     let(:today) { Time.zone.now.beginning_of_day + 1.second }
     let(:yesterday) { Time.zone.yesterday.end_of_day }
-    let(:subject) { described_class.created_today }
+    let!(:document) { create(:document, created_at: yesterday) }
+    let(:subject) { described_class.delivered_today }
 
-    it 'includes document from today' do
-      document = create(:document, created_at: today)
+    it 'excludes document without delivery' do
+      expect(subject).not_to include(document)
+    end
+
+    it 'excludes document with yesterdays delivery' do
+      create(:print_job, document: document, created_at: yesterday)
+      expect(subject).not_to include(document)
+    end
+
+    it 'includes document with todays delivery' do
+      create(:print_job, document: document, created_at: today)
       expect(subject).to include(document)
     end
 
-    it 'excludes document from yesterday' do
-      document = create(:document, created_at: yesterday)
-      expect(subject).not_to include(document)
+    it 'includes distinct documents' do
+      create_pair(:print_job, document: document, created_at: today)
+      expect(subject.count).to eq(1)
+    end
+
+    it 'order by print job creation date' do
+      other = create(:document)
+      create(:print_job, document: document)
+      create(:print_job, document: other)
+      expect(subject.first).to eq other
     end
   end
 
@@ -136,6 +148,11 @@ describe Document do
       expect(document.report).to be nil
       expect(subject).not_to include document
     end
+  end
+
+  describe '#recipient' do
+    it { expect(subject).to belong_to(:recipient) }
+    it { expect(subject).to validate_presence_of(:recipient) }
   end
 
   describe '#fax_number' do

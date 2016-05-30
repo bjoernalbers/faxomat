@@ -3,7 +3,7 @@ describe DocumentsController do
     let(:documents) { [ build(:document) ] }
 
     before do
-      allow(Document).to receive(:created_today).and_return(documents)
+      allow(Document).to receive(:delivered_today).and_return(documents)
       get :index
     end
 

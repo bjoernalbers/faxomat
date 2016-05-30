@@ -19,6 +19,6 @@ class DocumentsController < ApplicationController
   end
 
   def load_documents
-    @documents = Document.created_today
+    @documents = Document.delivered_today
   end
 end
