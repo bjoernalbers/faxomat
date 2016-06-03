@@ -5,9 +5,6 @@
   <li role="presentation" class=<%= 'active' if params[:pending] == 'false' %>>
     <%= link_to 'Vidiert', reports_path(pending: false) %>
   </li>
-  <li role="presentation" class=<%= 'active' if params[:to_deliver] == 'true' %>>
-    <%= link_to 'Zu senden', reports_path(to_deliver: true) %>
-  </li>
 </ul>
 
 <div class="list-group">
