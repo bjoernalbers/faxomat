@@ -3,7 +3,7 @@
     <div class="btn-group">
       <%= link_to 'Öffnen', download_document_path(@report.document), class: 'btn btn-default' if @report.document %>
       <% if @report.verified? %>
-        <%= link_to 'Senden', new_report_printing_path(@report), class:
+        <%= link_to 'Senden', document_path(@report.document), class:
           (@report.to_deliver? ? 'btn btn-primary' : 'btn btn-default') %>
       <% end %>
     </div>
