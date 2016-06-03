@@ -33,6 +33,18 @@ class Document < ActiveRecord::Base
     def with_report
       joins(:report)
     end
+
+    def search(query)
+      if query[:title].present?
+        result = all
+        query[:title].split(' ').each do |word|
+          result = result.where(arel_table[:title].matches("%#{word}%"))
+        end
+      else
+        result = none
+      end
+      result
+    end
   end
 
   delegate :path, :content_type, :fingerprint, to: :file

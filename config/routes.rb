@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     end
   end
   resources :deliver_documents, only: :index
+  resources :search_documents, only: :index
 
   resources :attendances, only: [:new]
 

@@ -8,4 +8,15 @@
       <%= content_tag(:span, deliver_documents_count, class: 'badge') %>
     <% end %>
   </li>
+  <li role="presentation" class='<%= 'active' if controller_name == 'search_documents' %>'>
+    <%= link_to 'Suche', search_documents_path %>
+  </li>
 </ul>
+
+<% if controller_name == 'search_documents' %>
+  <%= form_tag(search_documents_path, method: :get) do %>
+    <%= label_tag(:title, 'Titel') %>
+    <%= text_field_tag(:title, params[:title]) %>
+    <%= submit_tag('Suchen', name: nil) %>
+  <% end %>
+<% end %>

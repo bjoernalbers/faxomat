@@ -150,6 +150,26 @@ describe Document do
     end
   end
 
+  describe '.search' do
+    let(:subject) { described_class }
+    let!(:document) { create(:document, title: 'Chunky Bacon') }
+
+    it 'includes results by title' do
+      expect(subject.search(title: 'bacon')).to include document
+    end
+
+    it 'ignores order of mutitple search terms' do
+      expect(subject.search(title: 'bacon ky')).to include document
+    end
+
+    it 'includes no result with blank title' do
+      [nil, ''].each do |title|
+        query = { title: title }
+        expect(subject.search(query)).to be_empty
+      end
+    end
+  end
+
   describe '#recipient' do
     it { expect(subject).to belong_to(:recipient) }
     it { expect(subject).to validate_presence_of(:recipient) }

@@ -32,7 +32,7 @@ feature 'Todays doocuments list' do
 
   scenario 'without documents' do
     visit_todays_documents
-    expect(page).to have_content 'Heute wurde noch nichts versendet.'
+    expect(page).to have_content 'Nichts gefunden.'
   end
 
   scenario 'undelivered document' do
@@ -49,9 +49,29 @@ feature 'Todays doocuments list' do
     document = create(:document)
     create(:completed_print_job, document: document)
 
-    visit documents_url
+    visit_todays_documents
 
     expect(page).to have_content(document.title)
     expect(page).to have_content('gesendet')
+  end
+
+  scenario 'download document' do
+    document = create(:document)
+    create(:completed_print_job, document: document)
+
+    visit_todays_documents
+    click_link document.title
+
+    expect(page.response_headers['Content-Type']).to eq 'application/pdf'
+  end
+
+  scenario 'view details' do
+    document = create(:document)
+    create(:completed_print_job, document: document)
+
+    visit_todays_documents
+    click_link 'Details'
+
+    expect(current_path).to eq document_path(document)
   end
 end

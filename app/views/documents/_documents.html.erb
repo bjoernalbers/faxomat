@@ -1,15 +1,17 @@
 <% if @documents.empty? %>
   <p class="lead">
-    Heute wurde noch nichts versendet.
+    Nichts gefunden.
   </p>
 <% else %>
   <div class="list-group">
     <% @documents.each do |document| %>
-      <%= link_to document, class: 'list-group-item' do %>
+      <div class="list-group-item">
         <p class="list-group-item-heading">
-          <strong>
-            <%= document.title %>
-          </strong>
+          <%= link_to document, class: 'btn btn-default pull-right' do %>
+            <span class="glyphicon glyphicon glyphicon-info-sign"></span>
+            Details
+          <% end %>
+          <%= link_to document.title, download_document_path(document) %>
           <% if document.delivered? %>
             <span class="label label-success">gesendet</span>
           <% end %>
@@ -17,7 +19,7 @@
         <p class="list-group-item-text">
           <%= l document.created_at %>
         </p>
-      <% end %>
+      </div>
     <% end %>
   </div>
 <% end %>
