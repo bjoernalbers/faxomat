@@ -7,6 +7,11 @@
       <% end %>
     </h1>
 
+    <%= link_to 'Zum Bericht', @document.report if @document.report %>
+
+    <%= render @document.recipient %>
+
+
     <div class="btn-group">
       <%= link_to 'Herunterladen', download_document_path(@document), class: 'btn btn-default' %>
       <% if @document.released_for_delivery? %>

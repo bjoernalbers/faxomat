@@ -26,6 +26,9 @@ feature 'View document' do
 
     expect(page).to have_content document.title
     expect(page).to have_content 'gesendet'
+
+    expect(page).to have_content document.recipient.full_name
+
     expect(page).to have_content 'Mittwoch, 25. Mai 2016, 12:42 Uhr'
     expect(page).to have_content print_job.fax_number
     expect(page).to have_content 'erledigt'
