@@ -13,14 +13,11 @@
       <div id='navbar' class='navbar-collapse collapse'>
         <% if user_signed_in? %>
           <ul class='nav navbar-nav navbar-left'>
-            <li>
-              <%= link_to 'Druckaufträge', print_jobs_path %>
-            </li>
-            <li>
-              <%= link_to 'Arztbriefe', reports_path %>
-            </li>
             <li class="<%= 'active' if controller_name =~ /documents$/ %>">
               <%= link_to 'Versendungen', documents_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'reports' %>">
+              <%= link_to 'Arztbriefe', reports_path %>
             </li>
           </ul>
 

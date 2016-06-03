@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index]
 
-  root 'print_jobs#index'
+  root 'documents#index'
 
   resources :reports, only: [:index, :show, :destroy, :update] do
     patch :verify, on: :member
