@@ -29,4 +29,13 @@ feature 'Deliver document' do
       click_button 'Faxen'
     }.to change(PrintJob, :count).by(1)
   end
+
+  scenario 'when deliverable but not faxable' do
+    recipient = create(:recipient, fax_number: nil)
+    document = create(:verified_report, recipient: recipient).document
+
+    visit document_url(document)
+
+    expect(page).not_to have_button('Faxen')
+  end
 end

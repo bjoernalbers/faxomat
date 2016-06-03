@@ -263,4 +263,16 @@ describe Document do
       expect(subject).not_to be_to_deliver
     end
   end
+
+  describe '#recipient_fax_number?' do
+    it 'is true when recipipent has fax number' do
+      expect(subject.recipient.fax_number).to be_present
+      expect(subject.recipient_fax_number?).to eq true
+    end
+
+    it 'is false when recipient has no fax number' do
+      subject.recipient = build(:recipient, fax_number: nil)
+      expect(subject.recipient_fax_number?).to eq false
+    end
+  end
 end

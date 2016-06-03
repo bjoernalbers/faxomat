@@ -66,4 +66,8 @@ class Document < ActiveRecord::Base
   def released_for_delivery?
     report.blank? || report.verified?
   end
+
+  def recipient_fax_number?
+    recipient.fax_number?
+  end
 end
