@@ -62,7 +62,8 @@ class ReportsController < ApplicationController
 
   def reports
     if params[:pending] == 'false'
-      current_user.reports.verified
+      #current_user.reports.verified
+      current_user.reports.where('updated_at > ?', Time.zone.now.beginning_of_day).order(updated_at: :desc)
     else
       current_user.reports.pending
     end
