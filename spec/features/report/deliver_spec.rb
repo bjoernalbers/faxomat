@@ -5,6 +5,7 @@
 feature 'Deliver report' do
   let(:user) { create(:user) }
   let(:send_report) { 'Senden' }
+  let(:deliver_report) { 'Faxen' }
 
   before do
     Rails.application.load_seed
@@ -28,7 +29,7 @@ feature 'Deliver report' do
     visit report_url(report)
     expect(page).to have_link send_report
     click_link send_report
-    click_button 'Druckauftrag erstellen'
+    click_button deliver_report
     expect(page).to have_content('Druckauftrag wird gesendet')
   end
 
@@ -54,29 +55,5 @@ feature 'Deliver report' do
     visit report_url(report)
     expect(page).to have_link send_report
     expect(page).to have_content('Druckauftrag abgebrochen') # Label
-  end
-
-  scenario 'when canceled' do
-    report = create(:verified_report, user: user)
-    visit report_url(report)
-    click_link send_report
-    click_link 'Abbrechen'
-    expect(current_path).to eq report_path(report)
-  end
-
-  scenario 'when to deliver' do
-    report = create(:verified_report, user: user)
-    visit reports_url
-    click_link 'Zu senden'
-    expect(page).to have_content report.subject
-  end
-
-  scenario 'when not to deliver' do
-    report = create(:verified_report, user: user)
-    print_job = create(:completed_print_job, document: report.document)
-
-    visit reports_url
-    click_link 'Zu senden'
-    expect(page).not_to have_content report.subject
   end
 end
