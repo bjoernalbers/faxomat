@@ -30,7 +30,6 @@ feature 'Deliver report' do
     expect(page).to have_link send_report
     click_link send_report
     click_button deliver_report
-    expect(page).to have_content('Druckauftrag wird gesendet')
   end
 
   scenario 'with active fax' do
@@ -38,7 +37,6 @@ feature 'Deliver report' do
     create(:active_print_job, document: report.document)
     visit report_url(report)
     expect(page).to have_link send_report
-    expect(page).to have_content('Druckauftrag aktiv') # Label
   end
 
   scenario 'with completed fax' do
@@ -46,7 +44,6 @@ feature 'Deliver report' do
     create(:completed_print_job, document: report.document)
     visit report_url(report)
     expect(page).to have_link send_report
-    expect(page).to have_content('Druckauftrag abgeschlossen') # Label
   end
 
   scenario 'with aborted fax' do
@@ -54,6 +51,5 @@ feature 'Deliver report' do
     create(:aborted_print_job, document: report.document)
     visit report_url(report)
     expect(page).to have_link send_report
-    expect(page).to have_content('Druckauftrag abgebrochen') # Label
   end
 end

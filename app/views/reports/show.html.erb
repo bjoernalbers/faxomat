@@ -45,21 +45,6 @@
             Storniert
           </span>
         <% end %>
-        <% @report.print_jobs.each do |print_job| %>
-          <% if print_job.active? %>
-            <span class="label label-default">
-              Druckauftrag aktiv
-            </span>
-          <% elsif print_job.completed? %>
-            <span class="label label-success">
-              Druckauftrag abgeschlossen
-            </span>
-          <% elsif print_job.aborted? %>
-            <span class="label label-warning">
-              Druckauftrag abgebrochen
-            </span>
-          <% end %>
-        <% end %>
       </div>
     </div>
   </div>
