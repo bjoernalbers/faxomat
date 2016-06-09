@@ -11,10 +11,9 @@ namespace :faxomat do
     unless File.directory?(dir)
       FileUtils.mkdir(dir, verbose: true)
     end
-    PrintJob.joins(:document).
-      where(document_id: Document.with_report.select(:id)). # ...from reports
-      where('fax_number LIKE ?', '02941671%').              # and sent to EVK.
-      find_each do |fax|
+    # Find all faxes from documents without report send to EVK
+    PrintJob.joins(:document).merge(Document.with_report).
+      where('fax_number LIKE ?', '02941671%').find_each do |fax|
         patient = fax.document.report.patient
         source = fax.document.path
         fingerprint = Digest::MD5.file(source).hexdigest

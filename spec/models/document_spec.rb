@@ -16,11 +16,13 @@ describe Document do
     end
   end
 
-  it { expect(subject).to have_one(:report) }
+  it { expect(subject).to belong_to(:report) }
 
   it { expect(subject).to have_many(:print_jobs) }
 
   it { expect(subject).to validate_presence_of(:title) }
+
+  it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }
 
   describe '.delivered_today' do
     let(:today) { Time.zone.now.beginning_of_day + 1.second }
@@ -73,24 +75,24 @@ describe Document do
 
   describe '.released_for_delivery' do
     let(:subject) { described_class.released_for_delivery }
-    let!(:document) { create(:document) }
 
     it 'includes document without report' do
+      document = create(:document)
       expect(subject).to include document
     end
 
     it 'includes document with verified report' do
-      create(:verified_report, document: document)
+      document = create(:verified_report).document
       expect(subject).to include document
     end
 
     it 'excludes document with pending report' do
-      create(:pending_report, document: document)
+      document = create(:pending_report).document
       expect(subject).not_to include document
     end
 
     it 'excludes document with canceled report' do
-      create(:canceled_report, document: document)
+      document = create(:canceled_report).document
       expect(subject).not_to include document
     end
   end
@@ -195,24 +197,23 @@ describe Document do
   end
 
   describe '#released_for_delivery?' do
-    let(:subject) { create(:document) }
-
     it 'is true without report' do
+      subject = create(:document)
       expect(subject).to be_released_for_delivery
     end
 
     it 'is true with verified report' do
-      create(:verified_report, document: subject)
+      subject = create(:verified_report).document
       expect(subject).to be_released_for_delivery
     end
 
     it 'is false with pending report' do
-      create(:pending_report, document: subject)
+      subject = create(:pending_report).document
       expect(subject).not_to be_released_for_delivery
     end
 
     it 'is false with canceled report' do
-      create(:canceled_report, document: subject)
+      subject = create(:canceled_report).document
       expect(subject).not_to be_released_for_delivery
     end
   end

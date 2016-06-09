@@ -1,12 +1,13 @@
 class Document < ActiveRecord::Base
   belongs_to :recipient, required: true
-  has_one :report
+  belongs_to :report
   has_many :print_jobs
 
   has_attached_file :file,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
 
   validates_presence_of :title
+  validates_uniqueness_of :report_id, allow_nil: true
   validates_attachment :file,
     presence: true,
     content_type: { content_type: 'application/pdf' }
@@ -23,7 +24,7 @@ class Document < ActiveRecord::Base
     end
 
     def released_for_delivery
-      where.not(id: Report.not_verified.select(:document_id))
+      where.not(report_id: Report.not_verified.select(:id))
     end
 
     def without_active_or_completed_print_job
@@ -31,7 +32,7 @@ class Document < ActiveRecord::Base
     end
 
     def with_report
-      joins(:report)
+      where.not(report_id: nil)
     end
 
     def search(query)

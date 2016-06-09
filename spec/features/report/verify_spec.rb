@@ -24,6 +24,8 @@ feature 'Verify report' do
     expect(page).not_to have_content 'Vidiert'
     click_button 'Vidieren'
 
+    visit report_url(report)
+
     expect(page).not_to have_button 'Vidieren'
     expect(page).to have_content 'Vidiert'
 

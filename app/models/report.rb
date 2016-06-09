@@ -2,8 +2,8 @@ class Report < ActiveRecord::Base
   belongs_to :user, required: true
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
-  belongs_to :document, dependent: :destroy
 
+  has_one :document, dependent: :destroy
   has_many :print_jobs, through: :document
 
   validates_presence_of :anamnesis,
@@ -11,14 +11,13 @@ class Report < ActiveRecord::Base
     :procedure,
     :study,
     :study_date
-  validates_uniqueness_of :document_id, allow_nil: true
   validate :check_if_updatable, on: :update
 
   before_save :replace_carriage_returns
   before_destroy :check_if_destroyable
 
-  before_create :create_report_document
-  before_update :update_report_document, if: :changed?
+  after_create :create_report_document
+  after_update :update_report_document, if: :changed?
 
   class << self
     def pending
@@ -39,7 +38,7 @@ class Report < ActiveRecord::Base
 
     # TODO: Remove(?)!
     def to_deliver
-      verified.where(document_id: Document.to_deliver.select(:id))
+      verified.where(id: Document.to_deliver.select(:report_id))
     end
   end
 
@@ -164,20 +163,14 @@ class Report < ActiveRecord::Base
   end
 
   def create_report_document
-    unless self.document # TODO: Test this condition!
-      to_pdf.to_file do |file|
-        self.document = Document.create!(title: title,
-                                         file: file,
-                                         recipient: recipient)
-      end
+    to_pdf.to_file do |file|
+      create_document!(title: title, file: file, recipient: recipient)
     end
   end
 
   def update_report_document
     to_pdf.to_file do |file|
-      self.document.update!(title: title,
-                            file: file,
-                            recipient: recipient)
+      document.update!(title: title, file: file, recipient: recipient)
     end
   end
 end
