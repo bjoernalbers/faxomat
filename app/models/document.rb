@@ -23,7 +23,11 @@ class Document < ActiveRecord::Base
     end
 
     def released_for_delivery
-      where.not(report_id: Report.not_verified.select(:id))
+      #where.not(report_id: Report.not_verified.select(:id)) # NOTE: Does not work in production and development but in test?!
+      report_id = arel_table[:report_id]
+      report_id_is_null = report_id.eq(nil)
+      report_id_from_verified_report = report_id.not_in(Report.not_verified.pluck(:id))
+      where(report_id_is_null.or(report_id_from_verified_report))
     end
 
     def without_active_or_completed_print_job
