@@ -22,8 +22,6 @@ describe Document do
 
   it { expect(subject).to validate_presence_of(:title) }
 
-  it { expect(subject).to validate_uniqueness_of(:report_id).allow_nil }
-
   describe '.delivered_today' do
     let(:today) { Time.zone.now.beginning_of_day + 1.second }
     let(:yesterday) { Time.zone.yesterday.end_of_day }

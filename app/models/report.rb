@@ -3,8 +3,8 @@ class Report < ActiveRecord::Base
   belongs_to :patient, required: true
   belongs_to :recipient, required: true
 
-  has_one :document, dependent: :destroy
-  has_many :print_jobs, through: :document
+  has_many :documents, dependent: :destroy
+  has_many :print_jobs, through: :documents
 
   validates_presence_of :anamnesis,
     :evaluation,
@@ -133,6 +133,10 @@ class Report < ActiveRecord::Base
     ReportPdf.new(self)
   end
 
+  def document
+    documents.first
+  end
+
   private
 
   # NOTE: Tomedo somehow sends both carriage return and newlines. We're
@@ -164,7 +168,7 @@ class Report < ActiveRecord::Base
 
   def create_report_document
     to_pdf.to_file do |file|
-      create_document!(title: title, file: file, recipient: recipient)
+      documents.create!(title: title, file: file, recipient: recipient)
     end
   end
 

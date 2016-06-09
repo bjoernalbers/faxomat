@@ -7,7 +7,6 @@ class Document < ActiveRecord::Base
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
 
   validates_presence_of :title
-  validates_uniqueness_of :report_id, allow_nil: true
   validates_attachment :file,
     presence: true,
     content_type: { content_type: 'application/pdf' }
