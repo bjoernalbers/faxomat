@@ -71,8 +71,15 @@ describe ReportPdf do
     end
 
     context 'with verified report' do
+      let(:report) { build(:verified_report) }
+
       it 'includes no watermark'
       it 'includes signature'
+
+      it 'includes physician suffix' do
+        allow(report).to receive(:physician_suffix).and_return('Facharzt für Radiologie')
+        expect(report_pdf_strings).to include('Facharzt für Radiologie')
+      end
     end
   end
 

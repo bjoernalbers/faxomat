@@ -231,6 +231,18 @@ describe Report do
     end
   end
 
+  describe '#physician_suffix' do
+    let(:user) { build(:user, suffix: 'Chunky Bacon') }
+
+    before do
+      subject.user = user
+    end
+
+    it 'returns full recipient name' do
+      expect(subject.physician_suffix).to eq 'Chunky Bacon'
+    end
+  end
+
 
   describe '#valediction' do
     it 'returns default value' do

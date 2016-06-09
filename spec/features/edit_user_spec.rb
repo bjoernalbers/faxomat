@@ -18,6 +18,7 @@ feature 'Edit user' do
     fill_in 'First name',       with: 'Björn'
     fill_in 'Last name',        with: 'Albers'
     fill_in 'Title',            with: 'Dipl.-Ing. (FH)'
+    fill_in 'Suffix',           with: 'Systems Engineer'
     fill_in 'Current password', with: 'totalgeheim'
     click_button 'Update'
 
@@ -25,6 +26,7 @@ feature 'Edit user' do
     expect(user.first_name).to eq 'Björn'
     expect(user.last_name).to  eq 'Albers'
     expect(user.title).to      eq 'Dipl.-Ing. (FH)'
+    expect(user.suffix).to     eq 'Systems Engineer'
   end
 
   scenario 'upload signature'

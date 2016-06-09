@@ -49,7 +49,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def additional_user_params
-    %i(first_name last_name title)
+    %i(first_name last_name title suffix)
   end
 
   # The path used after sign up.

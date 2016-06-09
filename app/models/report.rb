@@ -125,6 +125,10 @@ class Report < ActiveRecord::Base
     user.try(:full_name)
   end
 
+  def physician_suffix
+    user.try(:suffix)
+  end
+
   def signature_path
     user.try(:signature_path)
   end

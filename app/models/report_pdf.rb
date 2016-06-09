@@ -135,6 +135,7 @@ class ReportPdf
     if report.include_signature?
       image report.signature_path, height: 4*font.height if report.signature_path.present?
       text report.physician_name, size: 11.pt
+      text report.physician_suffix, size: 11.pt
     end
   end
 
