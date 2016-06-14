@@ -8,6 +8,7 @@ de:
         printer: Drucker
   activerecord:
     models:
+      address: Adresse
       document: Dokument
       template: Vorlage
       report: Bericht
@@ -20,6 +21,10 @@ de:
         other: Druckaufträge
       printer: Drucker
     attributes:
+      address:
+        street: Straße
+        zip: Postleitzahl
+        city: Stadt
       document:
         title: Titel
         file: Datei
