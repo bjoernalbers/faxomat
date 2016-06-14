@@ -37,7 +37,7 @@ module API
       :procedure,
       :clinic
 
-    attr_writer :patient, :recipient, :report
+    attr_writer :address, :patient, :recipient, :report
 
     validates_presence_of :user
 
@@ -165,7 +165,7 @@ module API
     end
 
     def check_associations
-      %i(patient recipient report).each do |association|
+      %i(address patient recipient report).each do |association|
         unless send(association).valid?
           send(association).errors.full_messages.each do |message|
             errors.add(association, message)

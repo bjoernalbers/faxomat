@@ -26,7 +26,7 @@ module API
       end
     end
 
-    %i(patient recipient).each do |association|
+    %i(address patient recipient report).each do |association|
       it "validates #{association}" do
         object = association.to_s.capitalize.constantize.new
         subject.send("#{association}=", object)
