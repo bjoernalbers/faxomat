@@ -3,13 +3,13 @@ describe Recipient do
 
   it 'has valid factory' do
     expect(recipient).to be_valid
-    %i(title first_name last_name suffix street city zip fax_number salutation).each do |attr|
+    %i(title first_name last_name suffix fax_number salutation address).each do |attr|
       expect(recipient.send(attr)).to be_present
     end
   end
 
   # Optional attributes
-  [ :first_name, :last_name, :title, :suffix, :salutation, :street, :zip, :city, :fax_number ].each do |attr|
+  [ :first_name, :last_name, :title, :suffix, :salutation, :fax_number ].each do |attr|
     it { expect(recipient).not_to validate_presence_of(attr) }
   end
 
@@ -24,11 +24,9 @@ describe Recipient do
       last_name:     'Nachname',
       title:         'Titel',
       suffix:        'Namenszusatz',
-      street:        'Straße',
-      zip:           'Postleitzahl',
-      city:          'Ort',
       salutation:    'Anrede',
-      fax_number:    'Faxnummer'
+      fax_number:    'Faxnummer',
+      address:       'Adresse'
     }.each do |attr,translation|
       expect(described_class.human_attribute_name(attr)).to eq translation
     end
@@ -46,11 +44,13 @@ describe Recipient do
 
   describe '#full_address' do
     it 'array of full name, suffix, street, zip and city' do
+      address = build(:address,
+                      street: 'Sesamstraße 1',
+                      zip: '12345',
+                      city: 'Springfield')
       recipient = build(:recipient,
                         suffix: 'Simpsons-Hausarzt',
-                        street: 'Sesamstraße 1',
-                        zip: '12345',
-                        city: 'Springfield')
+                        address: address)
       allow(recipient).to receive(:full_name).and_return('Dr. Julius M. Hibbert')
       expect(recipient.full_address).to eq [
         'Dr. Julius M. Hibbert',

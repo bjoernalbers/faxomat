@@ -6,6 +6,8 @@ class Recipient < ActiveRecord::Base
 
   validates :fax_number, fax: true
 
+  delegate :street, :zip, :city, to: :address
+
   def full_name
     [ title, first_name, last_name ].compact.join(' ')
   end

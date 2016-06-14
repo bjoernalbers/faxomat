@@ -92,6 +92,10 @@ module API
       @recipient ||= find_or_create_recipient
     end
 
+    def address
+      @address ||= Address.find_or_create_by(address_attributes)
+    end
+
     def report
       @report ||= ::Report.new
       @report.attributes = report_attributes
@@ -131,10 +135,16 @@ module API
         salutation: recipient_salutation,
         title:      recipient_title,
         suffix:     recipient_suffix,
-        street:     recipient_address,
-        zip:        recipient_zip,
-        city:       recipient_city,
-        fax_number: recipient_fax_number
+        fax_number: recipient_fax_number,
+        address:    address
+      }
+    end
+
+    def address_attributes
+      {
+        street: recipient_address,
+        zip:    recipient_zip,
+        city:   recipient_city
       }
     end
 

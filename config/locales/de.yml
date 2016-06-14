@@ -57,6 +57,7 @@ de:
         city: Ort
         salutation: Anrede
         fax_number: Faxnummer
+        address: Adresse
       report:
         recipient: Überweiser
         user: Arzt
