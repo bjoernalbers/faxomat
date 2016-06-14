@@ -320,7 +320,7 @@ module API
         expect(recipient.first_name).to eq 'Gregory'
         expect(recipient.title).to eq      'Dr.'
         expect(recipient.suffix).to eq     'MD'
-        expect(recipient.address).to eq    'Sesamstraße 42'
+        expect(recipient.street).to eq     'Sesamstraße 42'
         expect(recipient.zip).to eq        '98765'
         expect(recipient.city).to eq       'Hollywood'
         expect(recipient.salutation).to eq 'Hallihallo,'

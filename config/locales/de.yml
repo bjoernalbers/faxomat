@@ -52,7 +52,7 @@ de:
         last_name: Nachname
         title: Titel
         suffix: Namenszusatz
-        address: Adresse
+        street: Straße
         zip: Postleitzahl
         city: Ort
         salutation: Anrede

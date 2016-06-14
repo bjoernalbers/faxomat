@@ -131,7 +131,7 @@ module API
         salutation: recipient_salutation,
         title:      recipient_title,
         suffix:     recipient_suffix,
-        address:    recipient_address,
+        street:     recipient_address,
         zip:        recipient_zip,
         city:       recipient_city,
         fax_number: recipient_fax_number

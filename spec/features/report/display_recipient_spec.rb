@@ -19,7 +19,7 @@ feature 'Display report recipient' do
     expect(page).to have_content recipient.first_name
     expect(page).to have_content recipient.title
     expect(page).to have_content recipient.suffix
-    expect(page).to have_content recipient.address
+    expect(page).to have_content recipient.street
     expect(page).to have_content recipient.zip
     expect(page).to have_content recipient.city
     expect(page).to have_content recipient.fax_number

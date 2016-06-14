@@ -10,7 +10,7 @@ class Recipient < ActiveRecord::Base
   end
 
   def full_address
-    [ full_name, suffix, address, zip_with_city ]
+    [ full_name, suffix, street, zip_with_city ]
   end
 
   private
