@@ -16,6 +16,7 @@ describe Address do
     end
   end
 
+  it { should have_many(:recipients) }
   it { should validate_presence_of(:street) }
   it { should validate_presence_of(:zip) }
   it { should validate_presence_of(:city) }

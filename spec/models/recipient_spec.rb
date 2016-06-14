@@ -13,6 +13,8 @@ describe Recipient do
     it { expect(recipient).not_to validate_presence_of(attr) }
   end
 
+  it { should belong_to(:address) }
+
   it { expect(recipient).to have_many(:reports) }
 
   it 'is translated' do

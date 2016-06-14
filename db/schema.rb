@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160614134024) do
+ActiveRecord::Schema.define(version: 20160614141737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,7 +89,10 @@ ActiveRecord::Schema.define(version: 20160614134024) do
     t.datetime "updated_at", null: false
     t.string   "salutation"
     t.string   "fax_number"
+    t.integer  "address_id"
   end
+
+  add_index "recipients", ["address_id"], name: "index_recipients_on_address_id", using: :btree
 
   create_table "reports", force: :cascade do |t|
     t.integer  "user_id",      null: false
@@ -148,4 +151,5 @@ ActiveRecord::Schema.define(version: 20160614134024) do
   add_foreign_key "deliveries", "documents"
   add_foreign_key "documents", "recipients"
   add_foreign_key "documents", "reports"
+  add_foreign_key "recipients", "addresses"
 end

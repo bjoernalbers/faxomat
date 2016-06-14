@@ -1,4 +1,5 @@
 class Recipient < ActiveRecord::Base
+  belongs_to :address
   has_many :reports
 
   before_validation :strip_nondigits_from_fax_number
