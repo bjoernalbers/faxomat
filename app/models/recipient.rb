@@ -6,14 +6,18 @@ class Recipient < ActiveRecord::Base
 
   validates :fax_number, fax: true
 
-  delegate :street, :zip, :city, to: :address
+  delegate :street, :zip, :city, to: :address, allow_nil: true
+
+  def salutation
+    self[:salutation].present? ? self[:salutation] : 'Sehr geehrte Kollegen,'
+  end
 
   def full_name
     [ title, first_name, last_name ].compact.join(' ')
   end
 
   def full_address
-    [ full_name, suffix, street, zip_with_city ]
+    address.present? ? [ full_name, suffix, street, zip_with_city ] : [ full_name, suffix ]
   end
 
   private

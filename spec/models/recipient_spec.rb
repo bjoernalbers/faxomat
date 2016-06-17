@@ -17,6 +17,51 @@ describe Recipient do
 
   it { expect(recipient).to have_many(:reports) }
 
+  context '#street' do
+    it { should delegate_method(:street).to(:address) }
+
+    it 'returns nil without address' do
+      recipient = build(:recipient, address: nil)
+      expect(recipient.street).to be nil
+    end
+  end
+
+  context '#zip' do
+    it { should delegate_method(:zip).to(:address) }
+
+    it 'returns nil without address' do
+      recipient = build(:recipient, address: nil)
+      expect(recipient.zip).to be nil
+    end
+  end
+
+  context '#city' do
+    it { should delegate_method(:city).to(:address) }
+
+    it 'returns nil without address' do
+      recipient = build(:recipient, address: nil)
+      expect(recipient.city).to be nil
+    end
+  end
+
+  describe '#salutation' do
+    context 'when missing' do
+      let(:recipient) { build(:recipient, salutation: '') }
+
+      it 'returns default salutation' do
+        expect(recipient.salutation).to eq 'Sehr geehrte Kollegen,'
+      end
+    end
+
+    context 'when present' do
+      let(:recipient) { build(:recipient, salutation: 'Hallo Leute,') }
+
+      it 'returns recipient salutation' do
+        expect(recipient.salutation).to eq 'Hallo Leute,'
+      end
+    end
+  end
+
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Überweiser'
     {
@@ -43,20 +88,33 @@ describe Recipient do
   end
 
   describe '#full_address' do
-    it 'array of full name, suffix, street, zip and city' do
-      address = build(:address,
-                      street: 'Sesamstraße 1',
-                      zip: '12345',
-                      city: 'Springfield')
-      recipient = build(:recipient,
-                        suffix: 'Simpsons-Hausarzt',
-                        address: address)
+    let(:address) { build(:address,
+                          street: 'Sesamstraße 1',
+                          zip:    '12345',
+                          city:   'Springfield') }
+    let(:recipient) { build(:recipient,
+                             suffix: 'Simpsons-Hausarzt',
+                             address: address) }
+
+    before do
       allow(recipient).to receive(:full_name).and_return('Dr. Julius M. Hibbert')
+    end
+
+    it 'array of full name, suffix, street, zip and city' do
       expect(recipient.full_address).to eq [
         'Dr. Julius M. Hibbert',
         'Simpsons-Hausarzt',
         'Sesamstraße 1',
-        '12345 Springfield' ]
+        '12345 Springfield'
+      ]
+    end
+
+    it 'returns array of full name and suffix when without address' do
+      recipient.address = nil
+      expect(recipient.full_address).to eq [
+        'Dr. Julius M. Hibbert',
+        'Simpsons-Hausarzt'
+      ]
     end
   end
 
