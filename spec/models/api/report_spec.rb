@@ -301,6 +301,21 @@ module API
         expect(patient.suffix).to eq         "(yes, it's him!)"
       end
 
+      it 'creates document' do
+        subject = build(:api_report)
+        recipient = create(:recipient)
+        report = create(:report)
+        allow(subject).to receive(:report).and_return(report)
+        allow(subject).to receive(:recipient).and_return(recipient)
+
+        subject.save!
+
+        document = subject.document
+        expect(document.report).to eq report
+        expect(document.recipient).to eq recipient
+        expect(document.title).to eq report.title
+      end
+
       it 'creates recipient' do
         subject = build(:api_report,
                        recipient_last_name:  'House',

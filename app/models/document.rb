@@ -6,10 +6,12 @@ class Document < ActiveRecord::Base
   has_attached_file :file,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
 
-  validates_presence_of :title
-  validates_attachment :file,
-    presence: true,
-    content_type: { content_type: 'application/pdf' }
+  validates_presence_of :title, unless: :report_id?
+  validates_attachment_presence :file, unless: :report_id?
+  validates_attachment_content_type :file, content_type: 'application/pdf'
+
+  around_save :assign_report_attributes, if: :report_id?
+  after_commit :deliver, on: [:update, :create], if: :to_deliver? # TODO: Test this!
 
   class << self
     def delivered_today
@@ -54,13 +56,16 @@ class Document < ActiveRecord::Base
   delegate :path, :content_type, :fingerprint, to: :file
   delegate :fax_number, to: :recipient
 
+  def deliver
+    Deliverer.new(self).deliver
+  end
+
   def filename
     self.file_file_name
   end
 
-  # TODO: Remove(?)!
   def to_deliver?
-    print_jobs.active_or_completed.empty?
+    released_for_delivery? && print_jobs.active_or_completed.empty?
   end
 
   def delivered?
@@ -73,5 +78,17 @@ class Document < ActiveRecord::Base
 
   def recipient_fax_number?
     recipient.fax_number?
+  end
+
+  def report_pdf
+    ReportPdf.new(self)
+  end
+
+  def assign_report_attributes
+    report_pdf.to_file do |file|
+      self.file  = file
+      self.title = report.title
+      yield
+    end
   end
 end

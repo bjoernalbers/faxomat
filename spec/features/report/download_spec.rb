@@ -13,6 +13,7 @@ feature 'Download report' do
 
   scenario 'when pending' do
     report = create(:verified_report, user: user)
+    document = create(:document, report: report)
 
     visit report_url(report)
     click_link 'Öffnen'

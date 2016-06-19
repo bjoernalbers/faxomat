@@ -31,8 +31,10 @@ feature 'Pending documents list' do
   end
 
   scenario 'content' do
-    document = create(:verified_report).document
-    other = create(:pending_report).document
+    verified_report = create(:verified_report)
+    pending_report = create(:pending_report)
+    document = create(:document, report: verified_report)
+    other = create(:document, report: pending_report)
 
     visit_pending_documents
 

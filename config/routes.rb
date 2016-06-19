@@ -11,7 +11,6 @@ Rails.application.routes.draw do
 
   resources :reports, only: [:index, :show, :destroy, :update] do
     patch :verify, on: :member
-    resources :printings, only: [:new, :create]
   end
 
   resources :documents, only: [:index, :show] do

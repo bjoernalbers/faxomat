@@ -147,43 +147,14 @@ describe ReportsController do
         expect(report).to be_verified
       end
 
-      context 'when faxable' do
-        let(:recipient) { create(:recipient, fax_number: '0724634562234') }
-        let(:report) { create(:pending_report, user: current_user, recipient: recipient) }
-
-        it 'creates print job' do
-          expect { do_verify }.to change(FaxPrinter.default.print_jobs, :count).by(1)
-          expect(FaxPrinter.default.print_jobs.last.fax_number).to eq recipient.fax_number
-        end
-
-        it 'redirects to reports path' do
-          do_verify
-          expect(response).to redirect_to reports_url
-        end
-
-        it 'sets flash message' do
-          do_verify
-          expect(flash[:notice]).to eq 'Arztbrief erfolgreich vidiert und Fax-Auftrag angelegt.'
-        end
+      it 'redirects to reports path' do
+        do_verify
+        expect(response).to redirect_to reports_url
       end
 
-      context 'when not faxable' do
-        let(:recipient) { create(:recipient, fax_number: nil) }
-        let(:report) { create(:pending_report, user: current_user, recipient: recipient) }
-
-        it 'creates no print job' do
-          expect { do_verify }.to change(PrintJob, :count).by(0)
-        end
-
-        it 'redirects to reports path' do
-          do_verify
-          expect(response).to redirect_to reports_url
-        end
-
-        it 'sets flash message' do
-          do_verify
-          expect(flash[:notice]).to eq 'Arztbrief erfolgreich vidiert.'
-        end
+      it 'sets flash message' do
+        do_verify
+        expect(flash[:notice]).to eq 'Arztbrief erfolgreich vidiert.'
       end
     end
 

@@ -31,11 +31,7 @@ class ReportsController < ApplicationController
     load_user_report
     if @report.pending?
       @report.update!(status: :verified)
-      if @report.deliver_as_fax
-        redirect_to reports_url, notice: "Arztbrief erfolgreich vidiert und Fax-Auftrag angelegt."
-      else
-        redirect_to reports_url, notice: "Arztbrief erfolgreich vidiert."
-      end
+      redirect_to reports_url, notice: "Arztbrief erfolgreich vidiert."
     else
       render :show
     end

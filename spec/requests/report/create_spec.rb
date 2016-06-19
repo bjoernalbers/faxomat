@@ -24,6 +24,10 @@ describe 'POST /api/reports' do
       expect { do_post }.to change(Report, :count).by(1)
     end
 
+    it 'creates report in database' do
+      expect { do_post }.to change(Document, :count).by(1)
+    end
+
     it 'returns HTTP status 201' do
       do_post
       expect(response.status).to eq 201

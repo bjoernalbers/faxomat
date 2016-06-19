@@ -11,7 +11,7 @@ feature 'Deliver document' do
   end
 
   scenario 'when not deliverable' do
-    document = create(:pending_report).document
+    document = create(:document, report: create(:pending_report))
     expect(document).not_to be_released_for_delivery
 
     visit document_url(document)
@@ -20,7 +20,7 @@ feature 'Deliver document' do
   end
 
   scenario 'when deliverable' do
-    document = create(:verified_report).document
+    document = create(:document, report: create(:verified_report))
     expect(document).to be_released_for_delivery
 
     visit document_url(document)
@@ -32,7 +32,7 @@ feature 'Deliver document' do
 
   scenario 'when deliverable but not faxable' do
     recipient = create(:recipient, fax_number: nil)
-    document = create(:verified_report, recipient: recipient).document
+    document = create(:document, report: create(:verified_report), recipient: recipient)
 
     visit document_url(document)
 

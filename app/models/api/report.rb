@@ -37,7 +37,7 @@ module API
       :procedure,
       :clinic
 
-    attr_writer :address, :patient, :recipient, :report
+    attr_writer :address, :patient, :recipient, :report, :document
 
     validates_presence_of :user
 
@@ -75,7 +75,7 @@ module API
     end
 
     def save
-      valid? ? report.save : false
+      valid? ? (report.save && document.save): false
     end
 
     def attributes=(hash)
@@ -100,6 +100,10 @@ module API
       @report ||= ::Report.new
       @report.attributes = report_attributes
       @report
+    end
+
+    def document
+      @document ||= Document.new(report: report, recipient: recipient)
     end
 
     def username=(username)

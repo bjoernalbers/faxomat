@@ -23,8 +23,9 @@ describe PrintJobsController do
     end
 
     context 'with valid params' do
-      let(:params) { build(:print_job).attributes.
-        slice('printer_id', 'document_id') }
+      let!(:document) { create(:document) }
+      let!(:printer) { create(:printer) }
+      let(:params) { { 'printer_id' => printer.id, 'document_id' => document.id } }
 
       it 'creates print_job' do
         expect { do_post }.to change(PrintJob, :count).by(1)

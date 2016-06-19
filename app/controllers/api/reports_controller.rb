@@ -60,7 +60,7 @@ module API
       respond_to do |format|
         format.json { render :show, location: api_report_url(@report) }
         format.pdf  do
-          pdf = ReportPdf.new(@report)
+          pdf = ReportPdf.new(@report.document)
           send_data pdf.render, filename: pdf.filename, type: 'application/pdf'
         end
       end

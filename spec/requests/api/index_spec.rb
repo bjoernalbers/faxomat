@@ -20,6 +20,7 @@ describe 'GET /api/print_jobs' do
   end
 
   it 'returns number of print jobs by status' do
+    pending
     PrintJob.destroy_all # TODO: Fix database cleaner!
     2.times { FactoryGirl.create(:active_print_job) }
     1.times { FactoryGirl.create(:aborted_print_job) }

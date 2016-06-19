@@ -16,8 +16,8 @@ class Report < ActiveRecord::Base
   before_save :replace_carriage_returns
   before_destroy :check_if_destroyable
 
-  after_create :create_report_document
-  after_update :update_report_document, if: :changed?
+  #after_update :update_documents, if: :changed?
+  after_commit :update_documents, on: :update # TODO: Test this!
 
   class << self
     def pending
@@ -34,11 +34,6 @@ class Report < ActiveRecord::Base
 
     def not_verified
       where('verified_at IS NULL OR canceled_at IS NOT NULL')
-    end
-
-    # TODO: Remove(?)!
-    def to_deliver
-      verified.where(id: Document.to_deliver.select(:report_id))
     end
   end
 
@@ -77,40 +72,8 @@ class Report < ActiveRecord::Base
     patient.display_name
   end
 
-  def deliver_as_fax
-    if printer = FaxPrinter.default
-      if recipient_fax_number.present? # TODO: Move this into Printing-model!
-        Report::Printing.new(report: self, printer: printer).save
-      else
-        false
-      end
-    else
-      false
-    end
-  end
-
-  def to_deliver?
-    verified? && document.try(:to_deliver?)
-  end
-
-  def recipient_fax_number
-    recipient.try(:fax_number)
-  end
-
   def patient_name
     patient.try(:display_name)
-  end
-
-  def recipient_name
-    recipient.try(:full_name)
-  end
-
-  def recipient_address
-    recipient.try(:full_address)
-  end
-
-  def salutation
-    recipient.try(:salutation) || 'Sehr geehrte Kollegen,'
   end
 
   def report_date
@@ -135,10 +98,6 @@ class Report < ActiveRecord::Base
 
   def to_pdf
     ReportPdf.new(self)
-  end
-
-  def document
-    documents.first
   end
 
   private
@@ -170,15 +129,7 @@ class Report < ActiveRecord::Base
     !pending? && !changed.all? { |c| allowed_fields.include?(c) }
   end
 
-  def create_report_document
-    to_pdf.to_file do |file|
-      documents.create!(title: title, file: file, recipient: recipient)
-    end
-  end
-
-  def update_report_document
-    to_pdf.to_file do |file|
-      document.update!(title: title, file: file, recipient: recipient)
-    end
+  def update_documents
+    documents.each { |document| document.save }
   end
 end

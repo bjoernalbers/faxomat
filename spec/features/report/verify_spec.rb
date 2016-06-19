@@ -51,25 +51,4 @@ feature 'Verify report' do
     expect(page).to have_content 'Norris'
     expect(page).not_to have_button 'Vidieren'
   end
-
-  scenario 'when faxable' do
-    recipient = create(:recipient, fax_number: '0123456789')
-    report = create(:pending_report, user: user, recipient: recipient)
-
-    expect {
-      visit report_url(report)
-      click_button 'Vidieren'
-    }.to change(PrintJob, :count).by(1)
-    expect(report.print_jobs.last.fax_number).to eq recipient.fax_number
-  end
-
-  scenario 'when not faxable' do
-    recipient = create(:recipient, fax_number: nil)
-    report = create(:pending_report, user: user, recipient: recipient)
-    
-    expect {
-      visit report_url(report)
-      click_button 'Vidieren'
-    }.to change(PrintJob, :count).by(0)
-  end
 end

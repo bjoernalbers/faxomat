@@ -3,11 +3,16 @@ require 'prawn/measurement_extensions'
 class ReportPdf
   include Prawn::View
 
-  attr_reader :report, :template
+  attr_reader :report, :recipient, :template
 
-  def initialize(report, template = Template.default)
-    @report = report
+  def initialize(document, template = Template.default)
+    @report = document.report
+    @recipient = document.recipient
     @template = template
+  #def initialize(opts)
+    #@report    = opts.fetch(:report)
+    #@recipient = opts.fetch(:recipient)
+    #@template  = opts.fetch(:template) { Template.default }
 
     # NOTE: This sets the default page size and stuff.
     # See: https://github.com/prawnpdf/prawn/issues/802
@@ -82,7 +87,7 @@ class ReportPdf
     end
 
     bounding_box [0, bounds.absolute_top - (45.mm + 18.mm)], width: 80.mm, height: 27.mm do
-      text report.recipient_address.join("\n"),
+      text recipient.full_address.join("\n"),
         align: :left,
         size: 10.pt
     end
@@ -111,7 +116,7 @@ class ReportPdf
 
     move_down font.height * 2
 
-    text report.salutation, size: 11.pt
+    text recipient.salutation, size: 11.pt
 
     move_down font.height
 

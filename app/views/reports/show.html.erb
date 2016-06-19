@@ -1,37 +1,10 @@
 <div class="row">
   <div class="col-md-12">
-    <div class="btn-group">
-      <%= link_to 'Öffnen', download_document_path(@report.document), class: 'btn btn-default' if @report.document %>
-      <% if @report.verified? %>
-        <%= link_to 'Senden', document_path(@report.document), class:
-          (@report.to_deliver? ? 'btn btn-primary' : 'btn btn-default') %>
-      <% end %>
-    </div>
-
-    <% if @report.user == current_user %>
-      <div class="btn-group pull-right">
-        <% if @report.pending? %>
-            <%= button_to 'Vidieren', verify_report_path(@report), method: :patch, class: 'btn btn-primary' %>
-            <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
-        <% elsif @report.verified? %>
-          <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
     <div class="page-header">
       <% p = @report.patient %>
       <h1>
         <%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %><br>
       </h1>
-      <h2>
-        Überweiser
-      </h2>
-      <%= render @report.recipient %>
       <h2>
         <%= @report.subject %>
       </h2>
@@ -50,22 +23,52 @@
   </div>
 </div>
 
-<% %i(anamnesis procedure clinic findings evaluation).each do |method| %>
-  <% if @report.send(method).present? %>
-    <div class="row">
-      <div class="col-md-2">
-        <p class="strong">
-          <%= @report.class.human_attribute_name(method) %>
-        </p>
+<div class="row">
+  <div class="col-md-12">
+    <% if @report.user == current_user %>
+      <div class="btn-group">
+        <% if @report.pending? %>
+            <%= button_to 'Vidieren', verify_report_path(@report), method: :patch, class: 'btn btn-primary' %>
+            <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
+        <% elsif @report.verified? %>
+          <%= button_to 'Stornieren', report_path(@report), method: :patch, params: { status: :canceled }, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
+        <% end %>
       </div>
-      <div class="col-md-10">
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <h3>
+      <%= @report.subject %>
+    </h3>
+    <% %i(anamnesis procedure clinic findings evaluation).each do |method| %>
+      <% if @report.send(method).present? %>
+        <h4>
+          <%= @report.class.human_attribute_name(method) %>
+        </h4>
         <p>
           <%= @report.send(method) %>
         </p>
-      </div>
-    </div>
-  <% end %>
-<% end %>
-
-<%# link_to 'Edit', edit_report_path(@report) %> 
-<%# link_to 'Back', reports_path %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="col-md-4">
+    <h3>
+      <%= Document.model_name.human %>
+    </h3>
+    <ul class="list-group">
+      <% @report.documents.each do |document| %>
+        <li class="list-group-item">
+          <%= link_to 'Öffnen', download_document_path(document) %> |
+          <%= link_to 'Details', document_path(document) %>
+          <% if document.delivered? %>
+            <span class="label label-success">gesendet</span>
+          <% end %>
+          <%= render document.recipient %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

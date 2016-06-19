@@ -20,7 +20,30 @@ describe Document do
 
   it { expect(subject).to have_many(:print_jobs) }
 
-  it { expect(subject).to validate_presence_of(:title) }
+  describe '#title' do
+    context 'without report' do
+      let(:subject) { build(:document, report: nil, title: nil) }
+
+      it 'validates presence' do
+        expect(subject).to be_invalid
+        expect(subject.errors[:title]).to be_present
+      end
+    end
+
+    context 'with report' do
+      let(:report)  { create(:report) }
+      let(:subject) { build(:document, report: report, title: nil) }
+
+      it 'does not validate presence' do
+        expect(subject).to be_valid
+      end
+
+      it 'assigns title from report on save' do
+        subject.save
+        expect(subject.title).to eq(report.title)
+      end
+    end
+  end
 
   describe '.delivered_today' do
     let(:today) { Time.zone.now.beginning_of_day + 1.second }
@@ -80,17 +103,17 @@ describe Document do
     end
 
     it 'includes document with verified report' do
-      document = create(:verified_report).document
+      document = create(:document, report: create(:verified_report))
       expect(subject).to include document
     end
 
     it 'excludes document with pending report' do
-      document = create(:pending_report).document
+      document = create(:document, report: create(:pending_report))
       expect(subject).not_to include document
     end
 
     it 'excludes document with canceled report' do
-      document = create(:canceled_report).document
+      document = create(:document, report: create(:canceled_report))
       expect(subject).not_to include document
     end
   end
@@ -138,7 +161,7 @@ describe Document do
     let(:subject) { described_class.with_report }
 
     it 'includes document with report' do
-      document = create(:report).document
+      document = create(:document, report: create(:report))
       expect(document.report).not_to be nil
       expect(subject).to include document
     end
@@ -201,17 +224,17 @@ describe Document do
     end
 
     it 'is true with verified report' do
-      subject = create(:verified_report).document
+      subject = create(:document, report: create(:verified_report))
       expect(subject).to be_released_for_delivery
     end
 
     it 'is false with pending report' do
-      subject = create(:pending_report).document
+      subject = create(:document, report: create(:pending_report))
       expect(subject).not_to be_released_for_delivery
     end
 
     it 'is false with canceled report' do
-      subject = create(:canceled_report).document
+      subject = create(:document, report: create(:canceled_report))
       expect(subject).not_to be_released_for_delivery
     end
   end
@@ -219,11 +242,31 @@ describe Document do
   describe '#file' do
     it { should have_attached_file(:file) }
 
-    it { should validate_attachment_presence(:file) }
-
     it { should validate_attachment_content_type(:file).
       allowing('application/pdf').
       rejecting('image/jpeg', 'image/png') }
+
+    context 'with report' do
+      let(:report)  { create(:report) }
+      let(:subject) { build(:document, report: report) }
+
+      it 'does not validate presence' do
+        subject.file = nil
+        expect(subject).to be_valid
+      end
+
+      it 'renders file on save'
+    end
+
+    context 'without report' do
+      let(:subject) { build(:document, report: nil) }
+
+      it 'validates presence' do
+        subject.file = nil
+        expect(subject).to be_invalid
+        expect(subject.errors[:file]).to be_present
+      end
+    end
   end
 
   %i(path content_type fingerprint).each do |method|
@@ -272,6 +315,32 @@ describe Document do
     it 'is false when recipient has no fax number' do
       subject.recipient = build(:recipient, fax_number: nil)
       expect(subject.recipient_fax_number?).to eq false
+    end
+  end
+
+  describe '#deliver' do
+    let(:deliverer) { double(:deliverer) }
+    let(:deliverer_class) { Document::Deliverer }
+
+    before do
+      allow(deliverer_class).to receive(:new).and_return(deliverer)
+      allow(deliverer).to receive(:deliver)
+    end
+
+    it 'delivers itself' do
+      subject.deliver
+      expect(deliverer_class).to have_received(:new).with(subject)
+      expect(deliverer).to have_received(:deliver)
+    end
+  end
+
+  describe 'with report' do
+    let(:report) { create(:report) }
+    let(:document) { create(:document, report: report) }
+
+    it 'assigns file from report on save' do
+      other = create(:document)
+      expect(FileUtils.identical?(document.path, other.path)).to be false
     end
   end
 end

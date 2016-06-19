@@ -226,7 +226,7 @@ describe Report do
       subject.user = user
     end
 
-    it 'returns full recipient name' do
+    it 'returns full user name' do
       expect(subject.physician_name).to eq 'Dr. Gregory House'
     end
   end
@@ -238,7 +238,7 @@ describe Report do
       subject.user = user
     end
 
-    it 'returns full recipient name' do
+    it 'returns full user suffix' do
       expect(subject.physician_suffix).to eq 'Chunky Bacon'
     end
   end
@@ -260,80 +260,6 @@ describe Report do
   describe '#title' do
     it 'returns patient display name' do
       expect(subject.title).to eq subject.patient.display_name
-    end
-  end
-
-  describe '.to_deliver' do
-    let(:subject) { described_class.to_deliver }
-
-    it 'excludes pending report' do
-      report = create(:pending_report)
-      expect(subject).not_to include report
-    end
-
-    it 'excludes canceled report' do
-      report = create(:canceled_report)
-      expect(subject).not_to include report
-    end
-
-    it 'excludes verified report with completed print job' do
-      report = create(:verified_report)
-      create(:completed_print_job, document: report.document)
-      expect(subject).not_to include report
-    end
-
-    it 'excludes verified report with active print job' do
-      report = create(:verified_report)
-      create(:active_print_job, document: report.document)
-      expect(subject).not_to include report
-    end
-
-    it 'includes verified report without print job' do
-      report = create(:verified_report)
-      expect(report.print_jobs).to be_empty
-      expect(subject).to include report
-    end
-
-    it 'includes verified report with aborted print job' do
-      report = create(:verified_report)
-      create(:aborted_print_job, document: report.document)
-      expect(subject).to include report
-    end
-  end
-
-  describe '#to_deliver?' do
-    it 'when pending is false' do
-      subject = create(:pending_report)
-      expect(subject).not_to be_to_deliver
-    end
-
-    it 'when canceled is false' do
-      subject = create(:canceled_report)
-      expect(subject).not_to be_to_deliver
-    end
-
-    context 'when verified' do
-      let(:subject) { create(:verified_report) }
-
-      it 'with completed print job is false' do
-        create(:completed_print_job, document: subject.document)
-        expect(subject).not_to be_to_deliver
-      end
-
-      it 'with active print job is false' do
-        create(:active_print_job, document: subject.document)
-        expect(subject).not_to be_to_deliver
-      end
-
-      it 'without print job is true' do
-        expect(subject.print_jobs).to be_empty
-        expect(subject).to be_to_deliver
-      end
-
-      it 'with aborted print job is true' do
-        create(:aborted_print_job, document: subject.document)
-        expect(subject).to be_to_deliver
-      end
     end
   end
 
@@ -367,59 +293,6 @@ describe Report do
     end
   end
 
-  describe '#deliver_as_fax' do
-    context 'without fax printer' do
-      it 'returns false' do
-        expect(FaxPrinter.default).to be nil
-        expect(subject.deliver_as_fax).to eq false
-      end
-    end
-
-    context 'with fax printer' do
-      before do
-        Rails.application.load_seed # To make the fax printer available!
-      end
-
-      context 'but without fax number' do
-        let(:recipient) { create(:recipient, fax_number: nil) }
-        let(:subject) { create(:verified_report, recipient: recipient) }
-
-        it 'returns false' do
-          expect(subject.deliver_as_fax).to eq false
-        end
-
-        it 'creates no fax print job' do
-          expect { subject.deliver_as_fax }.to change(PrintJob, :count).by(0)
-        end
-      end
-
-      context 'and with fax number' do
-        let(:recipient) { create(:recipient, fax_number: '032472384234') }
-        let(:subject) { create(:verified_report, recipient: recipient) }
-
-        it 'returns true' do
-          expect(subject.deliver_as_fax).to eq true
-        end
-
-        it 'creates a fax print job' do
-          expect { subject.deliver_as_fax }.to change(PrintJob, :count).by(1)
-        end
-      end
-    end
-  end
-
-  describe '#recipient_fax_number' do
-    it 'returns fax number of recipient' do
-      subject.recipient.fax_number = '02342342354'
-      expect(subject.recipient_fax_number).to eq '02342342354'
-    end
-
-    it 'returns nil when recipient missing' do
-      subject.recipient = nil
-      expect(subject.recipient_fax_number).to be nil
-    end
-  end
-
   describe '#replace_carriage_returns on save' do
     let(:text_attributes) { %i(anamnesis diagnosis findings evaluation procedure) }
 
@@ -446,48 +319,6 @@ describe Report do
 
     it 'returns patient display name' do
       expect(subject.patient_name).to eq patient.display_name
-    end
-  end
-
-  describe '#recipient_name' do
-    let(:recipient) { build(:recipient) }
-
-    before { subject.recipient = recipient }
-
-    it 'returns full recipient name' do
-      expect(subject.recipient_name).to eq recipient.full_name
-    end
-  end
-
-  describe '#recipient_address' do
-    let(:recipient) { build(:recipient) }
-
-    before { subject.recipient = recipient }
-
-    it 'returns full recipient address' do
-      expect(subject.recipient_address).to eq recipient.full_address
-    end
-  end
-
-  describe '#salutation' do
-    context 'when missing' do
-      let(:recipient) { build(:recipient, salutation: nil) }
-
-      before { subject.recipient = recipient }
-
-      it 'returns default salutation' do
-        expect(subject.salutation).to eq 'Sehr geehrte Kollegen,'
-      end
-    end
-
-    context 'when present' do
-      let(:recipient) { build(:recipient, salutation: 'Hallo Leute,') }
-
-      before { subject.recipient = recipient }
-
-      it 'returns recipient salutation' do
-        expect(subject.salutation).to eq 'Hallo Leute,'
-      end
     end
   end
 
@@ -533,35 +364,15 @@ describe Report do
     end
   end
 
-  describe 'when created' do
-    let(:subject) { build(:pending_report) }
-
-    it 'creates new document' do
-      expect {
-        subject.save
-      }.to change(Document, :count).by(1)
-      expect(subject.document).to be_present
-    end
-
-    it 'sets document title' do
-      subject.save
-      expect(subject.document.title).to eq subject.title
-    end
-  end
-
   describe 'when updated' do
     let!(:subject) { create(:pending_report) }
+    let!(:document) { create(:document, report: subject) }
 
     it 'updates document when changed' do
-      expect {
-        subject.update(status: :verified)
-      }.to change { subject.document.file_fingerprint }
-    end
-
-    it 'does not update document when nothing has changed' do
-      expect {
-        subject.save
-      }.not_to change { subject.document.file_fingerprint }
+      old_fingerprint = document.fingerprint
+      subject.update(status: :verified)
+      document.reload
+      expect(document.fingerprint).not_to eq(old_fingerprint)
     end
   end
 end

@@ -13,7 +13,6 @@ class Fax
       doc = Document.new(title: title, recipient: recipient)
       doc.file = document
       doc.save
-      printer.print_jobs.new(document: doc, fax_number: phone).save
     else
       false
     end

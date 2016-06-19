@@ -1,11 +1,4 @@
 de:
-  activemodel:
-    models:
-      report/printing: Druckauftrag
-    attributes:
-      report/printing:
-        report: Bericht
-        printer: Drucker
   activerecord:
     models:
       address: Adresse

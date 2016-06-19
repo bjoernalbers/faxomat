@@ -1,14 +1,16 @@
 describe ReportPdf do
-  let(:report)     { build(:report) }
-  let(:report_pdf) { ReportPdf.new(report) }
+  let(:report)    { build(:report) }
+  let(:recipient) { build(:recipient) }
+  let(:document)  { build(:document, report: report, recipient: recipient) }
+  let(:subject)   { ReportPdf.new(document) }
 
   def report_pdf_strings
-    PDF::Inspector::Text.analyze(report_pdf.render).strings
+    PDF::Inspector::Text.analyze(subject.render).strings
   end
 
   describe '#render' do
     it 'returns PDF as string' do
-      expect(report_pdf.render[0,4]).to eq '%PDF' # Magic number for PDF
+      expect(subject.render[0,4]).to eq '%PDF' # Magic number for PDF
     end
 
     it 'includes subject' do
@@ -28,7 +30,7 @@ describe ReportPdf do
     it 'includes recipient address'
 
     it 'includes salutation' do
-      allow(report).to receive(:salutation).and_return('Hallihallo Dr. Hibbert,')
+      allow(recipient).to receive(:salutation).and_return('Hallihallo Dr. Hibbert,')
       expect(report_pdf_strings).to include('Hallihallo Dr. Hibbert,')
     end
 
@@ -87,30 +89,28 @@ describe ReportPdf do
     it 'returns default template' do
       template = build(:template)
       allow(Template).to receive(:default).and_return(template)
-      expect(report_pdf.template).to eq template
+      expect(subject.template).to eq template
     end
   end
 
   describe '#watermark' do
     it 'with pending report returns "ENTWURF"' do
-      subject = described_class.new(build(:pending_report))
+      document.report = build(:pending_report)
       expect(subject.watermark).to eq 'ENTWURF'
     end
 
     it 'with verified report returns nil' do
-      subject = described_class.new(build(:verified_report))
+      document.report = build(:verified_report)
       expect(subject.watermark).to be nil
     end
 
     it 'with canceled report returns "STORNIERT"' do
-      subject = described_class.new(build(:canceled_report))
+      document.report = build(:canceled_report)
       expect(subject.watermark).to eq 'STORNIERT'
     end
   end
 
   describe '#path' do
-    let(:subject) { described_class.new(report) }
-
     before do
       allow(subject).to receive(:filename).and_return('chunky_bacon.pdf')
     end
@@ -122,9 +122,6 @@ describe ReportPdf do
   end
 
   describe '#filename' do
-    let(:report) { create(:report) }
-    let(:subject) { described_class.new(report) }
-
     it 'begins with human model name' do
       expect(subject.filename).to match %r{^Bericht}
     end
