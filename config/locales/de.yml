@@ -68,6 +68,7 @@ de:
         address: Adresse
         report: Bericht
         recipient: Überweiser
+        recipient_fax_number: Faxnummer des Überweisers
         user: Arzt
         patient: Patient
         subject: Betreff

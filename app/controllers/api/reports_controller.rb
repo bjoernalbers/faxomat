@@ -22,7 +22,7 @@ module API
         :recipient_title,
         :recipient_suffix,
         :recipient_salutation,
-        :recipient_address,
+        :recipient_street,
         :recipient_zip,
         :recipient_city,
         :recipient_fax_number

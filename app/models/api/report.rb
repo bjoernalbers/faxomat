@@ -24,7 +24,7 @@ module API
       :recipient_salutation,
       :recipient_title,
       :recipient_suffix,
-      :recipient_address,
+      :recipient_street,
       :recipient_zip,
       :recipient_city,
       :recipient_fax_number,
@@ -35,15 +35,33 @@ module API
       :findings,
       :evaluation,
       :procedure,
-      :clinic
+      :clinic,
+      :report
 
-    attr_writer :address, :patient, :recipient, :report, :document
+    attr_reader :patient,
+      :address,
+      :recipient
 
-    validates_presence_of :user
+    attr_writer :document
+
+    validates_presence_of :user,
+      :patient_number,
+      :patient_first_name,
+      :patient_last_name,
+      :patient_date_of_birth,
+      :recipient_last_name,
+      :recipient_street,
+      :recipient_zip,
+      :recipient_city,
+      :study,
+      :study_date,
+      :anamnesis,
+      :evaluation,
+      :procedure
+
+    validates :recipient_fax_number, fax: true
 
     validates_format_of :patient_sex, with: /\A(m|w|u)\z/i, allow_blank: true
-
-    validate :check_associations
 
     before_validation :split_study_and_study_date
     before_validation :strip_nondigits_from_fax_number
@@ -57,7 +75,7 @@ module API
       end
     end
 
-    delegate :id, :persisted?, to: :report
+    delegate :id, :persisted?, to: :report, allow_nil: true
 
     def self.find(id)
       new(report: ::Report.find(id))
@@ -75,7 +93,9 @@ module API
     end
 
     def save
-      valid? ? (report.save && document.save): false
+      valid? ? (save_records!; true) : false
+    rescue ActiveRecord::ActiveRecordError
+      false
     end
 
     def attributes=(hash)
@@ -84,22 +104,20 @@ module API
       end
     end
 
-    def patient
-      @patient ||= find_or_create_patient
-    end
-
-    def recipient
-      @recipient ||= find_or_create_recipient
-    end
-
-    def address
-      @address ||= Address.find_or_create_by(address_attributes)
-    end
-
-    def report
+    def save_report!
       @report ||= ::Report.new
-      @report.attributes = report_attributes
-      @report
+      report.update!(
+        patient:    patient,
+        user:       user,
+        recipient:  recipient,
+        study:      study,
+        study_date: study_date,
+        anamnesis:  anamnesis,
+        diagnosis:  diagnosis,
+        findings:   findings,
+        evaluation: evaluation,
+        procedure:  procedure,
+        clinic:     clinic)
     end
 
     def document
@@ -112,75 +130,55 @@ module API
 
     private
 
-    def find_or_create_patient
-      Patient.find_or_create_by(patient_attributes)
-    end
-
-    def find_or_create_recipient
-      Recipient.find_or_create_by(recipient_attributes)
-    end
-
-    def patient_attributes
-      {
+    def save_patient!
+      @patient = Patient.find_or_create_by!(
         number:        patient_number,
         first_name:    patient_first_name,
         last_name:     patient_last_name,
         date_of_birth: patient_date_of_birth,
-        sex:           self.class.value_to_gender(patient_sex),
+        #sex:           self.class.value_to_gender(patient_sex),
+        sex:           Patient.sexes[self.class.value_to_gender(patient_sex)],
         title:         patient_title,
-        suffix:        patient_suffix
-      }
+        suffix:        patient_suffix)
     end
 
-    def recipient_attributes
-      {
+    def save_address!
+      @address = Address.find_or_create_by!(
+        street: recipient_street,
+        zip:    recipient_zip,
+        city:   recipient_city)
+    end
+
+    def save_recipient!
+      @recipient = Recipient.find_or_create_by!(
         last_name:  recipient_last_name,
         first_name: recipient_first_name,
         salutation: recipient_salutation,
         title:      recipient_title,
         suffix:     recipient_suffix,
         fax_number: recipient_fax_number,
-        address:    address
-      }
+        address:    address)
     end
 
-    def address_attributes
-      {
-        street: recipient_address,
-        zip:    recipient_zip,
-        city:   recipient_city
-      }
-    end
-
-    def report_attributes
-      {
-        patient:    patient,
-        user:       user,
-        recipient:  recipient,
-        study:      study,
-        study_date: study_date,
-        anamnesis:  anamnesis,
-        diagnosis:  diagnosis,
-        findings:   findings,
-        evaluation: evaluation,
-        procedure:  procedure,
-        clinic:     clinic
-      }
-    end
-
-    def check_associations
-      %i(address patient recipient report).each do |association|
-        unless send(association).valid?
-          send(association).errors.full_messages.each do |message|
-            errors.add(association, message)
-          end
-        end
-      end
+    def save_document!
+      @document = Document.find_or_create_by!(report: report, recipient: recipient)
     end
 
     def strip_nondigits_from_fax_number
       self.recipient_fax_number =
         self.recipient_fax_number.present? ? self.recipient_fax_number.gsub(/[^0-9]/, '') : nil
+    end
+
+    private
+
+    def save_records!
+      ActiveRecord::Base.transaction do
+        save_address!
+        save_recipient!
+        save_patient!
+        save_report!
+        save_document!
+      end
     end
   end
 end

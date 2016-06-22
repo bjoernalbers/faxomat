@@ -26,21 +26,28 @@ module API
       end
     end
 
-    %i(address patient recipient report).each do |association|
-      it "validates #{association}" do
-        object = association.to_s.capitalize.constantize.new
-        subject.send("#{association}=", object)
-        if subject.invalid?
-          expect(subject.errors[association].count).to eq(object.errors.count)
-        end
-      end
+    [
+      :patient_number,
+      :patient_first_name,
+      :patient_last_name,
+      :patient_date_of_birth,
+      :recipient_last_name,
+      :recipient_street,
+      :recipient_zip,
+      :recipient_city,
+      :study,
+      :study_date,
+      :anamnesis,
+      :evaluation,
+      :procedure
+    ].each do |attribute|
+      it { should validate_presence_of(attribute) }
     end
 
-    it 'validates report' do
-      subject = build(:api_report, study: nil, anamnesis: nil, findings: nil,
-                      evaluation: nil, procedure: nil, clinic: nil)
+    it 'validates format of fax number' do
+      subject = build(:api_report, recipient_fax_number: '98786')
       expect(subject).to be_invalid
-      expect(subject.errors[:report]).to be_present
+      expect(subject.errors[:recipient_fax_number]).to be_present
     end
 
     describe '.find' do
@@ -66,116 +73,220 @@ module API
       end
     end
 
-    describe '#save!' do
-      before do
-        allow(subject).to receive(:save).and_return(true)
-      end
-
-      it 'calls save' do
-        subject.save!
-        expect(subject).to have_received(:save)
-      end
-
-      context 'when saveable' do
-        it 'returns true' do
-          expect(subject.save!).to eq true
-        end
-      end
-
-      context 'when not saveable' do
-        it 'raises exception' do
-          allow(subject).to receive(:save).and_return(false)
-          expect { subject.save! }.to raise_error('Speicherung fehlgeschlagen')
-        end
-      end
-    end
-
     describe '#save' do
-      context 'when valid' do
-        before { allow(subject).to receive(:valid?).and_return(true) }
-
-        it 'saves report' do
-          expect { subject.save }.to change(::Report, :count).by(1)
-        end
-
-        it 'returns true' do
-          expect(subject.save).to eq true
-        end
+      before do
+        allow(subject).to receive(:save_records!)
       end
 
       context 'when invalid' do
-        before { allow(subject).to receive(:valid?).and_return(false) }
+        before do
+          allow(subject).to receive(:valid?).and_return(false)
+        end
+
+        it 'does not save records' do
+          subject.save
+          expect(subject).not_to have_received(:save_records!)
+        end
 
         it 'returns false' do
           expect(subject.save).to eq false
         end
       end
-    end
 
-    describe '#report' do
-      context 'when present' do
-        let(:report) { build(:report) }
-        let(:subject) { build(:api_report, report: report) }
+      context 'when valid' do
+        before do
+          allow(subject).to receive(:valid?).and_return(true)
+        end
 
-        it 'returns report' do
-          expect(subject.report).to eq report
+        it 'saves records' do
+          subject.save
+          expect(subject).to have_received(:save_records!)
+        end
+
+        it 'returns true' do
+          expect(subject.save).to eq true
+        end
+
+        it 'returns false if ActiveRecordError was raised' do
+          allow(subject).to receive(:save_records!).
+            and_raise(ActiveRecord::ActiveRecordError)
+          expect(subject.save).to eq false
         end
       end
-
-      context 'when missing' do
-        let(:report) { build(:report) }
-        before { allow(::Report).to receive(:new).and_return(report) }
-
-        it 'returns new report' do
-          expect(subject.report).to eq report
-        end
-
-        it 'assigns report' do
-          expect(subject.report).to eq subject.report
-        end
-      end
-
-      it 'assigns reports attributes to report'
     end
 
-    describe '#patient' do
-      let(:patient) { build(:patient) }
+    describe '#save_records!' do
+      def do_save_records
+        subject.send(:save_records!)
+      end
+
+      it 'creates address when not present' do
+        expect { do_save_records }.to change { Address.count }.by(1)
+      end
+
+      it 'does not create address when present' do
+        create(:address,
+          street: subject.recipient_street,
+          zip:    subject.recipient_zip,
+          city:   subject.recipient_city)
+        expect { do_save_records }.not_to change { Address.count }
+      end
+
+      it 'creates recipient when not present' do
+        expect { do_save_records }.to change { Recipient.count }.by(1)
+      end
+
+      it 'does not create recipient when present' do
+        address = create(:address,
+          street: subject.recipient_street,
+          zip:    subject.recipient_zip,
+          city:   subject.recipient_city)
+        recipient = create(:recipient, address: address,
+          last_name:  subject.recipient_last_name,
+          first_name: subject.recipient_first_name,
+          salutation: subject.recipient_salutation,
+          title:      subject.recipient_title,
+          suffix:     subject.recipient_suffix,
+          fax_number: subject.recipient_fax_number)
+        expect { do_save_records }.not_to change { Recipient.count }
+      end
+
+      it 'saves report' do
+        expect { do_save_records }.to change { ::Report.count }.by(1)
+      end
+    end
+
+    describe '#save_patient!' do
+      let(:patient) { double(:patient) }
 
       before do
-        allow(subject).to receive(:find_or_create_patient).and_return(patient)
+        allow(Patient).to receive(:find_or_create_by!).and_return(patient)
       end
 
-      it 'finds / creates and returns patient' do
-        expect(subject.patient).to eq patient
+      it 'finds or creates patient' do
+        subject.send(:save_patient!)
+        expect(Patient).to have_received(:find_or_create_by!).with(
+          number:        subject.patient_number,
+          first_name:    subject.patient_first_name,
+          last_name:     subject.patient_last_name,
+          date_of_birth: subject.patient_date_of_birth,
+          sex:           Patient.sexes[described_class.value_to_gender(subject.patient_sex)], # TOOD: Fix this!
+          title:         subject.patient_title,
+          suffix:        subject.patient_suffix)
       end
 
-      it 'caches patient' do
-        2.times { subject.patient }
-        expect(subject).to have_received(:find_or_create_patient).once
+      it 'assigns patient' do
+        subject.send(:save_patient!)
+        expect(subject.patient).to eq(patient)
       end
     end
 
-    describe '#recipient' do
-      let(:recipient) { build(:recipient) }
+    describe '#save_address!' do
+      let(:address) { double(:addres) }
 
       before do
-        allow(subject).to receive(:find_or_create_recipient).and_return(recipient)
+        allow(Address).to receive(:find_or_create_by!).and_return(address)
       end
 
-      it 'finds / creates and returns recipient' do
-        expect(subject.recipient).to eq recipient
+      it 'finds or creates address' do
+        subject.send(:save_address!)
+        expect(Address).to have_received(:find_or_create_by!).with(
+          street: subject.recipient_street,
+          zip:    subject.recipient_zip,
+          city:   subject.recipient_city)
       end
 
-      it 'caches recipient' do
-        2.times { subject.recipient }
-        expect(subject).to have_received(:find_or_create_recipient).once
+      it 'assigns document' do
+        subject.send(:save_address!)
+        expect(subject.address).to eq(address)
+      end
+    end
+
+    describe '#save_recipient!' do
+      let(:address)   { double(:addres) }
+      let(:recipient) { double(:recipient) }
+
+      before do
+        allow(subject).to receive(:address).and_return(address)
+        allow(Recipient).to receive(:find_or_create_by!).and_return(recipient)
+      end
+
+      it 'finds or creates recipient' do
+        subject.send(:save_recipient!)
+        expect(Recipient).to have_received(:find_or_create_by!).with(
+          first_name: subject.recipient_first_name,
+          last_name:  subject.recipient_last_name,
+          title:      subject.recipient_title,
+          suffix:     subject.recipient_suffix,
+          salutation: subject.recipient_salutation,
+          fax_number: subject.recipient_fax_number,
+          address:    address)
+      end
+
+      it 'assigns document' do
+        subject.send(:save_recipient!)
+        expect(subject.recipient).to eq(recipient)
+      end
+    end
+
+    describe '#save_report!' do
+      let(:recipient) { double(:recipient) }
+      let(:user)      { double(:user) }
+      let(:patient)   { double(:patient) }
+      let(:report)    { double(:report) }
+
+      before do
+        allow(subject).to receive(:recipient).and_return(recipient)
+        allow(subject).to receive(:user).and_return(user)
+        allow(subject).to receive(:patient).and_return(patient)
+        allow(subject).to receive(:report).and_return(report)
+        allow(report).to receive(:update!)
+      end
+
+      it 'updates report' do
+        subject.send(:save_report!)
+        expect(report).to have_received(:update!).with(
+          patient:    patient,
+          user:       user,
+          recipient:  recipient,
+          study:      subject.study,
+          study_date: subject.study_date,
+          anamnesis:  subject.anamnesis,
+          diagnosis:  subject.diagnosis,
+          findings:   subject.findings,
+          evaluation: subject.evaluation,
+          procedure:  subject.procedure,
+          clinic:     subject.clinic)
+      end
+
+      it 'assigns new report when missing'
+    end
+
+    describe '#save_document!' do
+      let(:report)    { double(:report) }
+      let(:recipient) { double(:recipient) }
+      let(:document)  { double(:document) }
+
+      before do
+        allow(subject).to receive(:report).and_return(report)
+        allow(subject).to receive(:recipient).and_return(recipient)
+        allow(Document).to receive(:find_or_create_by!).and_return(document)
+      end
+
+      it 'finds or creates document' do
+        subject.send(:save_document!)
+        expect(Document).to have_received(:find_or_create_by!).
+          with(report: report, recipient: recipient)
+      end
+
+      it 'assigns document' do
+        subject.send(:save_document!)
+        expect(subject.document).to eq(document)
       end
     end
 
     describe '#user' do
-      it 'validates presence' do
-        expect(subject).to validate_presence_of(:user)
-      end
+      it { should validate_presence_of(:user) }
 
       context 'when initializes with existing username' do
         let(:user) { create(:user) }
@@ -275,94 +386,6 @@ module API
           allow(report).to receive(method).and_return(:chunky_bacon)
           expect(subject.send(method)).to eq(:chunky_bacon)
         end
-      end
-    end
-
-    context 'when saved' do
-      it 'creates patient' do
-        subject = build(:api_report,
-                       patient_number:        '42',
-                       patient_first_name:    'Chuck',
-                       patient_last_name:     'Norris',
-                       patient_date_of_birth: '1940-03-10',
-                       patient_sex:           'm',
-                       patient_title:         'Mr.',
-                       patient_suffix:        "(yes, it's him!)")
-        subject.save!
-        patient = subject.patient
-
-        expect(patient).to be_persisted
-        expect(patient.number).to eq '42'
-        expect(patient.first_name).to eq     'Chuck'
-        expect(patient.last_name).to eq      'Norris'
-        expect(patient.date_of_birth).to eq  Time.zone.parse('1940-03-10')
-        expect(patient).to                   be_male
-        expect(patient.title).to eq          'Mr.'
-        expect(patient.suffix).to eq         "(yes, it's him!)"
-      end
-
-      it 'creates document' do
-        subject = build(:api_report)
-        recipient = create(:recipient)
-        report = create(:report)
-        allow(subject).to receive(:report).and_return(report)
-        allow(subject).to receive(:recipient).and_return(recipient)
-
-        subject.save!
-
-        document = subject.document
-        expect(document.report).to eq report
-        expect(document.recipient).to eq recipient
-        expect(document.title).to eq report.title
-      end
-
-      it 'creates recipient' do
-        subject = build(:api_report,
-                       recipient_last_name:  'House',
-                       recipient_first_name: 'Gregory',
-                       recipient_salutation: 'Hallihallo,',
-                       recipient_title:      'Dr.',
-                       recipient_suffix:     'MD',
-                       recipient_address:    'Sesamstraße 42',
-                       recipient_zip:        '98765',
-                       recipient_city:       'Hollywood',
-                       recipient_fax_number: '0123456789')
-        subject.save!
-        recipient = subject.recipient
-
-        expect(recipient).to be_persisted
-        expect(recipient.last_name).to eq  'House'
-        expect(recipient.first_name).to eq 'Gregory'
-        expect(recipient.title).to eq      'Dr.'
-        expect(recipient.suffix).to eq     'MD'
-        expect(recipient.street).to eq     'Sesamstraße 42'
-        expect(recipient.zip).to eq        '98765'
-        expect(recipient.city).to eq       'Hollywood'
-        expect(recipient.salutation).to eq 'Hallihallo,'
-        expect(recipient.fax_number).to eq '0123456789'
-      end
-
-      it 'creates no duplicate recipient' do
-        first, second = build_pair(:api_report,
-                       recipient_last_name:  'House',
-                       recipient_first_name: 'Gregory',
-                       recipient_salutation: 'Hallihallo,',
-                       recipient_title:      'Dr.',
-                       recipient_suffix:     'MD',
-                       recipient_address:    'Sesamstraße 42',
-                       recipient_zip:        '98765',
-                       recipient_city:       'Hollywood',
-                       recipient_fax_number: '') # Faxnumber must be blank for this test!
-
-        expect { first.save!  }.to change(Recipient, :count).by(1)
-        expect { second.save! }.to change(Recipient, :count).by(0)
-      end
-
-      it 'creates report' do
-        subject = build(:api_report, findings: 'chunky')
-        expect { subject.save! }.to change(::Report, :count).by(1)
-        report = subject.report
-        expect(report.findings).to eq 'chunky'
       end
     end
   end

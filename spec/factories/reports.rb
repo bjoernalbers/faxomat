@@ -65,7 +65,7 @@ FactoryGirl.define do
     patient_sex           { ['m', 'M', 'w', 'W', 'u', 'U', '', nil ].sample }
     recipient_last_name   { Faker::Name.last_name }
     recipient_fax_number  { '0' + Faker::Number.between(1,9).to_s + Faker::Number.number(8).to_s }
-    recipient_address     { Faker::Address.street_address }
+    recipient_street      { Faker::Address.street_address }
     recipient_zip         { Faker::Address.zip }
     recipient_city        { Faker::Address.city }
 
