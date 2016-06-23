@@ -40,9 +40,8 @@ module API
 
     attr_reader :patient,
       :address,
-      :recipient
-
-    attr_writer :document
+      :recipient,
+      :document
 
     validates_presence_of :user,
       :patient_number,
@@ -118,10 +117,6 @@ module API
         evaluation: evaluation,
         procedure:  procedure,
         clinic:     clinic)
-    end
-
-    def document
-      @document ||= Document.new(report: report, recipient: recipient)
     end
 
     def username=(username)
