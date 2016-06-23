@@ -11,7 +11,7 @@ feature 'Display report recipient' do
 
   scenario 'happy path' do
     recipient = create(:recipient)
-    report = create(:pending_report, user: user, recipient: recipient)
+    report = create(:pending_report, user: user)
     document = create(:document, report: report, recipient: recipient)
 
     visit report_url(report)
@@ -28,7 +28,7 @@ feature 'Display report recipient' do
 
   scenario 'without fax number' do
     recipient = create(:recipient, fax_number: nil)
-    report = create(:pending_report, user: user, recipient: recipient)
+    report = create(:pending_report, user: user)
     document = create(:document, report: report, recipient: recipient)
 
     visit report_url(report)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622195937) do
+ActiveRecord::Schema.define(version: 20160623131136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,19 +92,18 @@ ActiveRecord::Schema.define(version: 20160622195937) do
   add_index "recipients", ["address_id"], name: "index_recipients_on_address_id", using: :btree
 
   create_table "reports", force: :cascade do |t|
-    t.integer  "user_id",      null: false
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.integer  "patient_id",   null: false
-    t.integer  "recipient_id", null: false
-    t.string   "study",        null: false
-    t.text     "anamnesis",    null: false
+    t.integer  "user_id",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "patient_id",  null: false
+    t.string   "study",       null: false
+    t.text     "anamnesis",   null: false
     t.text     "diagnosis"
     t.text     "findings"
-    t.text     "evaluation",   null: false
-    t.text     "procedure",    null: false
+    t.text     "evaluation",  null: false
+    t.text     "procedure",   null: false
     t.text     "clinic"
-    t.date     "study_date",   null: false
+    t.date     "study_date",  null: false
     t.datetime "verified_at"
     t.datetime "canceled_at"
   end

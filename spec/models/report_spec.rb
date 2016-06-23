@@ -2,7 +2,7 @@ describe Report do
   let(:subject) { build(:report) }
 
   # Associations
-  [ :user, :patient, :recipient ].each do |association|
+  [ :user, :patient ].each do |association|
     it { expect(subject).to belong_to(association) }
   end
 
@@ -15,7 +15,6 @@ describe Report do
     {
       user:       'Arzt',
       patient:    'Patient',
-      recipient:  'Überweiser',
       study:      'Untersuchung',
       study_date: 'Untersuchungsdatum',
       anamnesis:  'Indikation',
@@ -32,7 +31,6 @@ describe Report do
   [
     :user,
     :patient,
-    :recipient,
     :anamnesis,
     :evaluation,
     :procedure,

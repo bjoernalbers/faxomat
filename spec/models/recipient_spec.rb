@@ -15,8 +15,6 @@ describe Recipient do
 
   it { should belong_to(:address) }
 
-  it { expect(recipient).to have_many(:reports) }
-
   context '#street' do
     it { should delegate_method(:street).to(:address) }
 

@@ -1,7 +1,6 @@
 class Report < ActiveRecord::Base
   belongs_to :user, required: true
   belongs_to :patient, required: true
-  belongs_to :recipient, required: true
 
   has_many :documents, dependent: :destroy
   has_many :print_jobs, through: :documents

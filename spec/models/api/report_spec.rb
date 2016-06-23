@@ -12,7 +12,6 @@ module API
       {
         user:       'Arzt',
         patient:    'Patient',
-        recipient:  'Überweiser',
         study:      'Untersuchung',
         study_date: 'Untersuchungsdatum',
         anamnesis:  'Indikation',
@@ -230,13 +229,11 @@ module API
     end
 
     describe '#save_report!' do
-      let(:recipient) { double(:recipient) }
       let(:user)      { double(:user) }
       let(:patient)   { double(:patient) }
       let(:report)    { double(:report) }
 
       before do
-        allow(subject).to receive(:recipient).and_return(recipient)
         allow(subject).to receive(:user).and_return(user)
         allow(subject).to receive(:patient).and_return(patient)
         allow(subject).to receive(:report).and_return(report)
@@ -248,7 +245,6 @@ module API
         expect(report).to have_received(:update!).with(
           patient:    patient,
           user:       user,
-          recipient:  recipient,
           study:      subject.study,
           study_date: subject.study_date,
           anamnesis:  subject.anamnesis,

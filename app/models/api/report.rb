@@ -102,10 +102,10 @@ module API
 
     def save_records!
       ActiveRecord::Base.transaction do
-        save_address!
-        save_recipient!
         save_patient!
         save_report!
+        save_address!
+        save_recipient!
         save_document!
       end
     end
@@ -127,7 +127,6 @@ module API
       report.update!(
         patient:    patient,
         user:       user,
-        recipient:  recipient,
         study:      study,
         study_date: study_date,
         anamnesis:  anamnesis,

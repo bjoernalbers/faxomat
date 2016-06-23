@@ -30,7 +30,6 @@ FactoryGirl.define do
     clinic { Faker::Lorem.sentences.join("\n") }
     user
     patient
-    recipient
 
     factory :pending_report do
       verified_at { nil }
