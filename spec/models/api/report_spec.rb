@@ -43,6 +43,51 @@ module API
       it { should validate_presence_of(attribute) }
     end
 
+    describe '#patient_street' do
+      it 'with send_report_to_patient=true validates presence' do
+        subject = build(:api_report, send_report_to_patient: true,
+                        patient_street: nil)
+        expect(subject).to be_invalid
+        expect(subject.errors[:patient_street]).to be_present
+      end
+
+      it 'with send_report_to_patient=false does not validate presence' do
+        subject = build(:api_report, send_report_to_patient: false,
+                        patient_street: nil)
+        expect(subject).to be_valid
+      end
+    end
+
+    describe '#patient_zip' do
+      it 'with send_report_to_patient=true validates presence' do
+        subject = build(:api_report, send_report_to_patient: true,
+                        patient_zip: nil)
+        expect(subject).to be_invalid
+        expect(subject.errors[:patient_zip]).to be_present
+      end
+
+      it 'with send_report_to_patient=false does not validate presence' do
+        subject = build(:api_report, send_report_to_patient: false,
+                        patient_zip: nil)
+        expect(subject).to be_valid
+      end
+    end
+
+    describe '#patient_city' do
+      it 'with send_report_to_patient=true validates presence' do
+        subject = build(:api_report, send_report_to_patient: true,
+                        patient_city: nil)
+        expect(subject).to be_invalid
+        expect(subject.errors[:patient_city]).to be_present
+      end
+
+      it 'with send_report_to_patient=false does not validate presence' do
+        subject = build(:api_report, send_report_to_patient: false,
+                        patient_city: nil)
+        expect(subject).to be_valid
+      end
+    end
+
     it 'validates format of fax number' do
       subject = build(:api_report, recipient_fax_number: '98786')
       expect(subject).to be_invalid
@@ -152,6 +197,15 @@ module API
 
       it 'saves report' do
         expect { do_save_records }.to change { ::Report.count }.by(1)
+      end
+
+      it 'creates document' do
+        expect { do_save_records }.to change { Document.count }.by(1)
+      end
+
+      it 'creates two documents with send_report_to_patient=true' do
+        subject.send_report_to_patient = true
+        expect { do_save_records }.to change { Document.count }.by(2)
       end
     end
 
@@ -382,6 +436,95 @@ module API
           allow(report).to receive(method).and_return(:chunky_bacon)
           expect(subject.send(method)).to eq(:chunky_bacon)
         end
+      end
+    end
+
+    describe '#send_report_to_patient' do
+      it 'returns false by default' do
+        expect(subject.send_report_to_patient).to be_falsey
+      end
+
+      [ nil, '', 0, '0', 'false' ].each do |value|
+        it "returns false when '#{value}'" do
+          subject.send_report_to_patient = value
+          expect(subject.send_report_to_patient).to be_falsey
+        end
+      end
+
+      [ 1, '1', 'true' ].each do |value|
+        it "returns false when '#{value}'" do
+          subject.send_report_to_patient = value
+          expect(subject.send_report_to_patient).to be_truthy
+        end
+      end
+    end
+
+    describe '#save_patient_address!' do
+      let(:address) { double(:addres) }
+
+      before do
+        allow(Address).to receive(:find_or_create_by!).and_return(address)
+      end
+
+      it 'finds or creates address' do
+        subject.send(:save_patient_address!)
+        expect(Address).to have_received(:find_or_create_by!).with(
+          street: subject.patient_street,
+          zip:    subject.patient_zip,
+          city:   subject.patient_city)
+      end
+
+      it 'assigns patient address' do
+        subject.send(:save_patient_address!)
+        expect(subject.patient_address).to eq(address)
+      end
+    end
+
+    describe '#save_patient_recipient!' do
+      let(:address)   { double(:addres) }
+      let(:recipient) { double(:recipient) }
+
+      before do
+        allow(subject).to receive(:patient_address).and_return(address)
+        allow(Recipient).to receive(:find_or_create_by!).and_return(recipient)
+      end
+
+      it 'finds or creates recipient' do
+        subject.send(:save_patient_recipient!)
+        expect(Recipient).to have_received(:find_or_create_by!).with(
+          first_name: subject.patient_first_name,
+          last_name:  subject.patient_last_name,
+          title:      subject.patient_title,
+          suffix:     subject.patient_suffix,
+          address:    address)
+      end
+
+      it 'assigns patient recipient' do
+        subject.send(:save_patient_recipient!)
+        expect(subject.patient_recipient).to eq(recipient)
+      end
+    end
+
+    describe '#save_patient_document!' do
+      let(:report)    { double(:report) }
+      let(:recipient) { double(:recipient) }
+      let(:document)  { double(:document) }
+
+      before do
+        allow(subject).to receive(:report).and_return(report)
+        allow(subject).to receive(:patient_recipient).and_return(recipient)
+        allow(Document).to receive(:find_or_create_by!).and_return(document)
+      end
+
+      it 'finds or creates document' do
+        subject.send(:save_patient_document!)
+        expect(Document).to have_received(:find_or_create_by!).
+          with(report: report, recipient: recipient)
+      end
+
+      it 'assigns patient document' do
+        subject.send(:save_patient_document!)
+        expect(subject.patient_document).to eq(document)
       end
     end
   end

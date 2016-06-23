@@ -67,6 +67,9 @@ FactoryGirl.define do
     recipient_street      { Faker::Address.street_address }
     recipient_zip         { Faker::Address.zip }
     recipient_city        { Faker::Address.city }
+    patient_street        { Faker::Address.street_address }
+    patient_zip           { Faker::Address.zip }
+    patient_city          { Faker::Address.city }
 
     after(:build) do |report|
       report.username = create(:user).username # Works, but only with `build`!

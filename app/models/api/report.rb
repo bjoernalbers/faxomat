@@ -19,6 +19,9 @@ module API
       :patient_sex,
       :patient_title,
       :patient_suffix,
+      :patient_street,
+      :patient_zip,
+      :patient_city,
       :recipient_last_name,
       :recipient_first_name,
       :recipient_salutation,
@@ -39,9 +42,13 @@ module API
       :report
 
     attr_reader :patient,
+      :patient_address,
+      :patient_recipient,
+      :patient_document,
       :address,
       :recipient,
-      :document
+      :document,
+      :send_report_to_patient
 
     validates_presence_of :user,
       :patient_number,
@@ -57,6 +64,9 @@ module API
       :anamnesis,
       :evaluation,
       :procedure
+
+    validates_presence_of :patient_street, :patient_zip, :patient_city,
+      if: :send_report_to_patient
 
     validates :recipient_fax_number, fax: true
 
@@ -98,6 +108,11 @@ module API
       self.user = User.find_by(username: username)
     end
 
+    def send_report_to_patient=(value)
+      @send_report_to_patient =
+        ActiveRecord::Type::Boolean.new.type_cast_from_database(value)
+    end
+
     private
 
     def save_records!
@@ -107,6 +122,11 @@ module API
         save_address!
         save_recipient!
         save_document!
+        if send_report_to_patient
+          save_patient_address!
+          save_patient_recipient!
+          save_patient_document!
+        end
       end
     end
 
@@ -144,6 +164,22 @@ module API
         city:   recipient_city)
     end
 
+    def save_patient_address!
+      @patient_address = Address.find_or_create_by!(
+        street: patient_street,
+        zip:    patient_zip,
+        city:   patient_city)
+    end
+
+    def save_patient_recipient!
+      @patient_recipient = Recipient.find_or_create_by!(
+        last_name:  patient_last_name,
+        first_name: patient_first_name,
+        title:      patient_title,
+        suffix:     patient_suffix,
+        address:    patient_address)
+    end
+
     def save_recipient!
       @recipient = Recipient.find_or_create_by!(
         last_name:  recipient_last_name,
@@ -157,6 +193,10 @@ module API
 
     def save_document!
       @document = Document.find_or_create_by!(report: report, recipient: recipient)
+    end
+
+    def save_patient_document!
+      @patient_document = Document.find_or_create_by!(report: report, recipient: patient_recipient)
     end
 
     # NOTE: I found no way to send the study date independent from the study in
