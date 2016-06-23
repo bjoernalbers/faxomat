@@ -65,15 +65,6 @@ module API
     before_validation :split_study_and_study_date
     before_validation :strip_nondigits_from_fax_number
 
-    # NOTE: I found no way to send the study date independent from the study in
-    # Tomedo, which is Karteieintrag "Untersuchung" (UNT).
-    # Thats why both fields are joined and must be split afterwards.
-    def split_study_and_study_date
-      if study_date.blank? && study && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
-        self.study_date, self.study = match.captures
-      end
-    end
-
     delegate :id, :persisted?, to: :report, allow_nil: true
 
     def self.find(id)
@@ -103,6 +94,34 @@ module API
       end
     end
 
+    def username=(username)
+      self.user = User.find_by(username: username)
+    end
+
+    private
+
+    def save_records!
+      ActiveRecord::Base.transaction do
+        save_address!
+        save_recipient!
+        save_patient!
+        save_report!
+        save_document!
+      end
+    end
+
+    def save_patient!
+      @patient = Patient.find_or_create_by!(
+        number:        patient_number,
+        first_name:    patient_first_name,
+        last_name:     patient_last_name,
+        date_of_birth: patient_date_of_birth,
+        #sex:           self.class.value_to_gender(patient_sex),
+        sex:           Patient.sexes[self.class.value_to_gender(patient_sex)],
+        title:         patient_title,
+        suffix:        patient_suffix)
+    end
+
     def save_report!
       @report ||= ::Report.new
       report.update!(
@@ -117,24 +136,6 @@ module API
         evaluation: evaluation,
         procedure:  procedure,
         clinic:     clinic)
-    end
-
-    def username=(username)
-      self.user = User.find_by(username: username)
-    end
-
-    private
-
-    def save_patient!
-      @patient = Patient.find_or_create_by!(
-        number:        patient_number,
-        first_name:    patient_first_name,
-        last_name:     patient_last_name,
-        date_of_birth: patient_date_of_birth,
-        #sex:           self.class.value_to_gender(patient_sex),
-        sex:           Patient.sexes[self.class.value_to_gender(patient_sex)],
-        title:         patient_title,
-        suffix:        patient_suffix)
     end
 
     def save_address!
@@ -159,21 +160,18 @@ module API
       @document = Document.find_or_create_by!(report: report, recipient: recipient)
     end
 
+    # NOTE: I found no way to send the study date independent from the study in
+    # Tomedo, which is Karteieintrag "Untersuchung" (UNT).
+    # Thats why both fields are joined and must be split afterwards.
+    def split_study_and_study_date
+      if study_date.blank? && study && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
+        self.study_date, self.study = match.captures
+      end
+    end
+
     def strip_nondigits_from_fax_number
       self.recipient_fax_number =
         self.recipient_fax_number.present? ? self.recipient_fax_number.gsub(/[^0-9]/, '') : nil
-    end
-
-    private
-
-    def save_records!
-      ActiveRecord::Base.transaction do
-        save_address!
-        save_recipient!
-        save_patient!
-        save_report!
-        save_document!
-      end
     end
   end
 end
