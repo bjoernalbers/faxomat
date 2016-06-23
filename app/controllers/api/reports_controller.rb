@@ -23,6 +23,7 @@ module API
         :patient_street,
         :patient_zip,
         :patient_city,
+        :send_report_to_patient,
         :recipient_last_name,
         :recipient_first_name,
         :recipient_title,
