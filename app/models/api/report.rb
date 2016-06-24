@@ -16,7 +16,6 @@ module API
       :patient_first_name,
       :patient_last_name,
       :patient_date_of_birth,
-      :patient_sex,
       :patient_title,
       :patient_suffix,
       :patient_street,
@@ -42,6 +41,7 @@ module API
       :report
 
     attr_reader :patient,
+      :patient_sex,
       :patient_address,
       :patient_recipient,
       :patient_document,
@@ -69,8 +69,6 @@ module API
       if: :send_report_to_patient
 
     validates :recipient_fax_number, fax: true
-
-    validates_format_of :patient_sex, with: /\A(m|w|u)\z/i, allow_blank: true
 
     before_validation :split_study_and_study_date
     before_validation :strip_nondigits_from_fax_number
@@ -108,6 +106,15 @@ module API
       self.user = User.find_by(username: username)
     end
 
+    def patient_sex=(value)
+      @patient_sex =
+        case value
+        when 'w', 'W', 'f', 'F' then Patient.sexes[:female]
+        when 'm', 'M'           then Patient.sexes[:male]
+        else                         nil
+        end
+    end
+
     def send_report_to_patient=(value)
       @send_report_to_patient =
         ActiveRecord::Type::Boolean.new.type_cast_from_database(value)
@@ -136,8 +143,7 @@ module API
         first_name:    patient_first_name,
         last_name:     patient_last_name,
         date_of_birth: patient_date_of_birth,
-        #sex:           self.class.value_to_gender(patient_sex),
-        sex:           Patient.sexes[self.class.value_to_gender(patient_sex)],
+        sex:           patient_sex,
         title:         patient_title,
         suffix:        patient_suffix)
     end

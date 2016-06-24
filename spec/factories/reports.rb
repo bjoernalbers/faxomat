@@ -61,7 +61,7 @@ FactoryGirl.define do
     patient_first_name    { Faker::Name.first_name }
     patient_last_name     { Faker::Name.last_name }
     patient_date_of_birth { Faker::Date.between(90.years.ago, 20.years.ago) }
-    patient_sex           { ['m', 'M', 'w', 'W', 'u', 'U', '', nil ].sample }
+    patient_sex           { ['m', 'M', 'f', 'F', 'w', 'W', 'u', 'U', '', nil ].sample }
     recipient_last_name   { Faker::Name.last_name }
     recipient_fax_number  { '0' + Faker::Number.between(1,9).to_s + Faker::Number.number(8).to_s }
     recipient_street      { Faker::Address.street_address }

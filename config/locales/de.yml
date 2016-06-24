@@ -69,6 +69,7 @@ de:
         recipient_fax_number: Faxnummer des Überweisers
         user: Arzt
         patient: Patient
+        patient_sex: Geschlecht des Patienten
         subject: Betreff
         study: Untersuchung
         study_date: Untersuchungsdatum

@@ -223,7 +223,7 @@ module API
           first_name:    subject.patient_first_name,
           last_name:     subject.patient_last_name,
           date_of_birth: subject.patient_date_of_birth,
-          sex:           Patient.sexes[described_class.value_to_gender(subject.patient_sex)], # TOOD: Fix this!
+          sex:           subject.patient_sex,
           title:         subject.patient_title,
           suffix:        subject.patient_suffix)
       end
@@ -385,14 +385,6 @@ module API
       expect{subject.save}.to change(::Report, :count).by(1)
     end
 
-    describe '#patient_sex' do
-      it { expect(subject).to allow_value('m', 'M', 'w', 'W', 'u', 'U', nil, '').
-        for(:patient_sex) }
-
-      it { expect(subject).not_to allow_value('Frau', 'Mann', 0, 1, 2, 3).
-        for(:patient_sex) }
-    end
-
     describe '.value_to_gender' do
       it 'accepts values for :male' do
         [ 'm', 'M' ].each do |sex|
@@ -525,6 +517,33 @@ module API
       it 'assigns patient document' do
         subject.send(:save_patient_document!)
         expect(subject.patient_document).to eq(document)
+      end
+    end
+
+    describe '#patient_sex' do
+      [ 'm', 'M' ].each do |value|
+        it "it male when initialized with '#{value}'" do
+          subject = build(:api_report, patient_sex: value)
+          patient = Patient.new(sex: subject.patient_sex)
+          expect(patient).to be_male
+        end
+      end
+
+      [ 'w', 'W', 'f', 'F' ].each do |value|
+        it "it female when initialized with '#{value}'" do
+          subject = build(:api_report, patient_sex: value)
+          patient = Patient.new(sex: subject.patient_sex)
+          expect(patient).to be_female
+        end
+      end
+
+      [ 'u', 'U', '', nil ].each do |value|
+        it "it male when initialized with '#{value}'" do
+          subject = build(:api_report, patient_sex: value)
+          patient = Patient.new(sex: subject.patient_sex)
+          expect(patient).not_to be_male
+          expect(patient).not_to be_female
+        end
       end
     end
   end
