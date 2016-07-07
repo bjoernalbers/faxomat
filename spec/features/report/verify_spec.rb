@@ -19,7 +19,7 @@ feature 'Verify report' do
     report = create(:pending_report, user: user, patient: patient)
 
     visit report_url(report)
-    expect(page).to have_content 'Norris, Chuck (* 10.03.1940)'
+    expect(page).to have_content patient
 
     expect(page).not_to have_content 'Vidiert'
     click_button 'Vidieren'
@@ -48,7 +48,7 @@ feature 'Verify report' do
     report = create(:report, user: user, patient: patient)
     logout(:user)
     visit report_url(report)
-    expect(page).to have_content 'Norris'
+    expect(page).to have_content patient
     expect(page).not_to have_button 'Vidieren'
   end
 end
