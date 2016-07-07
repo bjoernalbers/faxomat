@@ -57,8 +57,18 @@ describe Patient do
       patient = build(:patient,
                       first_name: 'Chunky',
                       last_name: 'Bacon',
-                      date_of_birth: '1970-1-1')
-      expect(patient.display_name).to eq 'Bacon, Chunky (* 1.1.1970)'
+                      title: nil,
+                      date_of_birth: '1970-2-1')
+      expect(patient.display_name).to eq 'Chunky Bacon (* 1.2.1970)'
+    end
+
+    it 'includes title when present' do
+      patient = build(:patient,
+                      first_name: 'Chunky',
+                      last_name: 'Bacon',
+                      title: 'Mr.',
+                      date_of_birth: '1970-2-1')
+      expect(patient.display_name).to eq 'Mr. Chunky Bacon (* 1.2.1970)'
     end
   end
 

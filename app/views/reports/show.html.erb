@@ -1,9 +1,8 @@
 <div class="row">
   <div class="col-md-12">
     <div class="page-header">
-      <% p = @report.patient %>
       <h1>
-        <%= "#{p.last_name}, #{p.first_name} (* #{p.date_of_birth.strftime('%d.%m.%Y')})" %><br>
+        <%= @report.patient %>
       </h1>
       <h2>
         <%= @report.subject %>

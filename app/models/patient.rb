@@ -9,7 +9,12 @@ class Patient < ActiveRecord::Base
   before_save :strip_number
 
   def display_name
-    "#{last_name}, #{first_name} (* #{date_of_birth.strftime('%-d.%-m.%Y')})"
+    [
+      title,
+      first_name,
+      last_name,
+      "(* #{date_of_birth.strftime('%-d.%-m.%Y')})"
+    ].select(&:present?).join(' ')
   end
 
   def to_s
