@@ -35,6 +35,14 @@ describe User do
                    last_name:  'Hibbert')
       expect(user.full_name).to eq 'Dr. Julius M. Hibbert'
     end
+
+    it 'excludes blank elements' do
+      user = build(:user,
+                   title:      'Dr.',
+                   first_name: '',
+                   last_name:  'Hibbert')
+      expect(user.full_name).to eq 'Dr. Hibbert'
+    end
   end
 
   describe '#name' do

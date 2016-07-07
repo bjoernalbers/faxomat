@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   end
 
   def full_name
-    [title, first_name, last_name].compact.join(' ')
+    [title, first_name, last_name].select(&:present?).join(' ')
   end
 
   def signature_path
