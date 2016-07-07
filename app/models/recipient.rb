@@ -12,7 +12,7 @@ class Recipient < ActiveRecord::Base
   end
 
   def full_name
-    [ title, first_name, last_name ].compact.join(' ')
+    [ title, first_name, last_name ].select(&:present?).join(' ')
   end
 
   def full_address

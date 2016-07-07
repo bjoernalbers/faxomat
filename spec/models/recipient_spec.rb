@@ -83,6 +83,14 @@ describe Recipient do
                         last_name:  'Hibbert')
       expect(recipient.full_name).to eq 'Dr. Julius M. Hibbert'
     end
+
+    it 'excludes blank elements' do
+      recipient = build(:recipient,
+                        title:      'Dr.',
+                        first_name: '',
+                        last_name:  'Hibbert')
+      expect(recipient.full_name).to eq 'Dr. Hibbert'
+    end
   end
 
   describe '#full_address' do
