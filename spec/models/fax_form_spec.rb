@@ -1,5 +1,5 @@
-describe Fax do
-  let(:subject) { build(:fax) }
+describe FaxForm do
+  let(:subject) { build(:fax_form) }
 
   it 'has valid factory' do
     expect(subject).to be_valid

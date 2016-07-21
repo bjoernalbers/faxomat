@@ -1,4 +1,4 @@
-class Fax
+class FaxForm
   include ActiveModel::Model
 
   attr_accessor :title, :phone, :document, :printer

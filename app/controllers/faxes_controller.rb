@@ -18,7 +18,7 @@ class FaxesController < ApplicationController
   private
 
   def build_fax
-    @fax = Fax.new(fax_params)
+    @fax = FaxForm.new(fax_params)
     @fax.printer = FaxPrinter.default
   end
 
