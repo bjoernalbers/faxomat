@@ -274,40 +274,6 @@ describe PrintJob do
     end
   end
 
-  describe '.created_last_week' do
-    let(:now) { Time.zone.local(2015, 1, 13, 20, 59, 59) }
-    let(:monday_morning_last_week) { Time.zone.local(2015, 1, 5, 0, 0, 0) }
-    let(:sunday_night_last_week) { Time.zone.local(2015, 1, 11, 23, 59, 59) }
-
-    before do
-      Timecop.freeze(now)
-    end
-
-    after do
-      Timecop.return
-    end
-
-    it 'includes print_job from monday morning last week' do
-      subject = create(:print_job, created_at: monday_morning_last_week)
-      expect(PrintJob.created_last_week).to include subject
-    end
-
-    it 'includes print_job from sunday night last week' do
-      subject = create(:print_job, created_at: sunday_night_last_week)
-      expect(PrintJob.created_last_week).to include subject
-    end
-
-    it 'excludes print_job before monday morning last week' do
-      subject = create(:print_job, created_at: monday_morning_last_week - 1.second)
-      expect(PrintJob.created_last_week).not_to include subject
-    end
-
-    it 'excludes print_job after sunday night last week' do
-      subject = create(:print_job, created_at: sunday_night_last_week + 1.second)
-      expect(PrintJob.created_last_week).not_to include subject
-    end
-  end
-
   describe '.search' do
     before { skip }
     let(:document) { create(:document, title: 'Chunky Bacon') }

@@ -39,13 +39,6 @@ class PrintJob < Delivery
     where('updated_at >= ?', DateTime.current.beginning_of_day)
   end
 
-  def self.created_last_week
-    last_week = Time.zone.now - 1.week
-    where('created_at >= ? AND created_at <= ?',
-          last_week.beginning_of_week,
-          last_week.end_of_week)
-  end
-
   def self.count_by_status
     counts = group(:status).count
     Hash[PrintJob.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
