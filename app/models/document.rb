@@ -2,6 +2,7 @@ class Document < ActiveRecord::Base
   belongs_to :recipient, required: true
   belongs_to :report
   has_many :print_jobs
+  has_many :deliveries
 
   has_attached_file :file,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'
@@ -15,13 +16,13 @@ class Document < ActiveRecord::Base
 
   class << self
     def delivered_today
-      includes(:print_jobs).
+      includes(:deliveries).
         where('deliveries.created_at > ?', Time.zone.now.beginning_of_day).
         order('deliveries.created_at DESC').distinct
     end
 
     def to_deliver
-      released_for_delivery.without_active_or_completed_print_job
+      released_for_delivery.without_active_or_completed_delivery
     end
 
     def released_for_delivery
@@ -32,8 +33,8 @@ class Document < ActiveRecord::Base
       where(report_id_is_null.or(report_id_from_verified_report))
     end
 
-    def without_active_or_completed_print_job
-      where.not(id: PrintJob.active_or_completed.select(:document_id))
+    def without_active_or_completed_delivery
+      where.not(id: Delivery.active_or_completed.select(:document_id))
     end
 
     def with_report
@@ -65,11 +66,11 @@ class Document < ActiveRecord::Base
   end
 
   def to_deliver?
-    released_for_delivery? && print_jobs.active_or_completed.empty?
+    released_for_delivery? && deliveries.active_or_completed.empty?
   end
 
   def delivered?
-    print_jobs.completed.present?
+    deliveries.completed.present?
   end
 
   def released_for_delivery?

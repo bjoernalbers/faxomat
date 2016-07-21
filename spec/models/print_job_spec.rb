@@ -54,25 +54,6 @@ describe PrintJob do
     end
   end
 
-  describe '.active_or_completed' do
-    let(:subject) { described_class.active_or_completed }
-
-    it 'includes active print job' do
-      print_job = create(:active_print_job)
-      expect(subject).to include print_job
-    end
-
-    it 'includes completed print job' do
-      print_job = create(:completed_print_job)
-      expect(subject).to include print_job
-    end
-
-    it 'excludes aborted print job' do
-      print_job = create(:aborted_print_job)
-      expect(subject).not_to include print_job
-    end
-  end
-
   describe '.driver_class' do
     let(:subject) { described_class }
 
@@ -98,29 +79,6 @@ describe PrintJob do
       it 'returns CUPS driver' do
         expect(subject.driver_class).to eq described_class::CupsDriver
       end
-    end
-  end
-
-  describe '#document' do
-    it { expect(subject).to belong_to(:document) }
-    it { expect(subject).to validate_presence_of(:document) }
-    
-    it 'validates document is released for delivery on create' do
-      report = create(:pending_report)
-      document = create(:document, report: report)
-      subject = build(:print_job, document: document)
-      expect(document).not_to be_released_for_delivery
-      expect(subject).to be_invalid
-      expect(subject.errors[:document]).to be_present
-
-      report.update! status: :verified
-      expect(document).to be_released_for_delivery
-      expect(subject).to be_valid
-      
-      subject.save
-      report.update! status: :canceled
-      expect(document).not_to be_released_for_delivery
-      expect(subject).to be_valid
     end
   end
 
@@ -213,18 +171,6 @@ describe PrintJob do
 
     it 'validates uniqueness in database' do
       subject.job_id = create(:completed_print_job).job_id
-      expect{ subject.save!(validate: false) }.
-        to raise_error(ActiveRecord::ActiveRecordError)
-    end
-  end
-
-  describe '#status' do
-    it 'is active by default' do
-      expect(subject).to be_active
-    end
-
-    it 'validates presence in database' do
-      subject.status = nil
       expect{ subject.save!(validate: false) }.
         to raise_error(ActiveRecord::ActiveRecordError)
     end
@@ -401,37 +347,6 @@ describe PrintJob do
       [nil, ''].each do |query|
         expect(PrintJob.search(title: query)).to be_empty
       end
-    end
-  end
-
-  describe '#destroy' do
-    let(:message) { 'Nur abgebrochene Druckaufträge können gelöscht werden.' }
-
-    it 'destroys aborted print_job' do
-      subject = create(:aborted_print_job)
-      subject.destroy
-      expect(subject).to be_destroyed
-    end
-
-    it 'does not destroy completed print_job' do
-      subject = create(:completed_print_job)
-      subject.destroy
-      expect(subject).not_to be_destroyed
-      expect(subject.errors[:base]).to include(message)
-    end
-    
-    it 'does not destroy active print_job' do
-      subject = create(:active_print_job)
-      subject.destroy
-      expect(subject).not_to be_destroyed
-      expect(subject.errors[:base]).to include(message)
-    end
-
-    it 'does not destroy unsend print_job' do
-      subject = create(:print_job)
-      subject.destroy
-      expect(subject).not_to be_destroyed
-      expect(subject.errors[:base]).to include(message)
     end
   end
 

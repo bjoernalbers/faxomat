@@ -20,6 +20,8 @@ describe Document do
 
   it { expect(subject).to have_many(:print_jobs) }
 
+  it { expect(subject).to have_many(:deliveries) }
+
   describe '#title' do
     context 'without report' do
       let(:subject) { build(:document, report: nil, title: nil) }
@@ -85,7 +87,7 @@ describe Document do
     before do
       allow(described_class).to receive_message_chain(
         :released_for_delivery,
-        :without_active_or_completed_print_job
+        :without_active_or_completed_delivery
       ) { documents }
     end
 
@@ -118,41 +120,41 @@ describe Document do
     end
   end
 
-  describe '.without_active_or_completed_print_job' do
+  describe '.without_active_or_completed_delivery' do
     let(:subject) do
-      described_class.send(:without_active_or_completed_print_job)
+      described_class.send(:without_active_or_completed_delivery)
     end
 
     let!(:document) { create(:document) }
 
-    it 'includes document without print jobs' do
+    it 'includes document without delivery' do
       expect(subject).to include document
     end
 
-    it 'includes document with aborted print job' do
-      create(:aborted_print_job, document: document)
+    it 'includes document with aborted delivery' do
+      create(:aborted_delivery, document: document)
       expect(subject).to include document
     end
 
-    it 'excludes document with active print job' do
-      create(:active_print_job, document: document)
+    it 'excludes document with active delivery' do
+      create(:active_delivery, document: document)
       expect(subject).not_to include document
     end
 
-    it 'excludes document with completed print job' do
-      create(:completed_print_job, document: document)
+    it 'excludes document with completed delivery' do
+      create(:completed_delivery, document: document)
       expect(subject).not_to include document
     end
 
-    it 'excludes document with active and aborted print job' do
-      create(:active_print_job, document: document)
-      create(:aborted_print_job, document: document)
+    it 'excludes document with active and aborted delivery' do
+      create(:active_delivery, document: document)
+      create(:aborted_delivery, document: document)
       expect(subject).not_to include document
     end
 
-    it 'excludes document with completed and aborted print job' do
-      create(:completed_print_job, document: document)
-      create(:aborted_print_job, document: document)
+    it 'excludes document with completed and aborted delivery' do
+      create(:completed_delivery, document: document)
+      create(:aborted_delivery, document: document)
       expect(subject).not_to include document
     end
   end
@@ -205,14 +207,14 @@ describe Document do
   describe '#delivered?' do
     let(:subject) { create(:document) }
 
-    it 'is true with completed print job' do
-      create(:completed_print_job, document: subject)
+    it 'is true with completed delivery' do
+      create(:completed_delivery, document: subject)
       expect(subject).to be_delivered
     end
 
-    it 'is false without completed print job' do
-      create(:active_print_job, document: subject)
-      create(:aborted_print_job, document: subject)
+    it 'is false without completed delivery' do
+      create(:active_delivery, document: subject)
+      create(:aborted_delivery, document: subject)
       expect(subject).not_to be_delivered
     end
   end
@@ -286,22 +288,22 @@ describe Document do
   describe '#to_deliver?' do
     let(:subject) { create(:document) }
 
-    it 'is true without print jobs' do
+    it 'is true without delivery' do
       expect(subject).to be_to_deliver
     end
 
-    it 'is true with aborted print job' do
-      create(:aborted_print_job, document: subject)
+    it 'is true with aborted delivery' do
+      create(:aborted_delivery, document: subject)
       expect(subject).to be_to_deliver
     end
 
-    it 'is false with active print job' do
-      create(:active_print_job, document: subject)
+    it 'is false with active delivery' do
+      create(:active_delivery, document: subject)
       expect(subject).not_to be_to_deliver
     end
 
-    it 'is false with completed print job' do
-      create(:completed_print_job, document: subject)
+    it 'is false with completed delivery' do
+      create(:completed_delivery, document: subject)
       expect(subject).not_to be_to_deliver
     end
   end

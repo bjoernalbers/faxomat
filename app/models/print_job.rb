@@ -1,19 +1,13 @@
 # Keeps track of print jobs.
 class PrintJob < Delivery
-  enum status: { active: 0, completed: 1, aborted: 2 }
-
   belongs_to :printer, required: true
-  belongs_to :document, required: true
 
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
 
-  validate :document_is_released_for_delivery, if: :document, on: :create
-
   before_validation :assign_fax_number, unless: :fax_number, if: :belongs_to_fax_printer?, on: :create
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
   before_create :print, unless: :job_id
-  before_destroy :check_if_aborted
 
   class << self
     # Updates status of active print jobs.
@@ -26,10 +20,6 @@ class PrintJob < Delivery
           end
         end
       end
-    end
-
-    def active_or_completed
-      where(status: %w(active completed).map { |status| statuses[status] })
     end
 
     def fake_printing?
@@ -132,19 +122,6 @@ class PrintJob < Delivery
   def strip_nondigits_from_fax_number
     self.fax_number =
       self.fax_number.present? ? self.fax_number.gsub(/[^0-9]/, '') : nil
-  end
-
-  def check_if_aborted
-    unless aborted?
-      self.errors[:base] << 'Nur abgebrochene Druckaufträge können gelöscht werden.'
-      false
-    end
-  end
-
-  def document_is_released_for_delivery
-    unless document.released_for_delivery?
-      self.errors[:document] << 'darf nicht versendet werden.'
-    end
   end
 
   def belongs_to_fax_printer?
