@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160722142129) do
+ActiveRecord::Schema.define(version: 20160722194843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,17 @@ ActiveRecord::Schema.define(version: 20160722142129) do
     t.datetime "updated_at",    null: false
     t.date     "date_of_birth", null: false
   end
+
+  create_table "print_jobs", force: :cascade do |t|
+    t.integer  "number",     null: false
+    t.string   "fax_number"
+    t.integer  "printer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "print_jobs", ["number"], name: "index_print_jobs_on_number", unique: true, using: :btree
+  add_index "print_jobs", ["printer_id"], name: "index_print_jobs_on_printer_id", using: :btree
 
   create_table "printers", force: :cascade do |t|
     t.string   "name"
@@ -147,5 +158,6 @@ ActiveRecord::Schema.define(version: 20160722142129) do
   add_foreign_key "deliveries", "documents"
   add_foreign_key "documents", "recipients"
   add_foreign_key "documents", "reports"
+  add_foreign_key "print_jobs", "printers"
   add_foreign_key "recipients", "addresses"
 end
