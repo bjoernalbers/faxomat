@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160722083349) do
+ActiveRecord::Schema.define(version: 20160722142129) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 20160722083349) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "status",      default: 0, null: false
-    t.integer  "job_id",                  null: false
+    t.integer  "job_number",              null: false
     t.string   "fax_number"
     t.integer  "printer_id",              null: false
     t.integer  "document_id",             null: false
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20160722083349) do
   end
 
   add_index "deliveries", ["document_id"], name: "index_deliveries_on_document_id", using: :btree
-  add_index "deliveries", ["job_id"], name: "index_deliveries_on_job_id", unique: true, using: :btree
+  add_index "deliveries", ["job_number"], name: "index_deliveries_on_job_number", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "title",             null: false

@@ -13,17 +13,17 @@ describe Print::TestDriver do
     end
   end
 
-  describe '#job_id' do
+  describe '#job_number' do
     it 'returns integer' do
-      expect(subject.job_id).to be_a Integer
+      expect(subject.job_number).to be_a Integer
     end
 
     it 'returns 6 digits' do
-      expect(subject.job_id.to_s.length).to eq 6
+      expect(subject.job_number.to_s.length).to eq 6
     end
 
     it 'returns random number' do
-      expect(subject.job_id).not_to eq subject.job_id
+      expect(subject.job_number).not_to eq subject.job_number
     end
   end
 end

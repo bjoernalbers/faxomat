@@ -4,8 +4,8 @@ FactoryGirl.define do
     association :printer, factory: :fax_printer
     document
 
-    factory :print_with_job_id do
-      job_id { Faker::Number.number(7) }
+    factory :print_with_job_number do
+      job_number { Faker::Number.number(7) }
 
       factory :active_print do
         status { :active }

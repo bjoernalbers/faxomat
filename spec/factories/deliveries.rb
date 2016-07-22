@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :delivery do
     document
     printer # TODO: Remove this!
-    job_id { Faker::Number.number(7) } # TODO: Remove this!
+    job_number { Faker::Number.number(7) } # TODO: Remove this!
 
     factory :active_delivery do
       status { :active }

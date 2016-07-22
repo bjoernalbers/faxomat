@@ -7,15 +7,15 @@ class Print < Delivery
 
   before_validation :assign_fax_number, unless: :fax_number, if: :belongs_to_fax_printer?, on: :create
   before_validation :strip_nondigits_from_fax_number, if: :fax_number
-  before_create :print, unless: :job_id
+  before_create :print, unless: :job_number
 
   class << self
     # Updates status of active print jobs.
     def update_active
       Printer.active.find_each do |printer|
-        statuses_by_job_id = driver_class.statuses(printer.name)
+        statuses_by_job_number = driver_class.statuses(printer.name)
         printer.prints.active.find_each do |print|
-          if status = statuses_by_job_id[print.job_id]
+          if status = statuses_by_job_number[print.job_number]
             print.update!(status: status)
           end
         end
@@ -76,7 +76,7 @@ class Print < Delivery
   private
 
   def print
-    driver.run ? self.job_id = driver.job_id : false
+    driver.run ? self.job_number = driver.job_number : false
   end
 
   # Helper class to strip down a search query string.

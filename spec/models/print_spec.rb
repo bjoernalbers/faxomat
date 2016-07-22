@@ -4,28 +4,28 @@ describe Print do
   it 'has valid factory' do
     expect(subject).to be_valid
     expect(subject).to be_active
-    expect(subject.job_id).not_to be_present
+    expect(subject.job_number).not_to be_present
   end
 
   it 'has factory for active print' do
     subject = build(:active_print)
     expect(subject).to be_valid
     expect(subject).to be_active
-    expect(subject.job_id).to be_present
+    expect(subject.job_number).to be_present
   end
 
   it 'has factory for completed print' do
     subject = build(:completed_print)
     expect(subject).to be_valid
     expect(subject).to be_completed
-    expect(subject.job_id).to be_present
+    expect(subject.job_number).to be_present
   end
 
   it 'has factory for aborted print' do
     subject = build(:aborted_print)
     expect(subject).to be_valid
     expect(subject).to be_aborted
-    expect(subject.job_id).to be_present
+    expect(subject.job_number).to be_present
   end
 
   describe '.update_active' do
@@ -47,7 +47,7 @@ describe Print do
     it 'updates active print jobs' do
       print = create(:active_print, printer: printer)
       allow(driver_class).to receive(:statuses).
-        and_return({print.job_id => :completed})
+        and_return({print.job_number => :completed})
       subject.update_active
       print.reload
       expect(print).to be_completed
@@ -146,18 +146,18 @@ describe Print do
     end
   end
 
-  describe '#job_id' do
+  describe '#job_number' do
     before do
       allow(subject).to receive(:print)
     end
 
     it 'is translated' do
-      translation = subject.class.human_attribute_name(:job_id)
+      translation = subject.class.human_attribute_name(:job_number)
       expect(translation).to eq 'Auftragsnummer'
     end
 
     it 'does not validates presence' do
-      expect(subject).not_to validate_presence_of(:job_id)
+      expect(subject).not_to validate_presence_of(:job_number)
     end
 
     it 'validates presence in database' do
@@ -166,11 +166,11 @@ describe Print do
     end
 
     it 'does not validate uniqueness' do
-      expect(subject).not_to validate_uniqueness_of(:job_id)
+      expect(subject).not_to validate_uniqueness_of(:job_number)
     end
 
     it 'validates uniqueness in database' do
-      subject.job_id = create(:completed_print).job_id
+      subject.job_number = create(:completed_print).job_number
       expect{ subject.save!(validate: false) }.
         to raise_error(ActiveRecord::ActiveRecordError)
     end
@@ -186,12 +186,12 @@ describe Print do
     context 'when printable' do
       before do
         allow(driver).to receive(:run).and_return(true)
-        allow(driver).to receive(:job_id).and_return(42)
+        allow(driver).to receive(:job_number).and_return(42)
       end
 
-      it 'assigns job_id' do
+      it 'assigns job_number' do
         subject.save
-        expect(subject.job_id).to eq 42
+        expect(subject.job_number).to eq 42
       end
 
       it 'is active' do
@@ -214,9 +214,9 @@ describe Print do
         expect(subject.save).to eq false
       end
 
-      it 'does not assign job_id' do
+      it 'does not assign job_number' do
         subject.save
-        expect(subject.job_id).to be nil
+        expect(subject.job_number).to be nil
       end
 
       it 'is active' do
@@ -230,9 +230,9 @@ describe Print do
       end
     end
 
-    context 'with existing job_id' do
+    context 'with existing job_number' do
       before do
-        subject.job_id = 42
+        subject.job_number = 42
         allow(driver).to receive(:run)
       end
 

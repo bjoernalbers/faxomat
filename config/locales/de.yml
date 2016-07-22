@@ -38,7 +38,7 @@ de:
           completed: erledigt
           aborted: abgebrochen
         document: Dokument
-        job_id: Auftragsnummer
+        job_number: Auftragsnummer
         fax_number: Faxnummer
       recipient:
         first_name: Vorname

@@ -5,8 +5,8 @@ class Print::CupsDriver
   class << self
     # Returns hash of print job statuses by job id.
     def statuses(printer_name)
-      Cups.all_jobs(printer_name).inject({}) do |memo, (job_id,cups_job)|
-        memo[job_id] = convert_status(cups_job.fetch(:state))
+      Cups.all_jobs(printer_name).inject({}) do |memo, (job_number,cups_job)|
+        memo[job_number] = convert_status(cups_job.fetch(:state))
         memo
       end
     end
@@ -31,8 +31,8 @@ class Print::CupsDriver
     cups_job.print
   end
 
-  # Returns job_id from cups_job if valid.
-  def job_id
+  # Returns job_number from cups_job if valid.
+  def job_number
     cups_job.job_id == 0 ? nil : cups_job.job_id
   end
 

@@ -84,21 +84,21 @@ describe Print::CupsDriver do
     end
   end
 
-  describe '#job_id' do
+  describe '#job_number' do
     let(:cups_job) { double('cups_job') }
 
     before do
       allow(subject).to receive(:cups_job).and_return(cups_job)
     end
 
-    it 'returns job_id when cups_job job_id is non-zero' do
+    it 'returns job_number when cups_job job_id is non-zero' do
       allow(cups_job).to receive(:job_id).and_return(42)
-      expect(subject.job_id).to eq 42
+      expect(subject.job_number).to eq 42
     end
 
     it 'returns nil when cups_job job_id is zero' do
       allow(cups_job).to receive(:job_id).and_return(0)
-      expect(subject.job_id).to eq nil
+      expect(subject.job_number).to eq nil
     end
   end
 
