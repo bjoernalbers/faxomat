@@ -28,17 +28,17 @@ Rails.application.routes.draw do
   resource :template, except: [:destroy]
 
   #namespace :api, defaults: { format: :json } do
-  #  resources :print_jobs, only: [:index]
+  #  resources :prints, only: [:index]
   #  resources :reports, only: [:create, :show]
   #end
   namespace :api do
-    resources :print_jobs, only: [:index], defaults: { format: :json }
+    resources :prints, only: [:index], defaults: { format: :json }
     resources :reports, only: [:create, :update, :show]
   end
 
   resources :faxes, only: :create
 
-  resources :print_jobs, except: [:edit, :update] do
+  resources :prints, except: [:edit, :update] do
     get 'aborted', on: :collection
     get 'search', on: :collection
     get 'filter', on: :collection

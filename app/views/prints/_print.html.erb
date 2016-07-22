@@ -1,0 +1,8 @@
+<%= div_for(print, class: print.status) do %>
+  <%= content_tag(:span, class: 'title') do %>
+    <%= link_to print.title, print, target: '_blank' %>
+  <% end %>
+  <%= content_tag(:span, class: 'state') do %>
+    <%= print.state %>
+  <% end %>
+<% end %>

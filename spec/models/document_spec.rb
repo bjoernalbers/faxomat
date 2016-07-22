@@ -18,7 +18,7 @@ describe Document do
 
   it { expect(subject).to belong_to(:report) }
 
-  it { expect(subject).to have_many(:print_jobs) }
+  it { expect(subject).to have_many(:prints) }
 
   it { expect(subject).to have_many(:deliveries) }
 
@@ -58,24 +58,24 @@ describe Document do
     end
 
     it 'excludes document with yesterdays delivery' do
-      create(:print_job, document: document, created_at: yesterday)
+      create(:print, document: document, created_at: yesterday)
       expect(subject).not_to include(document)
     end
 
     it 'includes document with todays delivery' do
-      create(:print_job, document: document, created_at: today)
+      create(:print, document: document, created_at: today)
       expect(subject).to include(document)
     end
 
     it 'includes distinct documents' do
-      create_pair(:print_job, document: document, created_at: today)
+      create_pair(:print, document: document, created_at: today)
       expect(subject.count).to eq(1)
     end
 
     it 'order by print job creation date' do
       other = create(:document)
-      create(:print_job, document: document)
-      create(:print_job, document: other)
+      create(:print, document: document)
+      create(:print, document: other)
       expect(subject.first).to eq other
     end
   end

@@ -1,5 +1,5 @@
-describe PrintJob::TestDriver do
-  let(:subject) { described_class.new(build(:print_job)) }
+describe Print::TestDriver do
+  let(:subject) { described_class.new(build(:print)) }
 
   describe '.statuses' do
     it 'returns empty hash' do
@@ -7,9 +7,9 @@ describe PrintJob::TestDriver do
     end
   end
 
-  describe '#print' do
+  describe '#run' do
     it 'always returns true' do
-      expect(subject.print).to eq true
+      expect(subject.run).to eq true
     end
   end
 

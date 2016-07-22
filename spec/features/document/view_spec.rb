@@ -18,7 +18,7 @@ feature 'View document' do
   end
 
   scenario 'with deliviveries' do
-    print_job = create(:completed_print_job,
+    print = create(:completed_print,
                        document: document,
                        created_at: '2016-05-25 12:42')
 
@@ -30,9 +30,9 @@ feature 'View document' do
     expect(page).to have_content document.recipient.full_name
 
     expect(page).to have_content 'Mittwoch, 25. Mai 2016, 12:42 Uhr'
-    expect(page).to have_content print_job.fax_number
+    expect(page).to have_content print.fax_number
     expect(page).to have_content 'erledigt'
-    expect(page).to have_content print_job.printer.name
+    expect(page).to have_content print.printer.name
   end
 
   scenario 'download' do

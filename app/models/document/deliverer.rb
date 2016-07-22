@@ -7,7 +7,7 @@ class Document::Deliverer
   end
 
   def deliver
-    document.print_jobs.create(printer: printer)
+    document.prints.create(printer: printer)
   end
 
   private

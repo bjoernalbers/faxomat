@@ -7,7 +7,7 @@ class FaxesController < ApplicationController
       if @fax.save
         flash[:notice] = 'Fax wird gesendet.'
         format.html { redirect_to(@fax) }
-        format.json { render json: 'OK', status: :created } #TODO: Return more infos about the new print_job!
+        format.json { render json: 'OK', status: :created } #TODO: Return more infos about the new print!
       else
         format.html { render action: 'new' }
         format.json { render json: @fax.errors, status: :unprocessable_entity }

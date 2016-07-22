@@ -1,5 +1,5 @@
 class Printer < ActiveRecord::Base
-  has_many :print_jobs
+  has_many :prints
 
   validates :name,
     presence: true,
@@ -10,8 +10,8 @@ class Printer < ActiveRecord::Base
   class << self
     # Returns distinct printers with active print jobs.
     def active
-      joins(:print_jobs).
-        where(id: PrintJob.active.select(:printer_id)).
+      joins(:prints).
+        where(id: Print.active.select(:printer_id)).
         distinct
     end
   end

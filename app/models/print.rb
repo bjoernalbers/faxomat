@@ -1,5 +1,5 @@
 # Keeps track of print jobs.
-class PrintJob < Delivery
+class Print < Delivery
   belongs_to :printer, required: true
 
   validates :fax_number,
@@ -14,9 +14,9 @@ class PrintJob < Delivery
     def update_active
       Printer.active.find_each do |printer|
         statuses_by_job_id = driver_class.statuses(printer.name)
-        printer.print_jobs.active.find_each do |print_job|
-          if status = statuses_by_job_id[print_job.job_id]
-            print_job.update!(status: status)
+        printer.prints.active.find_each do |print|
+          if status = statuses_by_job_id[print.job_id]
+            print.update!(status: status)
           end
         end
       end
@@ -41,7 +41,7 @@ class PrintJob < Delivery
 
   def self.count_by_status
     counts = group(:status).count
-    Hash[PrintJob.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
+    Hash[Print.statuses.map { |k,v| [k.to_sym, counts.fetch(v, 0)] }]
   end
 
   def self.search(params)
@@ -76,7 +76,7 @@ class PrintJob < Delivery
   private
 
   def print
-    driver.print ? self.job_id = driver.job_id : false
+    driver.run ? self.job_id = driver.job_id : false
   end
 
   # Helper class to strip down a search query string.

@@ -9,7 +9,7 @@ de:
       recipient: Überweiser
       user: Arzt
       patient: Patient
-      print_job:
+      print:
         one: Druckauftrag
         other: Druckaufträge
       printer: Drucker
@@ -30,7 +30,7 @@ de:
         suffix: Namenszusatz
         sex: Geschlecht
         number: Nummer
-      print_job:
+      print:
         created_at: Erstellt
         status: Status
         statuses:

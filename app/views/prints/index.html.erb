@@ -1,0 +1,29 @@
+<ul class='nav nav-tabs'>
+  <%= content_tag(:li, link_to('Aktive Druckaufträge', prints_path), class: ('active' if action_name == 'index')) %>
+  <%= content_tag(:li, class: ('active' if action_name == 'aborted')) do %>
+    <%= link_to(aborted_prints_path) do %>
+      <%= content_tag(:span, 'Abgebrochene Druckaufträge') %>
+      <%= content_tag(:span, aborted_prints_count, class: 'badge') %>
+    <% end %>
+  <% end %>
+  <%= content_tag(:li, link_to('Suche', search_prints_path), class: ('active' if action_name == 'search')) %>
+</ul>
+
+<table>
+  <tr>
+    <th>Druckauftrag</th>
+    <th>Empfänger</th>
+    <th>Erstellt</th>
+    <th>Status</th>
+  </tr>
+  <% @prints.each do |print| %>
+    <%= content_tag_for(:tr, print, class: print.status) do %>
+      <%= content_tag(:td, class: 'title') do %>
+        <%= link_to(print.title, print, target: '_blank') %>
+      <% end %>
+      <%= content_tag(:td, print.fax_number, class: 'fax_number') %>
+      <%= content_tag(:td, print.created_at, class: 'created_at') %>
+      <%= content_tag(:td, print.status, class: 'status') %>
+    <% end %>
+  <% end %>
+</table>

@@ -1,6 +1,6 @@
-describe PrintJob::CupsDriver do
-  let(:print_job) { build(:print_job) }
-  let(:subject) { described_class.new(print_job) }
+describe Print::CupsDriver do
+  let(:print) { build(:print) }
+  let(:subject) { described_class.new(print) }
 
   describe '.statuses' do
     let(:subject) { described_class }
@@ -32,7 +32,7 @@ describe PrintJob::CupsDriver do
     end
   end
 
-  describe '#print' do
+  describe '#run' do
     let(:cups_job) { double('cups_job') }
 
     before do
@@ -42,20 +42,20 @@ describe PrintJob::CupsDriver do
       allow(cups_job).to receive(:print) { true }
       allow(cups_job).to receive(:job_id) { 42 }
 
-      allow(print_job).to receive(:path).and_return('chunky_bacon.pdf')
-      allow(print_job).to receive(:fax_number).and_return('012456789')
+      allow(print).to receive(:path).and_return('chunky_bacon.pdf')
+      allow(print).to receive(:fax_number).and_return('012456789')
     end
 
     context 'with fax printer' do
       let(:printer) { build(:fax_printer) }
 
-      before { print_job.printer = printer }
+      before { print.printer = printer }
 
-      it 'prints as CUPS fax print_job' do
-        subject.print
+      it 'prints as CUPS fax print' do
+        subject.run
         expect(Cups::PrintJob).to have_received(:new).
           with('chunky_bacon.pdf', printer.name, {'phone' =>
-               "#{printer.dialout_prefix}#{print_job.fax_number}"})
+               "#{printer.dialout_prefix}#{print.fax_number}"})
         expect(cups_job).to have_received(:print)
       end
     end
@@ -63,10 +63,10 @@ describe PrintJob::CupsDriver do
     context 'with paper printer' do
       let(:printer) { build(:paper_printer) }
 
-      before { print_job.printer = printer }
+      before { print.printer = printer }
 
-      it 'prints as CUPS print_job' do
-        subject.print
+      it 'prints as CUPS print' do
+        subject.run
         expect(Cups::PrintJob).to have_received(:new).
           with('chunky_bacon.pdf', printer.name)
         expect(cups_job).to have_received(:print)
@@ -74,13 +74,13 @@ describe PrintJob::CupsDriver do
     end
 
     it 'sets print job title' do
-      subject.print
-      expect(cups_job).to have_received(:title=).with(print_job.title)
+      subject.run
+      expect(cups_job).to have_received(:title=).with(print.title)
     end
 
     it 'returns CUPS job ID' do
       allow(cups_job).to receive(:print).and_return(:chunky_bacon)
-      expect(subject.print).to eq :chunky_bacon
+      expect(subject.run).to eq :chunky_bacon
     end
   end
 

@@ -1,12 +1,12 @@
-<%= print_job_report_header %>
+<%= print_report_header %>
 ==================================================================
 <%= "Empfänger:\t#{params[:fax_number]}\n" if params[:fax_number].present? -%>
 <%= "Zeitraum:\t#{Time.zone.parse(params[:created_since]).to_s(:short)} - #{Time.zone.now.to_s(:short)}\n" if params[:created_since].present? -%>
 
 Sendedatum<%= "\t" %>Patient(in) / Faxtitel
 ------------------------------------------------------------------
-<% @print_jobs.reorder(:created_at).each do |print_job| %>
-<%= [print_job.created_at.strftime('%d.%m.%Y'), print_job.title].join("\t") %>
+<% @prints.reorder(:created_at).each do |print| %>
+<%= [print.created_at.strftime('%d.%m.%Y'), print.title].join("\t") %>
 <% end %>
 
 

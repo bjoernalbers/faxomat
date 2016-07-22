@@ -1,6 +1,6 @@
 # A fake driver for test & development.
-class PrintJob::TestDriver
-  attr_reader :print_job
+class Print::TestDriver
+  attr_reader :print
 
   class << self
     # Returns empty hash.
@@ -9,12 +9,12 @@ class PrintJob::TestDriver
     end
   end
 
-  def initialize(print_job)
-    @print_job = print_job
+  def initialize(print)
+    @print = print
   end
 
   # Does nothing and always returns true.
-  def print
+  def run
     true
   end
 

@@ -11,10 +11,10 @@ describe Document::Deliverer do
       let(:recipient) { create(:recipient) }
 
       it 'creates fax job' do
-        expect { subject.deliver }.to change(PrintJob, :count).by(1)
-        print_job = PrintJob.last
-        expect(print_job.printer).to eq fax_printer
-        expect(print_job.fax_number).to eq recipient.fax_number
+        expect { subject.deliver }.to change(Print, :count).by(1)
+        print = Print.last
+        expect(print.printer).to eq fax_printer
+        expect(print.fax_number).to eq recipient.fax_number
       end
     end
 
@@ -22,10 +22,10 @@ describe Document::Deliverer do
       let(:recipient) { create(:recipient, fax_number: nil) }
 
       it 'creates print job' do
-        expect { subject.deliver }.to change(PrintJob, :count).by(1)
-        print_job = PrintJob.last
-        expect(print_job.printer).to eq paper_printer
-        expect(print_job.fax_number).to be nil
+        expect { subject.deliver }.to change(Print, :count).by(1)
+        print = Print.last
+        expect(print.printer).to eq paper_printer
+        expect(print.fax_number).to be nil
       end
     end
   end

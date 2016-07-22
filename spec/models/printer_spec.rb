@@ -7,25 +7,25 @@ describe Printer do
     expect(subject.dialout_prefix).not_to be_present
   end
 
-  it { expect(subject).to have_many(:print_jobs) }
+  it { expect(subject).to have_many(:prints) }
 
   describe '.active' do
     let(:subject) { described_class }
     let(:printer) { create(:printer) }
 
     it 'includes printer with active print job' do
-      create(:active_print_job, printer: printer)
+      create(:active_print, printer: printer)
       expect(subject.active).to include printer
     end
 
     it 'excludes printer without active print job' do
-      create(:completed_print_job, printer: printer)
-      create(:aborted_print_job, printer: printer)
+      create(:completed_print, printer: printer)
+      create(:aborted_print, printer: printer)
       expect(subject.active).not_to include printer
     end
 
     it 'returns distinct printers' do
-      create_list(:active_print_job, 2, printer: printer)
+      create_list(:active_print, 2, printer: printer)
       expect(subject.active.count).to eq 1
     end
   end

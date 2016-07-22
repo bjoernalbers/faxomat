@@ -1,7 +1,7 @@
 class Document < ActiveRecord::Base
   belongs_to :recipient, required: true
   belongs_to :report
-  has_many :print_jobs
+  has_many :prints
   has_many :deliveries
 
   has_attached_file :file,

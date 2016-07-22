@@ -1,6 +1,6 @@
 # Interface to CUPS.
-class PrintJob::CupsDriver
-  attr_reader :print_job
+class Print::CupsDriver
+  attr_reader :print
 
   class << self
     # Returns hash of print job statuses by job id.
@@ -22,12 +22,12 @@ class PrintJob::CupsDriver
     end
   end
 
-  def initialize(print_job)
-    @print_job = print_job
+  def initialize(print)
+    @print = print
   end
 
-  # Print (deliver) the print_job.
-  def print
+  # Actually print via CUPS
+  def run
     cups_job.print
   end
 
@@ -44,19 +44,19 @@ class PrintJob::CupsDriver
 
   def build_cups_job
     cups_job = if printer.is_fax_printer?
-      Cups::PrintJob.new(print_job.path, printer.name, 'phone' => fax_number)
+      Cups::PrintJob.new(print.path, printer.name, 'phone' => fax_number)
     else
-      Cups::PrintJob.new(print_job.path, printer.name)
+      Cups::PrintJob.new(print.path, printer.name)
     end
-    cups_job.title = print_job.title if print_job.title
+    cups_job.title = print.title if print.title
     cups_job
   end
 
   def fax_number
-    [printer.dialout_prefix, print_job.fax_number].join
+    [printer.dialout_prefix, print.fax_number].join
   end
 
   def printer
-    print_job.printer
+    print.printer
   end
 end

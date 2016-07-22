@@ -1,8 +1,8 @@
 namespace :faxomat do
-  desc 'Update status of active print_jobs.'
+  desc 'Update status of active prints.'
   task :check => :environment do
     puts "#{Time.zone.now.iso8601} Updating active print jobs on #{Rails.env}..."
-    PrintJob.update_active
+    Print.update_active
   end
 
   desc 'Export all report print jobs addressing EVK fax numbers.'
@@ -12,7 +12,7 @@ namespace :faxomat do
       FileUtils.mkdir(dir, verbose: true)
     end
     # Find all faxes from documents without report send to EVK
-    PrintJob.joins(:document).merge(Document.with_report).
+    Print.joins(:document).merge(Document.with_report).
       where('fax_number LIKE ?', '02941671%').find_each do |fax|
         patient = fax.document.report.patient
         source = fax.document.path

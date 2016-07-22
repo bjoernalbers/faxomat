@@ -1,9 +1,9 @@
-describe 'GET /api/print_jobs' do
+describe 'GET /api/prints' do
   let(:params)  { { } }
   let(:headers) { { 'Accept' => 'application/json' } }
 
   def do_get
-    get '/api/print_jobs', params, headers
+    get '/api/prints', params, headers
   end
 
   def json
@@ -21,10 +21,10 @@ describe 'GET /api/print_jobs' do
 
   it 'returns number of print jobs by status' do
     pending
-    PrintJob.destroy_all # TODO: Fix database cleaner!
-    2.times { FactoryGirl.create(:active_print_job) }
-    1.times { FactoryGirl.create(:aborted_print_job) }
-    0.times { FactoryGirl.create(:completed_print_job) }
+    Print.destroy_all # TODO: Fix database cleaner!
+    2.times { FactoryGirl.create(:active_print) }
+    1.times { FactoryGirl.create(:aborted_print) }
+    0.times { FactoryGirl.create(:completed_print) }
     do_get
     expect(json['active']).to eq 2
     expect(json['aborted']).to eq 1
@@ -32,7 +32,7 @@ describe 'GET /api/print_jobs' do
   end
 
   it 'returns number of active print jobs' do
-    7.times { FactoryGirl.create(:active_print_job) }
+    7.times { FactoryGirl.create(:active_print) }
     do_get
     expect(json['active']).to eq 7
   end

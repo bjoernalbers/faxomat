@@ -37,7 +37,7 @@ feature 'Todays doocuments list' do
 
   scenario 'undelivered document' do
     document = create(:document)
-    create(:aborted_print_job, document: document)
+    create(:aborted_print, document: document)
 
     visit_todays_documents
 
@@ -47,7 +47,7 @@ feature 'Todays doocuments list' do
 
   scenario 'delivered document' do
     document = create(:document)
-    create(:completed_print_job, document: document)
+    create(:completed_print, document: document)
 
     visit_todays_documents
 
@@ -57,7 +57,7 @@ feature 'Todays doocuments list' do
 
   scenario 'download document' do
     document = create(:document)
-    create(:completed_print_job, document: document)
+    create(:completed_print, document: document)
 
     visit_todays_documents
     click_link document.title
@@ -67,7 +67,7 @@ feature 'Todays doocuments list' do
 
   scenario 'view details' do
     document = create(:document)
-    create(:completed_print_job, document: document)
+    create(:completed_print, document: document)
 
     visit_todays_documents
     click_link 'Details'

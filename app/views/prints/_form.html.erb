@@ -1,11 +1,11 @@
 <div class='container'>
-<%= form_for(@print_job, html: { class: 'form-horizontal' }) do |f| %>
-  <% if @print_job.errors.any? %>
+<%= form_for(@print, html: { class: 'form-horizontal' }) do |f| %>
+  <% if @print.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@print_job.errors.count, "error") %> prohibited this print_job from being saved:</h2>
+      <h2><%= pluralize(@print.errors.count, "error") %> prohibited this print from being saved:</h2>
 
       <ul>
-      <% @print_job.errors.full_messages.each do |message| %>
+      <% @print.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
       </ul>

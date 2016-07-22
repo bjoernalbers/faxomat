@@ -22,7 +22,7 @@ describe FaxForm do
       it 'creates print job' do
         expect {
           subject.save
-        }.to change(PrintJob, :count).by(1)
+        }.to change(Print, :count).by(1)
       end
 
       it 'returns true' do

@@ -27,7 +27,7 @@ feature 'Deliver document' do
 
     expect {
       click_button 'Faxen'
-    }.to change(PrintJob, :count).by(1)
+    }.to change(Print, :count).by(1)
   end
 
   scenario 'when deliverable but not faxable' do

@@ -16,53 +16,53 @@
       <%= link_to 'Herunterladen', download_document_path(@document), class: 'btn btn-default' %>
       <% if @document.released_for_delivery? %>
         <% if @document.recipient_fax_number? & fax_printer = FaxPrinter.default %>
-          <%= button_to 'Faxen', print_jobs_path, method: :post,
-            params: { 'print_job[printer_id]' => fax_printer.id, 'print_job[document_id]' => @document.id },
+          <%= button_to 'Faxen', prints_path, method: :post,
+            params: { 'print[printer_id]' => fax_printer.id, 'print[document_id]' => @document.id },
             class: 'btn btn-primary' %>
         <% end %>
         <% if paper_printer = PaperPrinter.default %>
-          <%= button_to 'Drucken', print_jobs_path, method: :post,
-            params: { 'print_job[printer_id]' => paper_printer.id, 'print_job[document_id]' => @document.id },
+          <%= button_to 'Drucken', prints_path, method: :post,
+            params: { 'print[printer_id]' => paper_printer.id, 'print[document_id]' => @document.id },
             class: 'btn btn-primary' %>
         <% end %>
       <% end %>
     </div>
 
-    <% if @document.print_jobs.present? %>
+    <% if @document.prints.present? %>
       <div class="panel panel-default">
         <div class="panel-heading">
           <h2 class="panel-title">
-            <%= PrintJob.model_name.human(count: @document.print_jobs.count) %>
+            <%= Print.model_name.human(count: @document.prints.count) %>
           </h2>
         </div>
         <table class="table">
           <tr>
             <th>
-              <%= PrintJob.human_attribute_name(:created_at) %>
+              <%= Print.human_attribute_name(:created_at) %>
             </th>
             <th>
               <%= Printer.model_name.human %>
             </th>
             <th>
-              <%= PrintJob.human_attribute_name(:fax_number) %>
+              <%= Print.human_attribute_name(:fax_number) %>
             </th>
             <th>
-              <%= PrintJob.human_attribute_name(:status) %>
+              <%= Print.human_attribute_name(:status) %>
             </th>
           </tr>
-          <% @document.print_jobs.order(:created_at).each do |print_job| %>
-            <tr class="<%= print_job_status_class(print_job) %>">
+          <% @document.prints.order(:created_at).each do |print| %>
+            <tr class="<%= print_status_class(print) %>">
               <td>
-                <%= l print_job.created_at %>
+                <%= l print.created_at %>
               </td>
               <td>
-                <%= print_job.printer.name %>
+                <%= print.printer.name %>
               </td>
               <td>
-                <%= print_job.fax_number %>
+                <%= print.fax_number %>
               </td>
               <td>
-                <%= t print_job.status, scope: 'activerecord.attributes.print_job.statuses' %>
+                <%= t print.status, scope: 'activerecord.attributes.print.statuses' %>
               </td>
             </tr>
           <% end %>
