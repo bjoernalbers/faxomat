@@ -1,10 +1,7 @@
 class Delivery < ActiveRecord::Base
-  enum status: { active: 0, completed: 1, aborted: 2 }
+  include Deliverable
 
-  belongs_to :document, required: true
-  belongs_to :printer, required: true # TODO: Remove!
-
-  validate :document_is_released_for_delivery, if: :document, on: :create
+  belongs_to :printer, required: true
 
   before_destroy :check_if_aborted
 
@@ -15,12 +12,6 @@ class Delivery < ActiveRecord::Base
   end
 
   private
-
-  def document_is_released_for_delivery
-    unless document.released_for_delivery?
-      self.errors[:document] << 'darf nicht versendet werden.'
-    end
-  end
 
   def check_if_aborted
     unless aborted?
