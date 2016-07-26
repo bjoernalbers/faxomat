@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160726082202) do
+ActiveRecord::Schema.define(version: 20160726095213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,18 @@ ActiveRecord::Schema.define(version: 20160726082202) do
 
   add_index "documents", ["recipient_id"], name: "index_documents_on_recipient_id", using: :btree
   add_index "documents", ["report_id"], name: "index_documents_on_report_id", using: :btree
+
+  create_table "exports", force: :cascade do |t|
+    t.integer  "status",       default: 0, null: false
+    t.string   "filename",                 null: false
+    t.integer  "document_id",              null: false
+    t.integer  "directory_id",             null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "exports", ["directory_id"], name: "index_exports_on_directory_id", using: :btree
+  add_index "exports", ["document_id"], name: "index_exports_on_document_id", using: :btree
 
   create_table "patients", force: :cascade do |t|
     t.string   "first_name",    null: false
@@ -154,5 +166,7 @@ ActiveRecord::Schema.define(version: 20160726082202) do
   add_foreign_key "deliveries", "documents"
   add_foreign_key "documents", "recipients"
   add_foreign_key "documents", "reports"
+  add_foreign_key "exports", "directories"
+  add_foreign_key "exports", "documents"
   add_foreign_key "recipients", "addresses"
 end

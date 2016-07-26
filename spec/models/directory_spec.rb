@@ -17,9 +17,23 @@ describe Directory do
   end
 
   describe '#exports' do
-    it 'has many'
+    it { should have_many(:exports) }
+
     context 'when present' do
-      it 'can not be deleted'
+      before do
+        create(:export, directory: subject)
+      end
+
+      it 'raises error on delete' do
+        expect {
+          subject.delete
+        }.to raise_error(ActiveRecord::ActiveRecordError)
+      end
+
+      it 'returns false on destroy' do
+        expect(subject.destroy).to eq false
+        expect(subject).to be_persisted
+      end
     end
   end
 

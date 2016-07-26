@@ -4,6 +4,7 @@ de:
       address: Adresse
       directory: Ordner
       document: Dokument
+      export: Export
       template: Vorlage
       report: Bericht
       api/report: Bericht
@@ -19,6 +20,8 @@ de:
         street: Straße
         zip: Postleitzahl
         city: Stadt
+      delivery:
+        document: Dokument
       directory:
         description: Bezeichnung
         path: Pfad
@@ -26,6 +29,10 @@ de:
         title: Titel
         file: Datei
         file_fingerprint: Dateiprüfsumme
+      export:
+        directory: Ordner
+        document: Dokument
+        filename: Dateiname
       patient:
         first_name: Vorname
         last_name: Nachname

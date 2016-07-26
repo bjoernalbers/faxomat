@@ -27,6 +27,11 @@ shared_examples 'a deliverable' do
       expect(document).not_to be_released_for_delivery
       expect(subject).to be_valid
     end
+
+    it 'is translated' do
+      expect(described_class.human_attribute_name(:document)).
+        to eq 'Dokument'
+    end
   end
 
   describe '#status' do

@@ -1,4 +1,7 @@
 class Directory < ActiveRecord::Base
+  has_many :exports,
+    dependent: :restrict_with_error
+
   validates :description,
     presence: true
   validates :path,
