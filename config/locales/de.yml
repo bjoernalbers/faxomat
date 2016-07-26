@@ -2,6 +2,7 @@ de:
   activerecord:
     models:
       address: Adresse
+      directory: Ordner
       document: Dokument
       template: Vorlage
       report: Bericht
@@ -18,6 +19,9 @@ de:
         street: Straße
         zip: Postleitzahl
         city: Stadt
+      directory:
+        description: Bezeichnung
+        path: Pfad
       document:
         title: Titel
         file: Datei
