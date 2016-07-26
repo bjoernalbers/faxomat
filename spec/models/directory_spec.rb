@@ -73,5 +73,12 @@ describe Directory do
       expect(subject).to be_invalid
       expect(subject.errors[:path]).to be_present
     end
+
+    it 'returns Pathname instance' do
+      subject = build(:directory, path: nil)
+      expect(subject.path).to be nil
+      subject = build(:directory)
+      expect(subject.path).to be_a(Pathname)
+    end
   end
 end

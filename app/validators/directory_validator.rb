@@ -8,6 +8,6 @@ class DirectoryValidator < ActiveModel::EachValidator
   private
 
   def default_message
-      'must be a directory'
+    'muss ein Verzeichnis auf dem Server sein'
   end
 end
