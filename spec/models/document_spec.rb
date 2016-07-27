@@ -22,6 +22,8 @@ describe Document do
 
   it { expect(subject).to have_many(:deliveries) }
 
+  it { expect(subject).to have_many(:exports) }
+
   describe '#title' do
     context 'without report' do
       let(:subject) { build(:document, report: nil, title: nil) }

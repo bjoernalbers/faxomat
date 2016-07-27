@@ -3,6 +3,7 @@ class Document < ActiveRecord::Base
   belongs_to :report
   has_many :prints
   has_many :deliveries
+  has_many :exports
 
   has_attached_file :file,
     path: ':rails_root/storage/:rails_env/:class/:id/:attachment/:filename'

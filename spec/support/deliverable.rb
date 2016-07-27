@@ -6,8 +6,13 @@ shared_examples 'a deliverable' do
       subject.document = nil
       expect(subject).to be_invalid
       expect(subject.errors[:document]).to be_present
-      expect{ subject.save!(validate: false) }.
-        to raise_error(ActiveRecord::ActiveRecordError)
+    end
+
+    it 'must be present in database' do
+      subject.save
+      expect {
+        subject.update_column(:document_id, nil)
+      }.to raise_error(ActiveRecord::ActiveRecordError)
     end
 
     it 'must be released for delivery on create' do
@@ -55,9 +60,10 @@ shared_examples 'a deliverable' do
     end
 
     it 'must be present in database' do
-      subject.status = nil
-      expect{ subject.save!(validate: false) }.
-        to raise_error(ActiveRecord::ActiveRecordError)
+      subject.save
+      expect {
+        subject.update_column(:status, nil)
+      }.to raise_error(ActiveRecord::ActiveRecordError)
     end
 
     it 'accepts no unknown value' do
