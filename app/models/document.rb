@@ -41,7 +41,7 @@ class Document < ActiveRecord::Base
     def exportable_to_evk
       without_completed_export.
         with_evk_recipient.
-        with_report
+        with_verified_report
     end
 
     def without_completed_export
@@ -51,6 +51,11 @@ class Document < ActiveRecord::Base
     def with_evk_recipient
       joins(:recipient).
         merge(Recipient.where('fax_number LIKE ?', "02941671%"))
+    end
+
+    def with_verified_report
+      joins(:report).
+        merge(Report.verified)
     end
 
     def with_report
