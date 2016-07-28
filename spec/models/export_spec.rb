@@ -199,4 +199,54 @@ describe Export do
       end
     end
   end
+
+  describe '#with_retry' do
+    let(:retryable) { double(:retryable) }
+
+    before do
+      allow(subject).to receive(:sleep)
+    end
+
+    def run_with_retry
+      subject.send(:with_retry) { retryable.run }
+    end
+
+    context 'without exception' do
+      before do
+        allow(retryable).to receive(:run)
+      end
+
+      it 'runs only once' do
+        run_with_retry
+        expect(retryable).to have_received(:run).once
+      end
+
+      it 'does not sleep' do
+        run_with_retry
+        expect(subject).not_to have_received(:sleep)
+      end
+    end
+
+    context 'with exception' do
+      before do
+        allow(retryable).to receive(:run) do
+          raise StandardError, 'OMG!'
+        end
+      end
+
+      it 'retries 3 times' do
+        expect {
+          run_with_retry
+        }.to raise_error(StandardError)
+        expect(retryable).to have_received(:run).exactly(3).times
+      end
+
+      it 'sleeps 2 times' do
+        expect {
+          run_with_retry
+        }.to raise_error(StandardError)
+        expect(subject).to have_received(:sleep).exactly(2).times
+      end
+    end
+  end
 end

@@ -39,6 +39,16 @@ class Export < ActiveRecord::Base
   end
 
   def copy_file!
-    FileUtils.cp(source, destination)
+    with_retry { FileUtils.cp(source, destination) }
+  end
+
+  def with_retry(retries = 3)
+    yield
+  rescue StandardError => e
+    if (retries -= 1) > 0
+      sleep 1
+      retry
+    end
+    raise e
   end
 end
