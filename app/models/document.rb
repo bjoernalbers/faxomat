@@ -38,6 +38,21 @@ class Document < ActiveRecord::Base
       where.not(id: Delivery.active_or_completed.select(:document_id))
     end
 
+    def exportable_to_evk
+      without_completed_export.
+        with_evk_recipient.
+        with_report
+    end
+
+    def without_completed_export
+      where.not(id: Export.completed.select(:document_id))
+    end
+
+    def with_evk_recipient
+      joins(:recipient).
+        merge(Recipient.where('fax_number LIKE ?', "02941671%"))
+    end
+
     def with_report
       where.not(report_id: nil)
     end
