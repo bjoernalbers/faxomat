@@ -4,7 +4,9 @@ de:
       address: Adresse
       directory: Ordner
       document: Dokument
-      export: Export
+      export:
+        one: Export
+        other: Exporte
       template: Vorlage
       report: Bericht
       api/report: Bericht

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     member do
       get :download
     end
+    resource :exports, only: [:new, :create]
   end
   resources :deliver_documents, only: :index
   resources :search_documents, only: :index

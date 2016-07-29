@@ -1,0 +1,35 @@
+<div id="exports_panel" class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <%= Export.model_name.human(count: @document.exports.count) %>
+      <% if @document.released_for_delivery? %>
+        <span class="pull-right">
+          <%= link_to 'Neu', new_document_exports_path(@document) %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @document.exports.empty? %>
+    <div class="panel-body">
+      <p>
+        ...nicht vorhanden.
+      </p>
+    </div>
+  <% else %>
+    <ul id="exports" class="list-group">
+      <% @document.exports.each do |export| %>
+        <li class="list-group-item">
+          <p class="list-group-item-heading">
+            <strong>
+              <%= export.filename %>
+            </strong>
+          </p>
+          <p class="list-group-item-text">
+            Exportiert am <%= l export.created_at %> an <%= export.directory.description %>
+          </p>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

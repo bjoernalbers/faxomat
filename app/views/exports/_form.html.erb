@@ -1,0 +1,26 @@
+<%= form_for([@document, @export], html: { class: 'form-inline' }) do |f| %>
+  <% if @export.errors.any? %>
+    <div id="error_explanation">
+      <h2>Oh, Mist:</h2>
+
+      <ul>
+      <% @export.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class='form-group'>
+    <%= f.label :directory %>
+    <%= f.collection_select :directory_id,
+      Directory.all, :id, :description,
+      { },
+      {class: 'form-control'} %>
+  </div>
+
+  <%= f.submit 'Exportieren', class: 'btn btn-primary' %>
+
+  <%= link_to 'Abbrechen', @document, class: 'btn btn-default' %>
+<% end %>
+

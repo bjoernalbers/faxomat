@@ -27,13 +27,17 @@
         <% end %>
       <% end %>
     </div>
+  </div>
+</div>
 
+<div class="row">
+  <div class="col-md-6">
     <% if @document.prints.present? %>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title">
+          <div class="panel-title">
             <%= Print.model_name.human(count: @document.prints.count) %>
-          </h2>
+          </div>
         </div>
         <table class="table">
           <tr>
@@ -73,5 +77,9 @@
         Hoppla, zu diesem Dokument gibt es noch keine Druckaufträge.
       </p>
     <% end %>
+  </div>
+
+  <div class="col-md-6">
+    <%= render 'exports/panel' %>
   </div>
 </div>
