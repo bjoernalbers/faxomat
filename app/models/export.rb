@@ -5,7 +5,7 @@ class Export < ActiveRecord::Base
     required: true
 
   before_create :set_filename, unless: :filename
-  before_create :export
+  before_create :copy_file
 
   def source
     @source ||= Pathname.new(document.path)
@@ -19,15 +19,6 @@ class Export < ActiveRecord::Base
 
   def set_filename
     self.filename = Filename.new(document).to_s
-  end
-
-  def export
-    if copy_file
-      self.status = :completed
-      true
-    else
-      false
-    end
   end
 
   def copy_file

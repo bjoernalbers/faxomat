@@ -1,6 +1,8 @@
 class Delivery < ActiveRecord::Base
   include Deliverable
 
+  enum status: { active: 0, completed: 1, aborted: 2 }
+
   belongs_to :printer, required: true
 
   before_destroy :check_if_aborted

@@ -104,11 +104,6 @@ describe Export do
       it 'does not create record' do
         expect{ subject.save }.not_to change(described_class, :count)
       end
-
-      it 'is active' do
-        subject.save
-        expect(subject).to be_active
-      end
     end
 
     context 'when #copy_file returns true' do
@@ -118,11 +113,6 @@ describe Export do
 
       it 'creates record' do
         expect{ subject.save }.to change(described_class, :count).by(1)
-      end
-
-      it 'is completed' do
-        subject.save
-        expect(subject).to be_completed
       end
     end
 

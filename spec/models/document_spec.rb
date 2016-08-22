@@ -177,27 +177,16 @@ describe Document do
     end
   end
 
-  describe '.without_completed_export' do
+  describe '.without_export' do
     let!(:document) { create(:document) }
-    let(:export) { create(:export, document: document) }
-    let(:subject) { described_class.without_completed_export }
+    let(:subject) { described_class.without_export }
 
     it 'includes document without export' do
       expect(subject).to include document
     end
 
-    it 'includes document with active export' do
-      export.active!
-      expect(subject).to include document
-    end
-
-    it 'includes document with aborted export' do
-      export.aborted!
-      expect(subject).to include document
-    end
-
-    it 'excludes document with completed export' do
-      export.completed!
+    it 'excludes document with export' do
+      create(:export, document: document)
       expect(subject).not_to include document
     end
   end

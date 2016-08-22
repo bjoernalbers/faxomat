@@ -39,13 +39,13 @@ class Document < ActiveRecord::Base
     end
 
     def exportable_to_evk
-      without_completed_export.
+      without_export.
         with_evk_recipient.
         with_verified_report
     end
 
-    def without_completed_export
-      where.not(id: Export.completed.select(:document_id))
+    def without_export
+      where.not(id: Export.select(:document_id))
     end
 
     def with_evk_recipient
