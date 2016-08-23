@@ -78,3 +78,6 @@ gem 'devise', '~> 3.5'
 gem 'devise-i18n', '~> 0.12'
 gem 'prawn', '~> 2.0'
 gem 'rails-i18n', '~> 4.0'
+
+# soft-delete records
+gem 'paranoia', '~> 2.2.0.pre'

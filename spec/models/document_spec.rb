@@ -189,6 +189,12 @@ describe Document do
       create(:export, document: document)
       expect(subject).not_to include document
     end
+
+    it 'excludes document with soft-deleted export' do
+      export = create(:export, document: document)
+      export.destroy
+      expect(subject).not_to include document
+    end
   end
 
   describe '.with_evk_recipient' do

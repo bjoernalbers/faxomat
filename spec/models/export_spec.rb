@@ -9,6 +9,17 @@ describe Export do
     expect(described_class.model_name.human).to eq 'Export'
   end
 
+  describe '.find' do
+    subject { create(:export) }
+
+    it 'includes deleted records' do
+      subject.destroy
+      expect {
+        described_class.find(subject.id)
+      }.not_to raise_error
+    end
+  end
+
   it_behaves_like 'a deliverable'
 
   describe '#directory' do
@@ -133,33 +144,44 @@ describe Export do
   describe '#destroy' do
     subject { create(:export) }
 
-    context 'when destination present' do
-      it 'deletes destination' do
-        subject.destroy
-        expect(subject.destination).not_to be_exist
-      end
-
-      it 'removes record' do
-        subject.destroy
-        expect(subject).not_to be_persisted
-      end
+    it 'soft-deletes record' do
+      expect(subject).not_to be_deleted
+      subject.destroy
+      expect(subject).to be_deleted
+      expect(subject).to be_persisted
     end
 
-    context 'when destination missing' do
-      before do
-        subject.destination.delete
-      end
+    it 'deletes destination when present' do
+      subject.destroy
+      expect(subject.destination).not_to be_exist
+    end
 
-      it 'ignores destination when missing' do
-        expect {
-          subject.destroy
-        }.not_to raise_error(StandardError)
-      end
-
-      it 'removes record' do
+    it 'does not delete destination when missing' do
+      subject.destination.delete
+      expect {
         subject.destroy
-        expect(subject).not_to be_persisted
-      end
+      }.not_to raise_error(StandardError)
+    end
+  end
+
+  describe '#restore' do
+    subject { create(:export) }
+
+    before do
+      subject.destroy
+    end
+
+    it 'undeletes record' do
+      expect(subject).to be_persisted
+      expect(subject).to be_deleted
+      subject.restore
+      expect(subject).not_to be_deleted
+    end
+
+    it 'restores file' do
+      expect(subject.destination).not_to be_exist
+      subject.restore
+      expect(subject.destination).to be_exist
     end
   end
 

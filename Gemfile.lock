@@ -140,6 +140,8 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
+    paranoia (2.2.0.pre)
+      activerecord (>= 4.0, < 5.1)
     pdf-core (0.5.1)
     pdf-inspector (1.2.0)
       pdf-reader (~> 1.0)
@@ -278,6 +280,7 @@ DEPENDENCIES
   jquery-rails
   lograge
   paperclip
+  paranoia (~> 2.2.0.pre)
   pdf-inspector (~> 1.2)
   pg
   prawn (~> 2.0)

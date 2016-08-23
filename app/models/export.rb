@@ -1,12 +1,15 @@
 class Export < ActiveRecord::Base
   include Deliverable
 
+  acts_as_paranoid without_default_scope: true
+
   belongs_to :directory,
     required: true
 
   before_create :set_filename, unless: :filename
   before_create :copy_file
   after_destroy :delete_destination
+  after_restore :copy_file
 
   def source
     @source ||= Pathname.new(document.path)
