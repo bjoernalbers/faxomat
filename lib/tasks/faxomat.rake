@@ -42,7 +42,6 @@ namespace :faxomat do
       Export.without_deleted.where('created_at < ?', 3.weeks.ago).destroy_all
     count = deleted_exports.count
     noun = Export.model_name.human(count: count)
-    logger.info "#{task.name}: #{count} #{noun} gelöscht"
     unless count.zero?
       deleted_exports.each do |e|
         logger.debug {
@@ -50,5 +49,6 @@ namespace :faxomat do
         }
       end
     end
+    logger.info "#{task.name}: #{count} #{noun} gelöscht"
   end
 end
