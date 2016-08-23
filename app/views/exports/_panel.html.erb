@@ -19,14 +19,18 @@
   <% else %>
     <ul id="exports" class="list-group">
       <% @document.exports.each do |export| %>
-        <li class="list-group-item">
+        <li class="list-group-item <%= "disabled" if export.deleted? %>">
           <p class="list-group-item-heading">
             <strong>
               <%= export.filename %>
             </strong>
           </p>
           <p class="list-group-item-text">
-            Exportiert am <%= l export.created_at %> an <%= export.directory.description %>
+            <% if export.deleted? %>
+              Gelöscht am <%= l export.deleted_at %>
+            <% else %>
+              Exportiert am <%= l export.created_at %> an <%= export.directory.description %>
+            <% end %>
           </p>
         </li>
       <% end %>
