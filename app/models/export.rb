@@ -6,6 +6,7 @@ class Export < ActiveRecord::Base
 
   before_create :set_filename, unless: :filename
   before_create :copy_file
+  after_destroy :delete_destination
 
   def source
     @source ||= Pathname.new(document.path)
@@ -41,5 +42,9 @@ class Export < ActiveRecord::Base
       retry
     end
     raise e
+  end
+
+  def delete_destination
+    destination.delete if destination.exist?
   end
 end

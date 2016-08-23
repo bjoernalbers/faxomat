@@ -130,6 +130,39 @@ describe Export do
     end
   end
 
+  describe '#destroy' do
+    subject { create(:export) }
+
+    context 'when destination present' do
+      it 'deletes destination' do
+        subject.destroy
+        expect(subject.destination).not_to be_exist
+      end
+
+      it 'removes record' do
+        subject.destroy
+        expect(subject).not_to be_persisted
+      end
+    end
+
+    context 'when destination missing' do
+      before do
+        subject.destination.delete
+      end
+
+      it 'ignores destination when missing' do
+        expect {
+          subject.destroy
+        }.not_to raise_error(StandardError)
+      end
+
+      it 'removes record' do
+        subject.destroy
+        expect(subject).not_to be_persisted
+      end
+    end
+  end
+
   ### Private methods below!!! ###
 
   describe '#copy_file!' do
