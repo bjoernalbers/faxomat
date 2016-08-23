@@ -1,4 +1,11 @@
 namespace :faxomat do
+  def build_logger
+    logger = ActiveSupport::Logger.new('log/evkexport.log')
+    logger.formatter = proc do |severity, datetime, progname, msg|
+      "[#{severity}] #{msg}\n"
+    end
+  end
+
   desc 'Update status of active prints.'
   task :check => :environment do
     puts "#{Time.zone.now.iso8601} Updating active print jobs on #{Rails.env}..."
@@ -8,10 +15,7 @@ namespace :faxomat do
   desc 'Export all report print jobs addressing EVK fax numbers.'
   task :evkexport => :environment do |task|
     start_time = Time.zone.now
-    logger = ActiveSupport::Logger.new('log/evkexport.log')
-    logger.formatter = proc do |severity, datetime, progname, msg|
-      "[#{severity}] #{msg}\n"
-    end
+    logger = build_logger
     logger.info "#{task.name} gestartet um #{start_time}"
     documents = Document.exportable_to_evk
     logger.info "Exportiere #{documents.count} Dokumente..."
@@ -28,5 +32,13 @@ namespace :faxomat do
       end
     end
     logger.info "#{task.name} beendet um #{Time.zone.now} in #{ActionController::Base.helpers.distance_of_time_in_words_to_now(start_time)}"
+  end
+
+  desc 'Delete old exports.'
+  task :delete_old_exports => :environment do |task|
+    deleted_exports =
+      Export.without_deleted.where('created_at < ?', 3.weeks.ago).destroy_all
+    logger = build_logger
+    logger.info "#{task.name}: Es wurden #{deleted_exports.count} alte Exporte gelöscht."
   end
 end
