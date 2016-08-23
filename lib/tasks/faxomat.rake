@@ -1,9 +1,10 @@
 namespace :faxomat do
   def build_logger
-    logger = ActiveSupport::Logger.new('log/evkexport.log')
+    logger = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = proc do |severity, datetime, progname, msg|
-      "[#{severity}] #{msg}\n"
+      "#{datetime.iso8601} [#{severity}] #{msg}\n"
     end
+    logger
   end
 
   desc 'Update status of active prints.'
@@ -36,9 +37,18 @@ namespace :faxomat do
 
   desc 'Delete old exports.'
   task :delete_old_exports => :environment do |task|
+    logger = build_logger
     deleted_exports =
       Export.without_deleted.where('created_at < ?', 3.weeks.ago).destroy_all
-    logger = build_logger
-    logger.info "#{task.name}: Es wurden #{deleted_exports.count} alte Exporte gelöscht."
+    count = deleted_exports.count
+    noun = Export.model_name.human(count: count)
+    logger.info "#{task.name}: #{count} #{noun} gelöscht"
+    unless count.zero?
+      deleted_exports.each do |e|
+        logger.debug {
+          "#{task.name}: #{e.model_name.human} #{e.id} (#{e.destination})"
+        }
+      end
+    end
   end
 end

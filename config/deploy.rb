@@ -30,7 +30,7 @@ set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'db/prod
 set :linked_dirs, fetch(:linked_dirs, []).push('storage')
 
 # Launchd-Services
-set :services, %w(app check)
+set :services, %w(app check delete_old_exports)
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
