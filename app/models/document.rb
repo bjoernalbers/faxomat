@@ -50,7 +50,7 @@ class Document < ActiveRecord::Base
 
     def with_evk_recipient
       joins(:recipient).
-        merge(Recipient.where('fax_number LIKE ?', "02941671%"))
+        merge(Recipient.where('fax_number LIKE ?', '02941671%'))
     end
 
     def with_verified_report
@@ -100,6 +100,10 @@ class Document < ActiveRecord::Base
 
   def recipient_fax_number?
     recipient.fax_number?
+  end
+
+  def recipient_is_evk?
+    !!(recipient.fax_number.match(/^02941671/) if recipient.fax_number?)
   end
 
   def report_pdf

@@ -7,12 +7,26 @@ class Document::Deliverer
   end
 
   def deliver
+    print_document
+    export_document if document.recipient_is_evk?
+  end
+
+  def print_document
     document.prints.create(printer: printer)
   end
+
+  def export_document
+    document.exports.create(directory: directory) if directory
+  end
+
 
   private
 
   def printer
     (recipient.fax_number.present? ? FaxPrinter : PaperPrinter).default
+  end
+
+  def directory
+    Directory.default
   end
 end

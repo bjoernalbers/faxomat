@@ -346,6 +346,34 @@ describe Document do
     end
   end
 
+  describe '#recipient_is_evk?' do
+    let(:subject) { build(:document, recipient: recipient) }
+
+    context 'with EVK fax number prefix' do
+      let(:recipient) { create(:recipient, fax_number: '02941671') }
+
+      it 'is true' do
+        expect(subject.recipient_is_evk?).to eq true
+      end
+    end
+
+    context 'with different fax number prefix' do
+      let(:recipient) { create(:recipient, fax_number: '02941672') }
+
+      it 'is false' do
+        expect(subject.recipient_is_evk?).to eq false
+      end
+    end
+
+    context 'without fax number' do
+      let(:recipient) { create(:recipient, fax_number: nil) }
+
+      it 'is false' do
+        expect(subject.recipient_is_evk?).to eq false
+      end
+    end
+  end
+
   describe '#recipient_fax_number?' do
     it 'is true when recipipent has fax number' do
       expect(subject.recipient.fax_number).to be_present
