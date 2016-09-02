@@ -39,7 +39,7 @@ namespace :faxomat do
   task :delete_old_exports => :environment do |task|
     logger = build_logger
     deleted_exports =
-      Export.without_deleted.where('created_at < ?', 3.weeks.ago).destroy_all
+      Export.without_deleted.where('created_at < ?', 3.months.ago).destroy_all
     count = deleted_exports.count
     noun = Export.model_name.human(count: count)
     unless count.zero?
