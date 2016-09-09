@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160902095459) do
+ActiveRecord::Schema.define(version: 20160908161431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -111,6 +111,16 @@ ActiveRecord::Schema.define(version: 20160902095459) do
 
   add_index "recipients", ["address_id"], name: "index_recipients_on_address_id", using: :btree
 
+  create_table "report_verifications", force: :cascade do |t|
+    t.integer  "report_id",  null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "report_verifications", ["report_id"], name: "index_report_verifications_on_report_id", unique: true, using: :btree
+  add_index "report_verifications", ["user_id"], name: "index_report_verifications_on_user_id", using: :btree
+
   create_table "reports", force: :cascade do |t|
     t.integer  "user_id",     null: false
     t.datetime "created_at",  null: false
@@ -124,7 +134,6 @@ ActiveRecord::Schema.define(version: 20160902095459) do
     t.text     "procedure",   null: false
     t.text     "clinic"
     t.date     "study_date",  null: false
-    t.datetime "verified_at"
     t.datetime "canceled_at"
   end
 
@@ -170,4 +179,6 @@ ActiveRecord::Schema.define(version: 20160902095459) do
   add_foreign_key "exports", "directories"
   add_foreign_key "exports", "documents"
   add_foreign_key "recipients", "addresses"
+  add_foreign_key "report_verifications", "reports"
+  add_foreign_key "report_verifications", "users"
 end

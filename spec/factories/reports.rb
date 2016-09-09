@@ -32,18 +32,19 @@ FactoryGirl.define do
     patient
 
     factory :pending_report do
-      verified_at { nil }
-      canceled_at { nil }
     end
 
     factory :verified_report do
-      verified_at { Time.zone.now }
-      canceled_at { nil }
+      after(:create) do |report,evaluator|
+        report.verify!
+      end
     end
 
     factory :canceled_report do
-      verified_at { Time.zone.now }
-      canceled_at { Time.zone.now }
+      after(:create) do |report,evaluator|
+        report.verify!
+        report.cancel!
+      end
     end
   end
 

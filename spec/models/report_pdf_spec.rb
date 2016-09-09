@@ -73,7 +73,7 @@ describe ReportPdf do
     end
 
     context 'with verified report' do
-      let(:report) { build(:verified_report) }
+      let(:report) { create(:verified_report) }
 
       it 'includes no watermark'
       it 'includes signature'
@@ -95,17 +95,17 @@ describe ReportPdf do
 
   describe '#watermark' do
     it 'with pending report returns "ENTWURF"' do
-      document.report = build(:pending_report)
+      document.report = create(:pending_report)
       expect(subject.watermark).to eq 'ENTWURF'
     end
 
     it 'with verified report returns nil' do
-      document.report = build(:verified_report)
+      document.report = create(:verified_report)
       expect(subject.watermark).to be nil
     end
 
     it 'with canceled report returns "STORNIERT"' do
-      document.report = build(:canceled_report)
+      document.report = create(:canceled_report)
       expect(subject.watermark).to eq 'STORNIERT'
     end
   end

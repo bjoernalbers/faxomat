@@ -88,14 +88,14 @@ describe ReportsController do
     let(:report) { create(:pending_report, user: current_user) }
 
     def do_patch
-      patch :update, id: report, 'status' => 'verified'
+      patch :update, id: report, 'diagnosis' => 'chunky bacon'
     end
 
     context 'with valid params' do
       it 'updates report' do
         do_patch
         report.reload
-        expect(report).to be_verified
+        expect(report.diagnosis).to eq 'chunky bacon'
       end
 
       it 'redirects to report' do
@@ -106,7 +106,7 @@ describe ReportsController do
 
     context 'with invalid params' do
       def do_patch
-        patch :update, id: report, 'status' => 'canceled'
+        patch :update, id: report, 'study' => ''
       end
 
       it 'does not update report' do

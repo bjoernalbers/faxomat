@@ -9,6 +9,7 @@ de:
         other: Exporte
       template: Vorlage
       report: Bericht
+      report/verification: Vidierung
       api/report: Bericht
       recipient: Überweiser
       user: Arzt
@@ -76,6 +77,9 @@ de:
         evaluation: Beurteilung
         procedure: Methode
         clinic: Klinik
+      report/verification:
+        report: Bericht
+        user: Arzt
       api/report:
         address: Adresse
         report: Bericht

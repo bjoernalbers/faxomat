@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   resources :reports, only: [:index, :show, :destroy, :update] do
     patch :verify, on: :member
+    patch :cancel, on: :member
   end
 
   resources :documents, only: [:index, :show] do

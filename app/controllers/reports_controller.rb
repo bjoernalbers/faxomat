@@ -30,8 +30,18 @@ class ReportsController < ApplicationController
   def verify
     load_user_report
     if @report.pending?
-      @report.update!(status: :verified)
+      @report.verify!
       redirect_to reports_url, notice: "Arztbrief erfolgreich vidiert."
+    else
+      render :show
+    end
+  end
+
+  def cancel
+    load_user_report
+    if @report.verified?
+      @report.cancel!
+      redirect_to reports_url, notice: "Arztbrief erfolgreich storniert."
     else
       render :show
     end
@@ -66,7 +76,6 @@ class ReportsController < ApplicationController
   end
 
   def report_params
-    # NOTE: Since we're using button_to to update the model we can't nest attributes!
-    params.permit(:status)
+    params.permit(:diagnosis) # TODO: Permit also other report attributes!
   end
 end

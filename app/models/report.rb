@@ -4,6 +4,7 @@ class Report < ActiveRecord::Base
 
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
+  has_many :verifications
 
   validates_presence_of :anamnesis,
     :evaluation,
@@ -20,11 +21,11 @@ class Report < ActiveRecord::Base
 
   class << self
     def pending
-      where('verified_at IS NULL')
+      without_verification
     end
 
     def verified
-      where('verified_at IS NOT NULL AND canceled_at IS NULL')
+      with_verification.where('canceled_at IS NULL')
     end
 
     def canceled
@@ -32,27 +33,35 @@ class Report < ActiveRecord::Base
     end
 
     def not_verified
-      where('verified_at IS NULL OR canceled_at IS NOT NULL')
+      where('reports.id NOT IN (SELECT report_verifications.report_id FROM report_verifications) OR reports.canceled_at IS NOT NULL')
+    end
+
+    def without_verification
+      where.not(id: Verification.select(:report_id))
+    end
+
+    def with_verification
+      where(id: Verification.select(:report_id))
     end
   end
 
   def status
     if canceled_at.present?
       :canceled
-    elsif verified_at.present?
+    elsif verifications.present?
       :verified
     else
       :pending
     end
   end
 
-  def status=(attr)
-    case attr.to_sym
-    when :verified
-      self.verified_at = Time.zone.now if pending?
-    when :canceled
-      self.canceled_at = Time.zone.now if verified?
-    end
+  def verify!
+    verifications.create!(user: user) if pending?
+  end
+
+  def cancel!
+    update!(canceled_at: Time.zone.now) if verified?
+    update_documents # debug
   end
 
   %i(pending verified canceled).each do |method_name|
@@ -99,6 +108,11 @@ class Report < ActiveRecord::Base
     ReportPdf.new(self)
   end
 
+  def update_documents
+    #documents.each { |document| document.save } # `documents.each` does not work!
+    documents.find_each { |document| document.save }
+  end
+
   private
 
   # NOTE: Tomedo somehow sends both carriage return and newlines. We're
@@ -124,11 +138,7 @@ class Report < ActiveRecord::Base
   end
 
   def has_forbidden_changes?
-    allowed_fields = %w(verified_at canceled_at updated_at)
+    allowed_fields = %w(canceled_at updated_at)
     !pending? && !changed.all? { |c| allowed_fields.include?(c) }
-  end
-
-  def update_documents
-    documents.each { |document| document.save }
   end
 end

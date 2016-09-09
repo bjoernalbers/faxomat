@@ -23,12 +23,12 @@ shared_examples 'a deliverable' do
       expect(subject).to be_invalid
       expect(subject.errors[:document]).to be_present
 
-      report.update! status: :verified
+      report.verify!
       expect(document).to be_released_for_delivery
       expect(subject).to be_valid
       
       subject.save
-      report.update! status: :canceled
+      report.cancel!
       expect(document).not_to be_released_for_delivery
       expect(subject).to be_valid
     end

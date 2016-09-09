@@ -10,6 +10,8 @@ describe Report do
 
   it { expect(subject).to have_many(:prints).through(:documents) }
 
+  it { expect(subject).to have_many(:verifications) }
+
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
     {
@@ -45,7 +47,6 @@ describe Report do
     :diagnosis,
     :findings,
     :clinic,
-    :verified_at,
     :canceled_at
   ].each do |attribute|
     it { expect(subject).not_to validate_presence_of(attribute) }
@@ -96,7 +97,7 @@ describe Report do
 
   describe '#status' do
     context 'when :pending' do
-      let(:subject) { build(:pending_report) }
+      let(:subject) { create(:pending_report) }
 
       it 'returns status as symbol' do
         expect(subject.status).to eq :pending
@@ -108,38 +109,27 @@ describe Report do
         expect(subject).not_to be_canceled
       end
 
-      it 'has no verified_at' do
-        expect(subject.verified_at).to be nil
+      it 'has no verification' do
+        expect(subject.verifications).to be_empty
       end
 
       it 'has no canceled_at' do
         expect(subject.canceled_at).to be nil
       end
 
-      it 'can be changed to :verified' do
-        subject.status = :verified
+      it 'is verifiable' do
+        subject.verify!
         expect(subject).to be_verified
       end
 
-      it 'can be updated to :verified' do
-        subject.save
-        expect(subject.update(status: :verified)).to eq true
-        expect(subject).to be_verified
-      end
-
-      it 'can not be changed to :canceled' do
-        subject.status = :canceled
-        expect(subject).to be_pending
-      end
-
-      it 'can not be changed to unknown status' do
-        subject.status = :chunky_bacon
+      it 'is not cancelable' do
+        subject.cancel!
         expect(subject).to be_pending
       end
     end
 
     context 'when :verified' do
-      let(:subject) { build(:verified_report) }
+      let(:subject) { create(:verified_report) }
 
       it 'returns status an symbol' do
         expect(subject.status).to eq :verified
@@ -151,33 +141,22 @@ describe Report do
         expect(subject).not_to be_canceled
       end
 
-      it 'has verified_at' do
-        expect(subject.verified_at).not_to be nil
+      it 'has verification' do
+        expect(subject.verifications.count).to eq 1
       end
 
       it 'has no canceled_at' do
         expect(subject.canceled_at).to be nil
       end
 
-      it 'can be changed to :canceled' do
-        subject.status = :canceled
+      it 'is cancelable' do
+        subject.cancel!
         expect(subject).to be_canceled
-      end
-
-      it 'can be updated to :canceled' do
-        subject.save
-        expect(subject.update(status: :canceled)).to eq true
-        expect(subject).to be_canceled
-      end
-
-      it 'can not be changed to :pending' do
-        subject.status = :pending
-        expect(subject).to be_verified
       end
     end
 
     context 'when :canceled' do
-      let(:subject) { build(:canceled_report) }
+      let(:subject) { create(:canceled_report) }
 
       it 'returns status as symbol' do
         expect(subject.status).to eq :canceled
@@ -189,22 +168,12 @@ describe Report do
         expect(subject).not_to be_pending
       end
 
-      it 'has verified_at' do
-        expect(subject.verified_at).not_to be nil
+      it 'has verification' do
+        expect(subject.verifications.count).to eq 1
       end
 
       it 'has canceled_at' do
         expect(subject.canceled_at).not_to be nil
-      end
-
-      it 'can not be changed to :pending' do
-        subject.status = :pending
-        expect(subject).to be_canceled
-      end
-
-      it 'can not be changed to :verified' do
-        subject.status = :verified
-        expect(subject).to be_canceled
       end
     end
   end
@@ -352,7 +321,7 @@ describe Report do
 
   describe '#include_signature?' do
     it 'is true with report verification' do
-      subject = build(:verified_report)
+      subject = create(:verified_report)
       expect(subject.include_signature?).to be true
     end
 
@@ -362,13 +331,25 @@ describe Report do
     end
   end
 
-  describe 'when updated' do
+  describe 'on verification' do
     let!(:subject) { create(:pending_report) }
     let!(:document) { create(:document, report: subject) }
 
-    it 'updates document when changed' do
+    it 'updates documents' do
       old_fingerprint = document.fingerprint
-      subject.update(status: :verified)
+      subject.verify!
+      document.reload
+      expect(document.fingerprint).not_to eq(old_fingerprint)
+    end
+  end
+
+  describe 'on cancelation' do
+    let!(:subject) { create(:verified_report) }
+    let!(:document) { create(:document, report: subject) }
+
+    it 'updates documents' do
+      old_fingerprint = document.fingerprint
+      subject.cancel!
       document.reload
       expect(document.fingerprint).not_to eq(old_fingerprint)
     end
