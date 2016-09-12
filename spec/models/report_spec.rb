@@ -12,6 +12,8 @@ describe Report do
 
   it { expect(subject).to have_many(:verifications) }
 
+  it { expect(subject).to have_one(:cancellation) }
+
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
     {
@@ -47,7 +49,6 @@ describe Report do
     :diagnosis,
     :findings,
     :clinic,
-    :canceled_at
   ].each do |attribute|
     it { expect(subject).not_to validate_presence_of(attribute) }
   end
@@ -113,8 +114,8 @@ describe Report do
         expect(subject.verifications).to be_empty
       end
 
-      it 'has no canceled_at' do
-        expect(subject.canceled_at).to be nil
+      it 'has no cancellation' do
+        expect(subject.cancellation).not_to be_present
       end
 
       it 'is verifiable' do
@@ -145,8 +146,8 @@ describe Report do
         expect(subject.verifications.count).to eq 1
       end
 
-      it 'has no canceled_at' do
-        expect(subject.canceled_at).to be nil
+      it 'has no cancellation' do
+        expect(subject.cancellation).not_to be_present
       end
 
       it 'is cancelable' do
@@ -168,12 +169,8 @@ describe Report do
         expect(subject).not_to be_pending
       end
 
-      it 'has verification' do
-        expect(subject.verifications.count).to eq 1
-      end
-
-      it 'has canceled_at' do
-        expect(subject.canceled_at).not_to be nil
+      it 'has cancellation' do
+        expect(subject.cancellation).to be_present
       end
     end
   end

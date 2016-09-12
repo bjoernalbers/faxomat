@@ -5,6 +5,7 @@ class Report < ActiveRecord::Base
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
   has_many :verifications
+  has_one  :cancellation
 
   validates_presence_of :anamnesis,
     :evaluation,
@@ -25,28 +26,36 @@ class Report < ActiveRecord::Base
     end
 
     def verified
-      with_verification.where('canceled_at IS NULL')
+      with_verification.without_cancellation
     end
 
     def canceled
-      where('canceled_at IS NOT NULL')
+      with_cancellation
     end
 
     def not_verified
-      where('reports.id NOT IN (SELECT report_verifications.report_id FROM report_verifications) OR reports.canceled_at IS NOT NULL')
+      where('reports.id NOT IN (SELECT report_verifications.report_id FROM report_verifications) OR reports.id IN (SELECT report_cancellations.report_id FROM report_cancellations)')
     end
 
     def without_verification
-      where.not(id: Verification.select(:report_id))
+      where.not(id: self::Verification.select(:report_id))
     end
 
     def with_verification
-      where(id: Verification.select(:report_id))
+      where(id: self::Verification.select(:report_id))
+    end
+
+    def without_cancellation
+      where.not(id: self::Cancellation.select(:report_id))
+    end
+
+    def with_cancellation
+      where(id: self::Cancellation.select(:report_id))
     end
   end
 
   def status
-    if canceled_at.present?
+    if cancellation.present?
       :canceled
     elsif verifications.present?
       :verified
@@ -60,8 +69,7 @@ class Report < ActiveRecord::Base
   end
 
   def cancel!
-    update!(canceled_at: Time.zone.now) if verified?
-    update_documents # debug
+    create_cancellation!(user: user) if verified?
   end
 
   %i(pending verified canceled).each do |method_name|
@@ -138,7 +146,7 @@ class Report < ActiveRecord::Base
   end
 
   def has_forbidden_changes?
-    allowed_fields = %w(canceled_at updated_at)
+    allowed_fields = %w(updated_at)
     !pending? && !changed.all? { |c| allowed_fields.include?(c) }
   end
 end
