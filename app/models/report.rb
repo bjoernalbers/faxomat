@@ -5,7 +5,6 @@ class Report < ActiveRecord::Base
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
   has_one  :release
-  has_one  :cancellation
 
   validates_presence_of :anamnesis,
     :evaluation,
@@ -22,54 +21,41 @@ class Report < ActiveRecord::Base
 
   class << self
     def pending
-      without_release
+      where.not(id: self::Release.with_deleted.select(:report_id))
     end
 
     def verified
-      with_release.without_cancellation
+      where(id: self::Release.without_deleted.select(:report_id))
     end
 
     def canceled
-      with_cancellation
+      where(id: self::Release.only_deleted.select(:report_id))
     end
 
     def not_verified
-      where('reports.id NOT IN (SELECT report_releases.report_id FROM report_releases) OR reports.id IN (SELECT report_cancellations.report_id FROM report_cancellations)')
-    end
-
-    def without_release
-      where.not(id: self::Release.select(:report_id))
-    end
-
-    def with_release
-      where(id: self::Release.select(:report_id))
-    end
-
-    def without_cancellation
-      where.not(id: self::Cancellation.select(:report_id))
-    end
-
-    def with_cancellation
-      where(id: self::Cancellation.select(:report_id))
+      where.not(id: self::Release.without_deleted.select(:report_id))
     end
   end
 
   def status
-    if cancellation.present?
-      :canceled
-    elsif release.present?
-      :verified
+    if release
+      release.deleted? ? :canceled : :verified
     else
       :pending
     end
   end
 
+  def release
+    # Return release, even when soft-deleted
+    self.class::Release.unscoped { super }
+  end
+
   def verify!
-    create_release!(user: user) if pending?
+    create_release!(user: user) unless release.present?
   end
 
   def cancel!
-    create_cancellation!(user: user) if verified?
+    release.destroy if release.present? && !release.deleted?
   end
 
   %i(pending verified canceled).each do |method_name|
@@ -78,6 +64,7 @@ class Report < ActiveRecord::Base
     end
   end
   alias_method :deletable?, :pending?
+  alias_method :updatable?, :pending?
   alias_method :include_signature?, :verified?
 
   def subject
@@ -133,20 +120,16 @@ class Report < ActiveRecord::Base
   end
 
   def check_if_destroyable
-    unless pending?
-      errors.add(:base, 'Arztbrief darf nicht mehr gelöscht werden!')
+    unless deletable?
+      errors.add(:base, 'Bericht darf nicht mehr gelöscht werden!')
       false
     end
   end
 
   def check_if_updatable
-    if has_forbidden_changes?
-      errors.add(:base, 'Arztbrief darf nicht mehr verändert werden!')
+    unless updatable?
+      errors.add(:base, 'Bericht darf nicht mehr verändert werden!')
+      false
     end
-  end
-
-  def has_forbidden_changes?
-    allowed_fields = %w(updated_at)
-    !pending? && !changed.all? { |c| allowed_fields.include?(c) }
   end
 end

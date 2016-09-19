@@ -3,7 +3,7 @@ describe Report::Release do
   let(:other) { create(:report_release) }
 
   it 'is translated' do
-    expect(described_class.model_name.human).to eq 'Vidierung'
+    expect(described_class.model_name.human).to eq 'Berichtfreigabe'
   end
 
   describe '#report' do

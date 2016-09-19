@@ -9,8 +9,7 @@ de:
         other: Exporte
       template: Vorlage
       report: Bericht
-      report/cancellation: Stornierung
-      report/release: Vidierung
+      report/release: Berichtfreigabe
       api/report: Bericht
       recipient: Überweiser
       user: Arzt
@@ -78,12 +77,10 @@ de:
         evaluation: Beurteilung
         procedure: Methode
         clinic: Klinik
-      report/cancellation:
-        report: Bericht
-        user: Arzt
       report/release:
         report: Bericht
         user: Arzt
+        deleted_at: Stornierungszeitpunkt
       api/report:
         address: Adresse
         report: Bericht

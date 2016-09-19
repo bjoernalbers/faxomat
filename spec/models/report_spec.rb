@@ -12,8 +12,6 @@ describe Report do
 
   it { expect(subject).to have_one(:release) }
 
-  it { expect(subject).to have_one(:cancellation) }
-
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
     {
@@ -110,14 +108,6 @@ describe Report do
         expect(subject).not_to be_canceled
       end
 
-      it 'has no release' do
-        expect(subject.release).not_to be_present
-      end
-
-      it 'has no cancellation' do
-        expect(subject.cancellation).not_to be_present
-      end
-
       it 'is verifiable' do
         subject.verify!
         expect(subject).to be_verified
@@ -142,14 +132,6 @@ describe Report do
         expect(subject).not_to be_canceled
       end
 
-      it 'has release' do
-        expect(subject.release).to be_present
-      end
-
-      it 'has no cancellation' do
-        expect(subject.cancellation).not_to be_present
-      end
-
       it 'is cancelable' do
         subject.cancel!
         expect(subject).to be_canceled
@@ -167,10 +149,6 @@ describe Report do
         expect(subject).to be_canceled
         expect(subject).not_to be_verified
         expect(subject).not_to be_pending
-      end
-
-      it 'has cancellation' do
-        expect(subject.cancellation).to be_present
       end
     end
   end

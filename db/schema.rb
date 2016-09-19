@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160919105044) do
+ActiveRecord::Schema.define(version: 20160919200417) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -111,16 +111,6 @@ ActiveRecord::Schema.define(version: 20160919105044) do
 
   add_index "recipients", ["address_id"], name: "index_recipients_on_address_id", using: :btree
 
-  create_table "report_cancellations", force: :cascade do |t|
-    t.integer  "report_id",  null: false
-    t.integer  "user_id",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "report_cancellations", ["report_id"], name: "index_report_cancellations_on_report_id", unique: true, using: :btree
-  add_index "report_cancellations", ["user_id"], name: "index_report_cancellations_on_user_id", using: :btree
-
   create_table "report_releases", force: :cascade do |t|
     t.integer  "report_id",  null: false
     t.integer  "user_id",    null: false
@@ -190,8 +180,6 @@ ActiveRecord::Schema.define(version: 20160919105044) do
   add_foreign_key "exports", "directories"
   add_foreign_key "exports", "documents"
   add_foreign_key "recipients", "addresses"
-  add_foreign_key "report_cancellations", "reports"
-  add_foreign_key "report_cancellations", "users"
   add_foreign_key "report_releases", "reports"
   add_foreign_key "report_releases", "users"
 end
