@@ -4,7 +4,7 @@ class Report < ActiveRecord::Base
 
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
-  has_many :releases
+  has_one  :release
   has_one  :cancellation
 
   validates_presence_of :anamnesis,
@@ -57,7 +57,7 @@ class Report < ActiveRecord::Base
   def status
     if cancellation.present?
       :canceled
-    elsif releases.present?
+    elsif release.present?
       :verified
     else
       :pending
@@ -65,7 +65,7 @@ class Report < ActiveRecord::Base
   end
 
   def verify!
-    releases.create!(user: user) if pending?
+    create_release!(user: user) if pending?
   end
 
   def cancel!

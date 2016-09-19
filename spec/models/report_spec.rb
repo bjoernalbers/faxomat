@@ -10,7 +10,7 @@ describe Report do
 
   it { expect(subject).to have_many(:prints).through(:documents) }
 
-  it { expect(subject).to have_many(:releases) }
+  it { expect(subject).to have_one(:release) }
 
   it { expect(subject).to have_one(:cancellation) }
 
@@ -111,7 +111,7 @@ describe Report do
       end
 
       it 'has no release' do
-        expect(subject.releases).to be_empty
+        expect(subject.release).not_to be_present
       end
 
       it 'has no cancellation' do
@@ -143,7 +143,7 @@ describe Report do
       end
 
       it 'has release' do
-        expect(subject.releases.count).to eq 1
+        expect(subject.release).to be_present
       end
 
       it 'has no cancellation' do
@@ -328,7 +328,7 @@ describe Report do
     end
   end
 
-  describe 'on release' do
+  describe 'on verification' do
     let!(:subject) { create(:pending_report) }
     let!(:document) { create(:document, report: subject) }
 

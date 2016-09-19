@@ -6,7 +6,7 @@ class Report::Cancellation < ActiveRecord::Base
   private
 
   def report_has_release
-    unless report.releases.present?
+    unless report.release.present?
       errors[:report] << 'ist nicht vidiert'
     end
   end
