@@ -104,4 +104,10 @@ describe User do
       end
     end
   end
+
+  describe '#can_release_reports?' do
+    it 'defaults to false' do
+      expect(subject.can_release_reports?).not_to be
+    end
+  end
 end
