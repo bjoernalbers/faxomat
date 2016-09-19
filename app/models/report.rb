@@ -4,7 +4,7 @@ class Report < ActiveRecord::Base
 
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
-  has_many :verifications
+  has_many :releases
   has_one  :cancellation
 
   validates_presence_of :anamnesis,
@@ -22,11 +22,11 @@ class Report < ActiveRecord::Base
 
   class << self
     def pending
-      without_verification
+      without_release
     end
 
     def verified
-      with_verification.without_cancellation
+      with_release.without_cancellation
     end
 
     def canceled
@@ -34,15 +34,15 @@ class Report < ActiveRecord::Base
     end
 
     def not_verified
-      where('reports.id NOT IN (SELECT report_verifications.report_id FROM report_verifications) OR reports.id IN (SELECT report_cancellations.report_id FROM report_cancellations)')
+      where('reports.id NOT IN (SELECT report_releases.report_id FROM report_releases) OR reports.id IN (SELECT report_cancellations.report_id FROM report_cancellations)')
     end
 
-    def without_verification
-      where.not(id: self::Verification.select(:report_id))
+    def without_release
+      where.not(id: self::Release.select(:report_id))
     end
 
-    def with_verification
-      where(id: self::Verification.select(:report_id))
+    def with_release
+      where(id: self::Release.select(:report_id))
     end
 
     def without_cancellation
@@ -57,7 +57,7 @@ class Report < ActiveRecord::Base
   def status
     if cancellation.present?
       :canceled
-    elsif verifications.present?
+    elsif releases.present?
       :verified
     else
       :pending
@@ -65,7 +65,7 @@ class Report < ActiveRecord::Base
   end
 
   def verify!
-    verifications.create!(user: user) if pending?
+    releases.create!(user: user) if pending?
   end
 
   def cancel!

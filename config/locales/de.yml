@@ -10,7 +10,7 @@ de:
       template: Vorlage
       report: Bericht
       report/cancellation: Stornierung
-      report/verification: Vidierung
+      report/release: Vidierung
       api/report: Bericht
       recipient: Überweiser
       user: Arzt
@@ -81,7 +81,7 @@ de:
       report/cancellation:
         report: Bericht
         user: Arzt
-      report/verification:
+      report/release:
         report: Bericht
         user: Arzt
       api/report:

@@ -10,7 +10,7 @@ describe Report do
 
   it { expect(subject).to have_many(:prints).through(:documents) }
 
-  it { expect(subject).to have_many(:verifications) }
+  it { expect(subject).to have_many(:releases) }
 
   it { expect(subject).to have_one(:cancellation) }
 
@@ -110,8 +110,8 @@ describe Report do
         expect(subject).not_to be_canceled
       end
 
-      it 'has no verification' do
-        expect(subject.verifications).to be_empty
+      it 'has no release' do
+        expect(subject.releases).to be_empty
       end
 
       it 'has no cancellation' do
@@ -142,8 +142,8 @@ describe Report do
         expect(subject).not_to be_canceled
       end
 
-      it 'has verification' do
-        expect(subject.verifications.count).to eq 1
+      it 'has release' do
+        expect(subject.releases.count).to eq 1
       end
 
       it 'has no cancellation' do
@@ -317,18 +317,18 @@ describe Report do
   end
 
   describe '#include_signature?' do
-    it 'is true with report verification' do
+    it 'is true with report release' do
       subject = create(:verified_report)
       expect(subject.include_signature?).to be true
     end
 
-    it 'is false without report verification' do
+    it 'is false without report release' do
       subject = build(:pending_report)
       expect(subject.include_signature?).to be false
     end
   end
 
-  describe 'on verification' do
+  describe 'on release' do
     let!(:subject) { create(:pending_report) }
     let!(:document) { create(:document, report: subject) }
 

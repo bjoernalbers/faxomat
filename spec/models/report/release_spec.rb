@@ -1,6 +1,6 @@
-describe Report::Verification do
-  subject { build(:report_verification) }
-  let(:other) { create(:report_verification) }
+describe Report::Release do
+  subject { build(:report_release) }
+  let(:other) { create(:report_release) }
 
   it_behaves_like 'status change'
 
@@ -14,7 +14,7 @@ describe Report::Verification do
 
     it 'updates report documents' do
       old_fingerprint = document.fingerprint
-      create(:report_verification, report: report)
+      create(:report_release, report: report)
       document.reload
       expect(document.fingerprint).not_to eq(old_fingerprint)
     end
