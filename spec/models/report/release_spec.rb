@@ -2,10 +2,51 @@ describe Report::Release do
   subject { build(:report_release) }
   let(:other) { create(:report_release) }
 
-  it_behaves_like 'status change'
-
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Vidierung'
+  end
+
+  describe '#report' do
+    it 'is translated' do
+      expect(described_class.human_attribute_name(:report)).to eq 'Bericht'
+    end
+
+    it { should belong_to(:report) }
+
+    it 'must be present' do
+      subject.report = nil
+      expect(subject).to be_invalid
+      expect(subject.errors[:report]).to be_present
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::ActiveRecordError)
+    end
+
+    it 'must be unique' do
+      subject.report = other.report
+      expect(subject).to be_invalid
+      expect(subject.errors[:report]).to be_present
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::ActiveRecordError)
+    end
+  end
+
+  describe '#user' do
+    it 'is translated' do
+      expect(described_class.human_attribute_name(:user)).to eq 'Arzt'
+    end
+
+    it { should belong_to(:user) }
+
+    it 'must be present' do
+      subject.user = nil
+      expect(subject).to be_invalid
+      expect(subject.errors[:user]).to be_present
+      expect {
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::ActiveRecordError)
+    end
   end
 
   describe '#create' do
@@ -13,10 +54,9 @@ describe Report::Release do
     let(:document) { create(:document, report: report) }
 
     it 'updates report documents' do
-      old_fingerprint = document.fingerprint
-      create(:report_release, report: report)
-      document.reload
-      expect(document.fingerprint).not_to eq(old_fingerprint)
+      expect {
+        create(:report_release, report: report)
+      }.to change { document.reload.fingerprint }
     end
   end
 
@@ -30,7 +70,10 @@ describe Report::Release do
       expect(subject).to be_persisted
     end
 
-    it 'updates report documents'
+    it 'updates report documents' do
+      document = create(:document, report: subject.report)
+      expect { subject.destroy }.to change { document.reload.fingerprint }
+    end
   end
 
   describe '#restore' do
@@ -46,7 +89,10 @@ describe Report::Release do
       expect(subject).not_to be_deleted
     end
 
-    it 'updates report documents'
+    it 'updates report documents' do
+      document = create(:document, report: subject.report)
+      expect { subject.restore }.to change { document.reload.fingerprint }
+    end
   end
 
   describe 'default scope' do
