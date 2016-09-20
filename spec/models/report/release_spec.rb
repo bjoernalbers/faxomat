@@ -6,6 +6,42 @@ describe Report::Release do
     expect(described_class.model_name.human).to eq 'Berichtfreigabe'
   end
 
+  it 'has factory for uncanceled reports' do
+    subject = build(:uncanceled_report_release)
+    expect(subject.canceled_at).not_to be
+    expect(subject).not_to be_canceled
+  end
+
+  it 'has factory for canceled reports' do
+    subject = build(:canceled_report_release)
+    expect(subject.canceled_at).to be
+    expect(subject).to be_canceled
+  end
+
+  describe '.canceled' do
+    subject { described_class.canceled }
+
+    it 'includes canceled records' do
+      expect(subject).to include(create(:canceled_report_release))
+    end
+
+    it 'excludes uncanceld records' do
+      expect(subject).not_to include(create(:uncanceled_report_release))
+    end
+  end
+
+  describe '.uncanceled' do
+    subject { described_class.uncanceled }
+
+    it 'includes uncanceled records' do
+      expect(subject).to include(create(:uncanceled_report_release))
+    end
+
+    it 'excludes canceld records' do
+      expect(subject).not_to include(create(:canceled_report_release))
+    end
+  end
+
   describe '#report' do
     it 'is translated' do
       expect(described_class.human_attribute_name(:report)).to eq 'Bericht'
@@ -48,74 +84,44 @@ describe Report::Release do
       }.to raise_error(ActiveRecord::ActiveRecordError)
     end
 
-    it 'must be authorized on create' do
+    it 'must be authorized' do
       subject.user = build(:unauthorized_user)
       expect(subject).to be_invalid
       expect(subject.errors[:user]).to be_present
-
       subject.user = build(:authorized_user)
-      expect(subject).to be_valid
-
-      subject.save
-      subject.update_columns(user_id: create(:unauthorized_user).id)
       expect(subject).to be_valid
     end
   end
 
-  describe '#create' do
+  describe '#cancel!' do
+    it 'updates canceled_at when uncanceled' do
+      subject = create(:uncanceled_report_release)
+      expect { subject.cancel! }.to change { subject.reload.canceled_at }
+    end
+
+    it 'does not update canceled_at when canceled' do
+      subject = create(:canceled_report_release)
+      expect { subject.cancel! }.not_to change { subject.reload.canceled_at }
+    end
+  end
+
+  describe 'updates documents' do
     let(:report) { create(:report) }
     let(:document) { create(:document, report: report) }
 
-    it 'updates report documents' do
-      expect {
-        create(:report_release, report: report)
-      }.to change { document.reload.fingerprint }
-    end
-  end
-
-  describe '#destroy' do
-    subject { create(:report_release) }
-
-    it 'soft-deletes record' do
-      expect(subject).not_to be_deleted
-      subject.destroy
-      expect(subject).to be_deleted
-      expect(subject).to be_persisted
+    it 'on create' do
+      subject = build(:report_release, report: report)
+      expect { subject.save }.to change { document.reload.fingerprint }
     end
 
-    it 'updates report documents' do
-      document = create(:document, report: subject.report)
+    it 'on update' do
+      subject = create(:report_release, report: report)
+      expect { subject.save }.to change { document.reload.fingerprint }
+    end
+
+    it 'on destroy' do
+      subject = create(:report_release, report: report)
       expect { subject.destroy }.to change { document.reload.fingerprint }
-    end
-  end
-
-  describe '#restore' do
-    subject { create(:report_release) }
-
-    before do
-      subject.destroy
-    end
-
-    it 'un-deletes record' do
-      expect(subject).to be_deleted
-      subject.restore
-      expect(subject).not_to be_deleted
-    end
-
-    it 'updates report documents' do
-      document = create(:document, report: subject.report)
-      expect { subject.restore }.to change { document.reload.fingerprint }
-    end
-  end
-
-  describe 'default scope' do
-    subject { described_class.all }
-    let(:record) { create(:report_release) }
-
-    before { record.destroy }
-
-    it 'excludes soft-deleted records' do
-      expect(subject).not_to include(record)
     end
   end
 end

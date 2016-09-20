@@ -3,11 +3,27 @@ class Report::Release < ActiveRecord::Base
   belongs_to :user, required: true
 
   validates :report, uniqueness: true
-  validate :user_is_authorized, if: :user, on: :create
+  validate :user_is_authorized, if: :user
 
-  after_commit :update_documents_from_report, on: [:create, :update]
+  after_commit :update_report_documents
 
-  acts_as_paranoid
+  class << self
+    def canceled
+      where.not(canceled_at: nil)
+    end
+
+    def uncanceled
+      where(canceled_at: nil)
+    end
+  end
+
+  def cancel!
+    update!(canceled_at: Time.zone.now) unless canceled?
+  end
+
+  def canceled?
+    self[:canceled_at].present?
+  end
 
   private
 
@@ -17,7 +33,7 @@ class Report::Release < ActiveRecord::Base
     end
   end
 
-  def update_documents_from_report
+  def update_report_documents
     # NOTE: Reloading report is required to refresh the (cached) status.
     report.reload.update_documents
   end

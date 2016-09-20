@@ -21,33 +21,28 @@ class Report < ActiveRecord::Base
 
   class << self
     def pending
-      where.not(id: self::Release.with_deleted.select(:report_id))
+      where.not(id: self::Release.select(:report_id))
     end
 
     def verified
-      where(id: self::Release.without_deleted.select(:report_id))
+      where(id: self::Release.uncanceled.select(:report_id))
     end
 
     def canceled
-      where(id: self::Release.only_deleted.select(:report_id))
+      where(id: self::Release.canceled.select(:report_id))
     end
 
     def not_verified
-      where.not(id: self::Release.without_deleted.select(:report_id))
+      where.not(id: self::Release.uncanceled.select(:report_id))
     end
   end
 
   def status
-    if release
-      release.deleted? ? :canceled : :verified
+    if release.present?
+      release.canceled? ? :canceled : :verified
     else
       :pending
     end
-  end
-
-  def release
-    # Return release, even when soft-deleted
-    self.class::Release.unscoped { super }
   end
 
   def verify!
@@ -55,7 +50,7 @@ class Report < ActiveRecord::Base
   end
 
   def cancel!
-    release.destroy if release.present? && !release.deleted?
+    release.cancel! if release.present?
   end
 
   %i(pending verified canceled).each do |method_name|

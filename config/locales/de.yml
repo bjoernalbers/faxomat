@@ -80,7 +80,7 @@ de:
       report/release:
         report: Bericht
         user: Arzt
-        deleted_at: Stornierungszeitpunkt
+        canceled_at: Stornierungszeitpunkt
       api/report:
         address: Adresse
         report: Bericht
