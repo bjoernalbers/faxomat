@@ -5,6 +5,7 @@ class Report < ActiveRecord::Base
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
   has_one  :release
+  has_many :signatures
 
   validates_presence_of :anamnesis,
     :evaluation,

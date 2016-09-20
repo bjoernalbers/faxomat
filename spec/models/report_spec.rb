@@ -12,6 +12,8 @@ describe Report do
 
   it { expect(subject).to have_one(:release) }
 
+  it { expect(subject).to have_many(:signatures) }
+
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
     {

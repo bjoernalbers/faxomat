@@ -10,6 +10,7 @@ de:
       template: Vorlage
       report: Bericht
       report/release: Berichtfreigabe
+      report/signature: Unterschrift
       api/report: Bericht
       recipient: Überweiser
       user: Arzt
@@ -81,6 +82,9 @@ de:
         report: Bericht
         user: Arzt
         canceled_at: Stornierungszeitpunkt
+      report/signature:
+        report: Bericht
+        user: Arzt
       api/report:
         address: Adresse
         report: Bericht
