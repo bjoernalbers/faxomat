@@ -47,6 +47,19 @@ describe Report::Release do
         subject.save!(validate: false)
       }.to raise_error(ActiveRecord::ActiveRecordError)
     end
+
+    it 'must be authorized on create' do
+      subject.user = build(:unauthorized_user)
+      expect(subject).to be_invalid
+      expect(subject.errors[:user]).to be_present
+
+      subject.user = build(:authorized_user)
+      expect(subject).to be_valid
+
+      subject.save
+      subject.update_columns(user_id: create(:unauthorized_user).id)
+      expect(subject).to be_valid
+    end
   end
 
   describe '#create' do
