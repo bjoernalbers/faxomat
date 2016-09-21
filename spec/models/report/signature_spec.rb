@@ -47,10 +47,10 @@ describe Report::Signature do
       }.not_to raise_error(ActiveRecord::ActiveRecordError)
     end
 
-    it 'must be unique per report' do
+    it 'must not have signed report' do
       subject.attributes = { report: other.report, user: other.user }
       expect(subject).to be_invalid
-      expect(subject.errors[:user]).to be_present
+      expect(subject.errors[:user]).to include('hat Bericht bereits unterschrieben')
       expect {
         subject.save!(validate: false)
       }.to raise_error(ActiveRecord::ActiveRecordError)

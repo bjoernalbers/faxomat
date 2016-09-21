@@ -10,8 +10,8 @@ Rails.application.routes.draw do
   root 'documents#index'
 
   resources :reports, only: [:index, :show, :destroy, :update] do
-    patch :verify, on: :member
     patch :cancel, on: :member
+    resource :verification, only: [:create]
   end
 
   resources :documents, only: [:index, :show] do

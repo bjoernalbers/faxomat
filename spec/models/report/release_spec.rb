@@ -58,10 +58,10 @@ describe Report::Release do
       }.to raise_error(ActiveRecord::ActiveRecordError)
     end
 
-    it 'must be unique' do
+    it 'must be unreleased' do
       subject.report = other.report
       expect(subject).to be_invalid
-      expect(subject.errors[:report]).to be_present
+      expect(subject.errors[:report]).to include('wurde bereits freigegeben')
       expect {
         subject.save!(validate: false)
       }.to raise_error(ActiveRecord::ActiveRecordError)
@@ -87,7 +87,7 @@ describe Report::Release do
     it 'must be authorized' do
       subject.user = build(:unauthorized_user)
       expect(subject).to be_invalid
-      expect(subject.errors[:user]).to be_present
+      expect(subject.errors[:user]).to include('darf nicht Berichte freigeben')
       subject.user = build(:authorized_user)
       expect(subject).to be_valid
     end

@@ -1,4 +1,11 @@
 de:
+  activemodel:
+    models:
+      report/verification: Vidierung
+    attributes:
+      report/verification:
+        report: Bericht
+        user: Arzt
   activerecord:
     models:
       address: Adresse

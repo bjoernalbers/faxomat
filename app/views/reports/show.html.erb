@@ -27,7 +27,7 @@
     <% if @report.user == current_user %>
       <div class="btn-group">
         <% if @report.pending? %>
-            <%= button_to 'Vidieren', verify_report_path(@report), method: :patch, class: 'btn btn-primary' %>
+            <%= button_to 'Vidieren', report_verification_path(@report), method: :post, class: 'btn btn-primary' %>
             <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
         <% elsif @report.verified? %>
           <%= button_to 'Stornieren', cancel_report_path(@report), method: :patch, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>

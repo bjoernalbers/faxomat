@@ -2,7 +2,7 @@ class Report::Release < ActiveRecord::Base
   belongs_to :report, required: true
   belongs_to :user, required: true
 
-  validates :report, uniqueness: true
+  validates :report, uniqueness: { message: 'wurde bereits freigegeben' }
   validate :user_is_authorized, if: :user
 
   after_commit :update_report_documents

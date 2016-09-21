@@ -47,7 +47,7 @@ class Report < ActiveRecord::Base
   end
 
   def verify!
-    create_release!(user: user) unless release.present?
+    self.class::Verification.new(report: self, user: user).save
   end
 
   def cancel!

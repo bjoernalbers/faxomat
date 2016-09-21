@@ -27,16 +27,6 @@ class ReportsController < ApplicationController
     end
   end
 
-  def verify
-    load_user_report
-    if @report.pending?
-      @report.verify!
-      redirect_to reports_url, notice: "Arztbrief erfolgreich vidiert."
-    else
-      render :show
-    end
-  end
-
   def cancel
     load_user_report
     if @report.verified?
