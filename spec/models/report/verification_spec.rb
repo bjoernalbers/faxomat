@@ -37,7 +37,7 @@ describe Report::Verification do
     end
 
     it 'must not have signed report' do
-      create(:report_signature, report: report, user: user)
+      create(:report_signing, report: report, user: user)
       expect(subject).to be_invalid
       expect(subject.errors[:user]).to include('hat Bericht bereits unterschrieben')
     end
@@ -47,7 +47,7 @@ describe Report::Verification do
     it 'signs report' do
       expect {
         subject.save
-      }.to change { report.signatures.where(user: user).count }.by(1)
+      }.to change { report.signings.where(user: user).count }.by(1)
     end
 
     it 'verifies report' do
@@ -72,8 +72,8 @@ describe Report::Verification do
         subject.send(:models) << bomb
       end
 
-      it 'does not save signature' do
-        expect { subject.save }.not_to change { report.signatures.count }
+      it 'does not save signing' do
+        expect { subject.save }.not_to change { report.signings.count }
       end
 
       it 'does not verify report' do

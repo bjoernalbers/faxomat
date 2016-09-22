@@ -27,7 +27,7 @@
     <% if user_signed_in? %>
       <div class="btn-group">
         <% if @report.pending? %>
-          <% if @report.signatures.where(user: current_user).empty? %>
+          <% unless @report.signed_by?(current_user) %>
             <%= button_to 'Vidieren', report_verification_path(@report), method: :post, class: 'btn btn-primary' %>
           <% end %>
           <% if @report.deletable? %>

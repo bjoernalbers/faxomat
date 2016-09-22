@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160921222353) do
+ActiveRecord::Schema.define(version: 20160922103754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,14 +123,14 @@ ActiveRecord::Schema.define(version: 20160921222353) do
   add_index "report_releases", ["report_id"], name: "index_report_releases_on_report_id", unique: true, using: :btree
   add_index "report_releases", ["user_id"], name: "index_report_releases_on_user_id", using: :btree
 
-  create_table "report_signatures", force: :cascade do |t|
+  create_table "report_signings", force: :cascade do |t|
     t.integer  "report_id",  null: false
     t.integer  "user_id",    null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "report_signatures", ["report_id", "user_id"], name: "index_report_signatures_on_report_id_and_user_id", unique: true, using: :btree
+  add_index "report_signings", ["report_id", "user_id"], name: "index_report_signings_on_report_id_and_user_id", unique: true, using: :btree
 
   create_table "reports", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -192,6 +192,6 @@ ActiveRecord::Schema.define(version: 20160921222353) do
   add_foreign_key "recipients", "addresses"
   add_foreign_key "report_releases", "reports"
   add_foreign_key "report_releases", "users"
-  add_foreign_key "report_signatures", "reports"
-  add_foreign_key "report_signatures", "users"
+  add_foreign_key "report_signings", "reports"
+  add_foreign_key "report_signings", "users"
 end

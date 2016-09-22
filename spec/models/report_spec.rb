@@ -12,7 +12,7 @@ describe Report do
 
   it { expect(subject).to have_one(:release) }
 
-  it { expect(subject).to have_many(:signatures) }
+  it { expect(subject).to have_many(:signings) }
 
   it 'is translated' do
     expect(described_class.model_name.human).to eq 'Bericht'
@@ -252,7 +252,7 @@ describe Report do
     subject { create(:report) }
 
     before do
-      create(:report_signature, report: subject)
+      create(:report_signing, report: subject)
     end
 
     it 'is not destroyable' do
@@ -335,6 +335,20 @@ describe Report do
     it 'is false without report release' do
       subject = build(:pending_report)
       expect(subject.include_signature?).to be false
+    end
+  end
+
+  describe '#signed_by?' do
+    subject { create(:report) }
+    let!(:signing) { create(:report_signing, report: subject) }
+
+    it 'is true when signed by user' do
+      expect(subject).to be_signed_by(signing.user)
+    end
+
+    it 'is false when signed by other user' do
+      other = create(:user)
+      expect(subject).not_to be_signed_by(other)
     end
   end
 

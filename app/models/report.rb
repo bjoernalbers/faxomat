@@ -5,7 +5,7 @@ class Report < ActiveRecord::Base
   has_many :documents, dependent: :destroy
   has_many :prints, through: :documents
   has_one  :release
-  has_many :signatures
+  has_many :signings
 
   validates_presence_of :anamnesis,
     :evaluation,
@@ -42,7 +42,7 @@ class Report < ActiveRecord::Base
     end
 
     def signed
-      where(id: self::Signature.select(:report_id))
+      where(id: self::Signing.select(:report_id))
     end
   end
 
@@ -75,7 +75,11 @@ class Report < ActiveRecord::Base
   alias_method :deletable?, :updatable?
 
   def unsigned?
-    signatures.empty?
+    signings.empty?
+  end
+
+  def signed_by?(user)
+    signings.exists?(user: user)
   end
 
   def subject

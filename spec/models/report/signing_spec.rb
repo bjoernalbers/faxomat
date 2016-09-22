@@ -1,9 +1,9 @@
-describe Report::Signature do
-  subject { build(:report_signature) }
-  let(:other) { create(:report_signature) }
+describe Report::Signing do
+  subject { build(:report_signing) }
+  let(:other) { create(:report_signing) }
 
   it 'is translated' do
-    expect(described_class.model_name.human).to eq 'Unterschrift'
+    expect(described_class.model_name.human).to eq 'Unterzeichnung'
   end
 
   describe '#report' do

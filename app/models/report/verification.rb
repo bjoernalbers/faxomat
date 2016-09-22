@@ -25,11 +25,11 @@ class Report::Verification
 
   def models
     @models ||=
-      (user.can_release_reports? ? [ signature, release ] : [ signature ])
+      (user.can_release_reports? ? [ signing, release ] : [ signing ])
   end
 
-  def signature
-    Report::Signature.new(report: report, user: user)
+  def signing
+    Report::Signing.new(report: report, user: user)
   end
 
   def release
