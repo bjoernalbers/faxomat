@@ -1,4 +1,5 @@
 class VerificationsController < ApplicationController
+  before_action :authenticate_user!
   before_action :load_report
   before_action :build_verification
 
