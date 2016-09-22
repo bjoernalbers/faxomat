@@ -44,6 +44,10 @@ class Report < ActiveRecord::Base
     def signed
       where(id: self::Signing.select(:report_id))
     end
+
+    def unsigned
+      where.not(id: self::Signing.select(:report_id))
+    end
   end
 
   def status
