@@ -136,11 +136,15 @@ class ReportPdf
 
     text %{Mit freundlichen Grüßen}, size: 11.pt
 
-    # TODO: Test this!
     if report.include_signature?
-      image report.signature_path, height: 4*font.height if report.signature_path.present?
-      text report.physician_name, size: 11.pt
-      text report.physician_suffix, size: 11.pt
+      report.signings.each_with_index do |signing,index|
+        move_down font.height
+        if signing.signature_path.present?
+          image signing.signature_path, height: 4*font.height
+        end
+        text signing.full_name, size: 11.pt
+        text signing.suffix, size: 11.pt
+      end
     end
   end
 

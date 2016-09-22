@@ -6,6 +6,10 @@ describe Report::Signing do
     expect(described_class.model_name.human).to eq 'Unterzeichnung'
   end
 
+  [ :signature_path, :full_name, :suffix ].each do |method|
+    it { should delegate_method(method).to(:user) }
+  end
+
   describe '#report' do
     it 'is translated' do
       expect(described_class.human_attribute_name(:report)).to eq 'Bericht'

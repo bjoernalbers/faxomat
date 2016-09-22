@@ -4,4 +4,6 @@ class Report::Signing < ActiveRecord::Base
 
   validates :user, uniqueness: {
     scope: :report, message: 'hat Bericht bereits unterschrieben' }
+
+  delegate :signature_path, :full_name, :suffix, to: :user
 end

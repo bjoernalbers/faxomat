@@ -110,10 +110,6 @@ class Report < ActiveRecord::Base
     user.try(:suffix)
   end
 
-  def signature_path
-    user.try(:signature_path)
-  end
-
   def to_pdf
     ReportPdf.new(self)
   end

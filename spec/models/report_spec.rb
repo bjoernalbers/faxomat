@@ -313,19 +313,6 @@ describe Report do
     end
   end
 
-  describe '#signature_path' do
-    let(:user) { build(:user) }
-
-    before do
-      allow(user).to receive(:signature_path).and_return('signature.png')
-      subject.user = user
-    end
-
-    it 'returns path to user signature' do
-      expect(subject.signature_path).to eq 'signature.png'
-    end
-  end
-
   describe '#include_signature?' do
     it 'is true with report release' do
       subject = create(:verified_report)
