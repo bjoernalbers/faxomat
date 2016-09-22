@@ -1,9 +1,12 @@
 <ul id="reports_nav" class="nav nav-tabs">
-  <li role="presentation" class=<%= 'active' if params[:pending] != 'false' %>>
+  <li role="presentation" class=<%= 'active' if params[:filter].blank? %>>
     <%= link_to 'Unvidiert', reports_path %>
   </li>
-  <li role="presentation" class=<%= 'active' if params[:pending] == 'false' %>>
-    <%= link_to 'Heute', reports_path(pending: false) %>
+  <li role="presentation" class=<%= 'active' if params[:filter] == 'today' %>>
+    <%= link_to 'Heute', reports_path(filter: 'today') %>
+  </li>
+  <li role="presentation" class=<%= 'active' if params[:filter] == 'unreleased' %>>
+    <%= link_to 'Unveröffentlicht', reports_path(filter: 'unreleased') %>
   </li>
 </ul>
 

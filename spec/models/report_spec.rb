@@ -80,6 +80,17 @@ describe Report do
     end
   end
 
+  describe '.unreleased reports' do
+    it 'returns all pending and signed reports' do
+      pending = create(:pending_report)
+      pending_and_signed = create(:pending_report, user: create(:unauthorized_user))
+      pending_and_signed.verify!
+      verified = create(:verified_report)
+      canceled = create(:canceled_report)
+      expect(described_class.unreleased.all).to eq  [ pending_and_signed ]
+    end
+  end
+
   describe '.not_verified' do
     let(:subject) { described_class.not_verified }
 
@@ -234,6 +245,25 @@ describe Report do
         expect(subject.update(attributes_for(:report))).to eq false
         expect(subject.errors[:base]).to be_present
       end
+    end
+  end
+
+  context 'when signed' do
+    subject { create(:report) }
+
+    before do
+      create(:report_signature, report: subject)
+    end
+
+    it 'is not destroyable' do
+      expect { subject.destroy }.to change(Report, :count).by(0)
+      expect(subject.errors[:base]).to be_present
+      expect(subject).not_to be_deletable
+    end
+
+    it 'is not updatable' do
+      expect(subject.update(attributes_for(:report))).to eq false
+      expect(subject.errors[:base]).to be_present
     end
   end
 

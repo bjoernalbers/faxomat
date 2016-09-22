@@ -36,6 +36,7 @@ feature 'Delete reports' do
   end
 
   scenario 'when from other user' do
+    pending
     report = create(:pending_report)
     visit report_url(report)
 

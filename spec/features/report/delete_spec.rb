@@ -20,6 +20,7 @@ feature 'Delete report' do
   end
 
   scenario 'when from other user' do
+    pending
     report = create(:pending_report)
     visit report_url(report)
     expect(page).not_to have_button 'Löschen'

@@ -36,6 +36,14 @@ class Report < ActiveRecord::Base
     def not_verified
       where.not(id: self::Release.uncanceled.select(:report_id))
     end
+
+    def unreleased
+      pending.signed
+    end
+
+    def signed
+      where(id: self::Signature.select(:report_id))
+    end
   end
 
   def status
@@ -59,9 +67,16 @@ class Report < ActiveRecord::Base
       status == method_name
     end
   end
-  alias_method :deletable?, :pending?
-  alias_method :updatable?, :pending?
   alias_method :include_signature?, :verified?
+
+  def updatable?
+    unsigned? && pending?
+  end
+  alias_method :deletable?, :updatable?
+
+  def unsigned?
+    signatures.empty?
+  end
 
   def subject
     "#{study} vom #{study_date.strftime('%-d.%-m.%Y')}"

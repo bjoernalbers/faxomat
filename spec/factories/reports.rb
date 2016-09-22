@@ -46,6 +46,14 @@ FactoryGirl.define do
         report.cancel!
       end
     end
+
+    factory :unreleased_report do
+      association :user, factory: :unauthorized_user
+
+      after(:create) do |report,evaluator|
+        report.verify!
+      end
+    end
   end
 
   factory :api_report, class: API::Report do

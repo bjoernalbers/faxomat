@@ -57,9 +57,11 @@ class ReportsController < ApplicationController
   end
 
   def reports
-    if params[:pending] == 'false'
+    if params[:filter] == 'today'
       #current_user.reports.verified
       current_user.reports.where('updated_at > ?', Time.zone.now.beginning_of_day).order(updated_at: :desc)
+    elsif params[:filter] == 'unreleased'
+      Report.unreleased
     else
       current_user.reports.pending
     end

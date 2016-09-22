@@ -24,12 +24,16 @@
 
 <div class="row">
   <div class="col-md-12">
-    <% if @report.user == current_user %>
+    <% if user_signed_in? %>
       <div class="btn-group">
         <% if @report.pending? %>
+          <% if @report.signatures.where(user: current_user).empty? %>
             <%= button_to 'Vidieren', report_verification_path(@report), method: :post, class: 'btn btn-primary' %>
+          <% end %>
+          <% if @report.deletable? %>
             <%= button_to 'Löschen', report_path(@report), method: :delete, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich löschen?' } %>
-        <% elsif @report.verified? %>
+          <% end %>
+        <% elsif @report.verified? && current_user.can_release_reports? %>
           <%= button_to 'Stornieren', cancel_report_path(@report), method: :patch, class: 'btn btn-danger', data: { confirm: 'Arztbrief wirklich stornieren?' } %>
         <% end %>
       </div>
