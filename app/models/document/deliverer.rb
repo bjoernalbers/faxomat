@@ -9,6 +9,8 @@ class Document::Deliverer
   def deliver
     print_document
     export_document if document.recipient_is_evk?
+  rescue StandardError => e
+    Rails.logger.error(e.message)
   end
 
   def print_document

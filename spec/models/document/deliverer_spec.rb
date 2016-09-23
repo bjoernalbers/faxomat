@@ -35,6 +35,25 @@ describe Document::Deliverer do
         expect(subject).not_to have_received(:export_document)
       end
     end
+
+    context 'when printing raises error' do
+      let(:logger) { double('logger') }
+      let(:error_message) { 'Oops!' }
+      before do
+        allow(subject).to receive(:print_document) { raise error_message }
+        allow(Rails).to receive(:logger) { logger }
+        allow(logger).to receive(:error)
+      end
+
+      it 'rescues exception' do
+        expect { subject.deliver }.not_to raise_error(RuntimeError)
+      end
+
+      it 'logs exception' do
+        subject.deliver
+        expect(logger).to have_received(:error).with(error_message)
+      end
+    end
   end
 
   describe '#print_document' do
