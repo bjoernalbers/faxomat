@@ -56,6 +56,24 @@
         </p>
       <% end %>
     <% end %>
+
+    <% if @report.signed? %>
+      <h3>
+        Vidiert von...
+      </h3>
+      <ul class="list-group">
+        <% @report.signings.each do |signing| %>
+          <li class='list-group-item'>
+            <%= signing.full_name %>
+            <% if signing.destroyable_by?(current_user) %>
+              <%= link_to 'Vidierung löschen', signing_path(signing),
+                method: :delete, class: 'pull-right' %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
   </div>
   <div class="col-md-4">
     <h3>

@@ -60,4 +60,29 @@ describe Report::Signing do
       }.to raise_error(ActiveRecord::ActiveRecordError)
     end
   end
+
+  describe '#destroy' do
+    subject { create(:report_signing, report: report) }
+
+    context 'with pending report' do
+      let(:report) { create(:pending_report) }
+
+      it 'destroys record' do
+        expect { subject.destroy }.to change(subject, :persisted?)
+      end
+    end
+
+    context 'with verified report' do
+      let(:report) { create(:verified_report) }
+
+      it 'does not destroy record' do
+        expect { subject.destroy }.not_to change(subject, :persisted?)
+      end
+
+      it 'adds error' do
+        subject.destroy
+        expect(subject.errors[:report]).to be_present
+      end
+    end
+  end
 end

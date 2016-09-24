@@ -78,12 +78,16 @@ class Report < ActiveRecord::Base
   end
   alias_method :deletable?, :updatable?
 
-  def unsigned?
-    signings.empty?
+  def signed?
+    signings.exists?
   end
 
   def signed_by?(user)
     signings.exists?(user: user)
+  end
+
+  def unsigned?
+    !signed?
   end
 
   def subject

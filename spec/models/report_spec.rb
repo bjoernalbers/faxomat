@@ -325,6 +325,19 @@ describe Report do
     end
   end
 
+  describe '#signed?' do
+    subject { create(:report) }
+
+    it 'is true when signed' do
+      create(:report_signing, report: subject)
+      expect(subject).to be_signed
+    end
+
+    it 'is false when not signed' do
+      expect(subject).not_to be_signed
+    end
+  end
+
   describe '#signed_by?' do
     subject { create(:report) }
     let!(:signing) { create(:report_signing, report: subject) }

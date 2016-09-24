@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     patch :cancel, on: :member
     resource :verification, only: [:create]
   end
+  resources :signings, only: :destroy
 
   resources :documents, only: [:index, :show] do
     member do
