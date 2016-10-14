@@ -85,6 +85,12 @@ describe Print do
   describe '#printer' do
     it { expect(subject).to belong_to(:printer) }
     it { expect(subject).to validate_presence_of(:printer) }
+
+    it 'returns even deleted printers' do
+      printer = create(:printer)
+      subject = create(:print, printer: printer)
+      expect { printer.destroy }.not_to change { subject.reload.printer }
+    end
   end
 
   describe '#fax_number' do

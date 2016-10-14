@@ -48,4 +48,41 @@ describe Printer do
   describe '#dialout_prefix' do
     it { expect(subject).not_to validate_presence_of(:dialout_prefix) }
   end
+
+  describe '#destroy' do
+    subject { create(:printer) }
+
+    it 'soft-deletes record' do
+      expect(subject).not_to be_deleted
+      subject.destroy
+      expect(subject).to be_deleted
+      expect(subject).to be_persisted
+    end
+  end
+
+  describe '#restore' do
+    subject { create(:printer) }
+
+    before do
+      subject.destroy
+    end
+
+    it 'undeletes record' do
+      expect(subject).to be_persisted
+      expect(subject).to be_deleted
+      subject.restore
+      expect(subject).not_to be_deleted
+    end
+  end
+
+  describe 'default scope' do
+    subject { described_class.all }
+    let(:record) { create(:printer) }
+
+    before { record.destroy }
+
+    it 'excludes soft-deleted records' do
+      expect(subject).not_to include(record)
+    end
+  end
 end

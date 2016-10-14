@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160922103754) do
+ActiveRecord::Schema.define(version: 20161014090017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,8 +93,10 @@ ActiveRecord::Schema.define(version: 20160922103754) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.string   "type"
+    t.datetime "deleted_at"
   end
 
+  add_index "printers", ["deleted_at"], name: "index_printers_on_deleted_at", using: :btree
   add_index "printers", ["name"], name: "index_printers_on_name", unique: true, using: :btree
 
   create_table "recipients", force: :cascade do |t|

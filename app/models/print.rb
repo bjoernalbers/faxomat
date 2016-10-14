@@ -1,6 +1,6 @@
 # Keeps track of print jobs.
 class Print < Delivery
-  belongs_to :printer, required: true
+  belongs_to :printer, -> { with_deleted }, required: true
 
   validates :fax_number,
     presence: true, fax: true, if: :belongs_to_fax_printer?
