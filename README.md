@@ -58,8 +58,6 @@ I suggest to use PostgreSQL as production database.
 To do that you have to install it via homebrew which is quite [simple](http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/)
 
 
-## Some boring stuff
+## License
 
-Copyright (c) 2015 Björn Albers
-
-This is licensed under... hmm... I dunno. Let's say MIT, ok?
+Faxomat is released under the [MIT License](LICENSE.txt).
