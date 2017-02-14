@@ -46,7 +46,7 @@ class Print::CupsDriver
     cups_job = if printer.is_fax_printer?
       Cups::PrintJob.new(print.path, printer.name, 'phone' => fax_number)
     else
-      Cups::PrintJob.new(print.path, printer.name)
+      Cups::PrintJob.new(print.path, printer.name, 'Duplex' => 'DuplexNoTumble')
     end
     cups_job.title = print.title if print.title
     cups_job

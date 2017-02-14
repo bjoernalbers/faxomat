@@ -68,7 +68,7 @@ describe Print::CupsDriver do
       it 'prints as CUPS print' do
         subject.run
         expect(Cups::PrintJob).to have_received(:new).
-          with('chunky_bacon.pdf', printer.name)
+          with('chunky_bacon.pdf', printer.name, {"Duplex"=>"DuplexNoTumble"})
         expect(cups_job).to have_received(:print)
       end
     end
