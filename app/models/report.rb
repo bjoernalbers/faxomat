@@ -127,6 +127,10 @@ class Report < ActiveRecord::Base
     documents.find_each { |document| document.save }
   end
 
+  def cancelable_by?(user)
+    verified? && self[:user_id] == user.id
+  end
+
   private
 
   # NOTE: Tomedo somehow sends both carriage return and newlines. We're

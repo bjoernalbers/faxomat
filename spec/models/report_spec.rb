@@ -375,4 +375,23 @@ describe Report do
       expect(document.fingerprint).not_to eq(old_fingerprint)
     end
   end
+
+  describe '#cancelable_by?' do
+    let(:user) { create(:user) }
+
+    it 'is false when not verified' do
+      subject = create(:pending_report, user: user)
+      expect(subject).not_to be_cancelable_by(user)
+    end
+
+    it 'is false when verified but from other user' do
+      subject = create(:verified_report, user: create(:user))
+      expect(subject).not_to be_cancelable_by(user)
+    end
+
+    it 'is true when verified and from user' do
+      subject = create(:verified_report, user: user)
+      expect(subject).to be_cancelable_by(user)
+    end
+  end
 end
