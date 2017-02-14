@@ -140,7 +140,7 @@ class ReportPdf
       report.signings.each_with_index do |signing,index|
         move_down font.height
         if signing.signature_path.present?
-          image signing.signature_path, height: 4*font.height
+          image signing.signature_path, height: 2*font.height
         end
         text signing.full_name, size: 11.pt
         text signing.suffix, size: 11.pt
