@@ -21,7 +21,7 @@ FactoryGirl.define do
     #  studies.split("\n").map(&:strip).sample
     #end
     study { Faker::Lorem.sentence }
-    study_date { Faker::Date.between(2.days.ago, Date.today) }
+    study_date { Faker::Time.between(2.days.ago, Date.today) }
     anamnesis { Faker::Lorem.sentences.join("\n") }
     diagnosis { Faker::Lorem.sentences.join("\n") }
     findings { Faker::Lorem.sentences.join("\n") }
@@ -59,7 +59,7 @@ FactoryGirl.define do
   factory :api_report, class: API::Report do
     recipient_salutation  { ['Hallo,', 'Moin,', 'Hi,', nil].sample }
     study                 { Faker::Lorem.sentence }
-    study_date            { Faker::Date.between(2.days.ago, Date.today) }
+    study_date            { Faker::Time.between(2.days.ago, Date.today) }
     anamnesis             { Faker::Lorem.sentences.join("\n") }
     diagnosis             { Faker::Lorem.sentences.join("\n") }
     findings              { Faker::Lorem.sentences.join("\n") }

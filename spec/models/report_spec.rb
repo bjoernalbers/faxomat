@@ -207,8 +207,8 @@ describe Report do
 
   describe '#subject' do
     it 'joins study and study date' do
-      subject = build(:report, study: 'MRT des Kopfes', study_date: '2016-01-01')
-      expect(subject.subject).to eq 'MRT des Kopfes vom 1.1.2016'
+      subject = build(:report, study: 'MRT des Kopfes', study_date: '2016-01-01 02:34')
+      expect(subject.subject).to eq 'MRT des Kopfes vom 1.1.2016 um 02:34 Uhr'
     end
   end
 
