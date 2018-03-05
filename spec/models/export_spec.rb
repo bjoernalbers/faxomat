@@ -187,20 +187,6 @@ describe Export do
 
   ### Private methods below!!! ###
 
-  describe '#copy_file!' do
-    before do
-      allow(FileUtils).to receive(:cp)
-      allow(subject).to receive(:source) { '/tmp/foo.pdf' }
-      allow(subject).to receive(:destination) { '/tmp/bar.pdf' }
-    end
-
-    it 'copies source to destination' do
-      subject.send(:copy_file!)
-      expect(FileUtils).to have_received(:cp).
-        with('/tmp/foo.pdf', '/tmp/bar.pdf')
-    end
-  end
-
   describe '#copy_file' do
     context 'without exception' do
       before do
