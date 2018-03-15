@@ -70,7 +70,6 @@ module API
 
     validates :recipient_fax_number, fax: true
 
-    before_validation :split_study_and_study_date
     before_validation :strip_nondigits_from_fax_number
 
     delegate :id, :persisted?, to: :report, allow_nil: true
@@ -203,15 +202,6 @@ module API
 
     def save_patient_document!
       @patient_document = Document.find_or_create_by!(report: report, recipient: patient_recipient)
-    end
-
-    # NOTE: I found no way to send the study date independent from the study in
-    # Tomedo, which is Karteieintrag "Untersuchung" (UNT).
-    # Thats why both fields are joined and must be split afterwards.
-    def split_study_and_study_date
-      if study_date.blank? && study && match = study.match(%r{^([0-9.-]+):\s+(.+)$})
-        self.study_date, self.study = match.captures
-      end
     end
 
     def strip_nondigits_from_fax_number
