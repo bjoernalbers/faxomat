@@ -91,7 +91,8 @@ class Report < ActiveRecord::Base
   end
 
   def subject
-    "#{study} vom #{study_date.strftime('%-d.%-m.%Y')} um #{study_date.strftime('%H:%M')} Uhr"
+    "#{study} vom #{study_date.strftime('%-d.%-m.%Y')}"
+    #"#{study} vom #{study_date.strftime('%-d.%-m.%Y')} um #{study_date.strftime('%H:%M')} Uhr"
   end
 
   def title
