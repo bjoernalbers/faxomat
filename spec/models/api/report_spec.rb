@@ -356,30 +356,6 @@ module API
       end
     end
 
-    describe '#study_date' do
-      context 'when prefixed in study' do
-        let(:subject) { build(:api_report,
-                              study_date: nil,
-                              study:      '01.12.1980: Party: Yes!') }
-
-        it 'splits study and study date on validation' do
-          subject.validate
-          expect(subject.study_date).to eq '01.12.1980'
-          expect(subject.study).to eq 'Party: Yes!'
-        end
-      end
-
-      context 'when missing and study date is nil' do
-        let(:subject) { build(:api_report,
-                              study_date: nil,
-                              study:      nil) }
-
-        it 'does not raise error' do
-          expect { subject.validate }.not_to raise_error
-        end
-      end
-    end
-
     it 'saves report' do
       subject = build(:api_report)
       expect{subject.save}.to change(::Report, :count).by(1)
