@@ -24,6 +24,25 @@ describe Document do
 
   it { expect(subject).to have_many(:exports) }
 
+  describe '.deliver' do
+    subject { create(:document) }
+    let(:deliverer) { double(:deliverer) }
+    let(:deliverer_class) { Document::Deliverer }
+
+    before do
+      allow(described_class).to receive(:find).and_return(subject)
+      allow(deliverer_class).to receive(:new).and_return(deliverer)
+      allow(deliverer).to receive(:deliver)
+    end
+
+    it 'delivers the document' do
+      described_class.deliver(subject.id)
+      expect(described_class).to have_received(:find).with(subject.id)
+      expect(deliverer_class).to have_received(:new).with(subject)
+      expect(deliverer).to have_received(:deliver)
+    end
+  end
+
   describe '#title' do
     context 'without report' do
       let(:subject) { build(:document, report: nil, title: nil) }
@@ -387,18 +406,14 @@ describe Document do
   end
 
   describe '#deliver' do
-    let(:deliverer) { double(:deliverer) }
-    let(:deliverer_class) { Document::Deliverer }
-
     before do
-      allow(deliverer_class).to receive(:new).and_return(deliverer)
-      allow(deliverer).to receive(:deliver)
+      allow(DeliveryJob).to receive(:perform_later)
     end
 
-    it 'delivers itself' do
-      subject.deliver
-      expect(deliverer_class).to have_received(:new).with(subject)
-      expect(deliverer).to have_received(:deliver)
+    it 'delivers itself later' do
+      # NOTE: `subject.deliver` gets called on create.
+      subject.save
+      expect(DeliveryJob).to have_received(:perform_later).with(subject.id)
     end
   end
 

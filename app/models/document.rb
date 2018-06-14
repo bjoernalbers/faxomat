@@ -16,6 +16,10 @@ class Document < ActiveRecord::Base
   after_commit :deliver, on: [:update, :create], if: :to_deliver? # TODO: Test this!
 
   class << self
+    def deliver(document_id)
+      Document::Deliverer.new(find(document_id)).deliver
+    end
+
     def delivered_today
       includes(:deliveries).
         where('deliveries.created_at > ?', Time.zone.now.beginning_of_day).
@@ -79,7 +83,7 @@ class Document < ActiveRecord::Base
   delegate :fax_number, to: :recipient
 
   def deliver
-    Deliverer.new(self).deliver
+    DeliveryJob.perform_later(id)
   end
 
   def filename
