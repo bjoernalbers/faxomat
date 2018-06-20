@@ -159,4 +159,16 @@ describe Recipient do
       expect(recipient.errors[:fax_number]).to be_present
     end
   end
+
+  describe '#send_with_hylafax' do
+    it 'defaults to false' do
+      subject = described_class.new
+      expect(subject.send_with_hylafax).to eq false
+    end
+
+    it 'can be set to true' do
+      subject = described_class.new(send_with_hylafax: true)
+      expect(subject.send_with_hylafax).to eq true
+    end
+  end
 end
