@@ -10,5 +10,8 @@ FactoryGirl.define do
     factory :paper_printer, class: PaperPrinter do
       dialout_prefix { nil }
     end
+
+    factory :hylafax_printer, class: HylafaxPrinter do
+    end
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180620090321) do
+ActiveRecord::Schema.define(version: 20180621155501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,10 +106,14 @@ ActiveRecord::Schema.define(version: 20180620090321) do
     t.string   "name"
     t.string   "label"
     t.integer  "dialout_prefix"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.string   "type"
     t.datetime "deleted_at"
+    t.string   "host",           default: "127.0.0.1", null: false
+    t.integer  "port",           default: 4559,        null: false
+    t.string   "user",           default: "anonymous", null: false
+    t.string   "password",       default: "anonymous", null: false
   end
 
   add_index "printers", ["deleted_at"], name: "index_printers_on_deleted_at", using: :btree
