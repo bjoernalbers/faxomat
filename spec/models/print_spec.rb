@@ -175,10 +175,15 @@ describe Print do
       expect(subject).not_to validate_uniqueness_of(:job_number)
     end
 
-    it 'validates uniqueness in database' do
-      subject.job_number = create(:completed_print).job_number
+    it 'validates uniqueness scoped by printer in database' do
+      printer = create(:printer)
+      subject.printer = printer
+      subject.job_number = create(:completed_print, printer: printer).job_number
       expect{ subject.save!(validate: false) }.
         to raise_error(ActiveRecord::ActiveRecordError)
+
+      subject.printer = create(:printer)
+      expect{ subject.save!(validate: false) }.not_to raise_error
     end
   end
 
