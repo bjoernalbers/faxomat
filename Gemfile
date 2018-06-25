@@ -83,3 +83,5 @@ gem 'rails-i18n', '~> 4.0'
 gem 'paranoia', '~> 2.2.0.pre'
 
 gem 'delayed_job_active_record'
+
+gem 'hylafax'
