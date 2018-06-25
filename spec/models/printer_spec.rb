@@ -37,7 +37,9 @@ describe Printer do
 
     it 'can not be stored when not unique' do
       subject.name = create(:printer).name
-      expect{ subject.save!(validate: false) }.to raise_error
+      expect{
+        subject.save!(validate: false)
+      }.to raise_error(ActiveRecord::ActiveRecordError)
     end
   end
 

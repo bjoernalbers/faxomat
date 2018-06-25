@@ -281,7 +281,7 @@ describe Report do
     it 'does not fail when nil' do
       text_attributes.each do |text_attribute|
         subject[text_attribute] = nil
-        expect{ subject.save!(validate: false) }.not_to raise_error NoMethodError
+        expect{ subject.save!(validate: false) }.not_to raise_error
       end
     end
   end

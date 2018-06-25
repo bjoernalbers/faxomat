@@ -46,9 +46,7 @@ describe Report::Signing do
     it 'can be non-unique' do
       subject.user = other.user
       expect(subject).to be_valid
-      expect {
-        subject.save!(validate: false)
-      }.not_to raise_error(ActiveRecord::ActiveRecordError)
+      expect { subject.save!(validate: false) }.not_to raise_error
     end
 
     it 'must not have signed report' do

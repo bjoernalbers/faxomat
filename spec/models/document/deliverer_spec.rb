@@ -46,7 +46,7 @@ describe Document::Deliverer do
       end
 
       it 'rescues exception' do
-        expect { subject.deliver }.not_to raise_error(RuntimeError)
+        expect { subject.deliver }.not_to raise_error
       end
 
       it 'logs exception' do

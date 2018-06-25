@@ -158,9 +158,7 @@ describe Export do
 
     it 'does not delete destination when missing' do
       subject.destination.delete
-      expect {
-        subject.destroy
-      }.not_to raise_error(StandardError)
+      expect { subject.destroy }.not_to raise_error
     end
   end
 

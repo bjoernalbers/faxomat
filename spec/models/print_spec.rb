@@ -76,8 +76,15 @@ describe Print do
         allow(subject).to receive(:fake_printing?).and_return(false)
       end
 
-      it 'returns CUPS driver' do
-        expect(subject.driver_class).to eq described_class::CupsDriver
+      context 'when recipient should receive hylafax prints' do
+      end
+
+      context 'when recipient should not receive hylafax prints' do
+        let(:recipient) { build(:recipient, send_with_hylafax: false) }
+
+        it 'returns CUPS driver' do
+          expect(subject.driver_class).to eq described_class::CupsDriver
+        end
       end
     end
   end
