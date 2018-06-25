@@ -4,7 +4,7 @@ class Print::TestDriver
 
   class << self
     # Returns empty hash.
-    def statuses(printer_name)
+    def statuses(printer)
       {}
     end
   end

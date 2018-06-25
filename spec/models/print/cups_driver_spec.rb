@@ -4,14 +4,15 @@ describe Print::CupsDriver do
 
   describe '.statuses' do
     let(:subject) { described_class }
+    let(:printer) { build(:paper_printer) }
 
     before do
       allow(Cups).to receive(:all_jobs).and_return( {} )
     end
 
     it 'queries CUPS jobs by printer name' do
-      subject.statuses('printer name')
-      expect(Cups).to have_received(:all_jobs).with('printer name')
+      subject.statuses(printer)
+      expect(Cups).to have_received(:all_jobs).with(printer.name)
     end
 
     it 'converts and returns hash of print job statuses' do
@@ -22,7 +23,7 @@ describe Print::CupsDriver do
         4 => { state: :active    },
         5 => { state: :chunky    }
       })
-      expect(subject.statuses('printer name')).to eq({
+      expect(subject.statuses(printer)).to eq({
         1 => :completed,
         2 => :aborted,
         3 => :aborted,

@@ -13,7 +13,7 @@ class Print < Delivery
     # Updates status of active print jobs.
     def update_active
       Printer.active.find_each do |printer|
-        statuses_by_job_number = driver_class.statuses(printer.name)
+        statuses_by_job_number = driver_class.statuses(printer)
         printer.prints.active.find_each do |print|
           if status = statuses_by_job_number[print.job_number]
             print.update!(status: status)

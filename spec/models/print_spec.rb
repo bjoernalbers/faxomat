@@ -41,7 +41,7 @@ describe Print do
     it 'groups status queries by printer' do
       create_list(:active_print, 2, printer: printer)
       subject.update_active
-      expect(driver_class).to have_received(:statuses).with(printer.name).once
+      expect(driver_class).to have_received(:statuses).with(printer).once
     end
 
     it 'updates active print jobs' do
