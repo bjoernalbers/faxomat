@@ -15,7 +15,7 @@
     <div class="btn-group">
       <%= link_to 'Herunterladen', download_document_path(@document), class: 'btn btn-default' %>
       <% if @document.released_for_delivery? %>
-        <% if @document.recipient_fax_number? && fax_printer = FaxPrinter.default %>
+        <% if @document.recipient_fax_number? && fax_printer = (@document.send_with_hylafax? ? HylafaxPrinter : FaxPrinter).default %>
           <%= button_to 'Faxen', prints_path, method: :post,
             params: { 'print[printer_id]' => fax_printer.id, 'print[document_id]' => @document.id },
             class: 'btn btn-primary' %>
