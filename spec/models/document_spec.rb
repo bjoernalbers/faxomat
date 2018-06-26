@@ -261,6 +261,10 @@ describe Document do
     it { expect(subject).to delegate_method(:fax_number).to(:recipient) }
   end
 
+  describe '#send_with_hylafax?' do
+    it { expect(subject).to delegate_method(:send_with_hylafax?).to(:recipient) }
+  end
+
   describe '#delivered?' do
     let(:subject) { create(:document) }
 

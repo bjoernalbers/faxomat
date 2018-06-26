@@ -59,14 +59,26 @@ describe Document::Deliverer do
   describe '#print_document' do
     let!(:fax_printer)   { create(:fax_printer) }
     let!(:paper_printer) { create(:paper_printer) }
+    let!(:hylafax_printer) { create(:hylafax_printer) }
 
-    context 'with recipient fax number' do
-      let(:recipient) { create(:recipient) }
+    context 'with recipient fax number but not hylafax enabled' do
+      let(:recipient) { create(:recipient, send_with_hylafax: false) }
 
-      it 'creates fax job' do
+      it 'creates CUPS fax job' do
         expect { subject.print_document }.to change(Print, :count).by(1)
         print = Print.last
         expect(print.printer).to eq fax_printer
+        expect(print.fax_number).to eq recipient.fax_number
+      end
+    end
+
+    context 'with recipient fax number and hylafax enabled' do
+      let(:recipient) { create(:recipient, send_with_hylafax: true) }
+
+      it 'creates HylaFAX fax job' do
+        expect { subject.print_document }.to change(Print, :count).by(1)
+        print = Print.last
+        expect(print.printer).to eq hylafax_printer
         expect(print.fax_number).to eq recipient.fax_number
       end
     end

@@ -58,16 +58,19 @@ describe Print do
     let(:subject) { described_class }
 
     it 'is test driver in current environment' do
-      expect(subject.driver_class).to eq described_class::TestDriver
+      printer = build(:fax_printer)
+      expect(subject.driver_class(printer)).to eq described_class::TestDriver
     end
 
     context 'with fake_printing enabled' do
+      let(:printer) { build(:fax_printer) }
+
       before do
         allow(subject).to receive(:fake_printing?).and_return(true)
       end
 
       it 'returns test driver' do
-        expect(subject.driver_class).to eq described_class::TestDriver
+        expect(subject.driver_class(printer)).to eq described_class::TestDriver
       end
     end
 
@@ -76,14 +79,19 @@ describe Print do
         allow(subject).to receive(:fake_printing?).and_return(false)
       end
 
-      context 'when recipient should receive hylafax prints' do
+      context 'and with HylaFAX-Printer' do
+        let(:printer) { build(:hylafax_printer) }
+
+        it 'returns HylaFAX driver' do
+          expect(subject.driver_class(printer)).to eq described_class::HylafaxDriver
+        end
       end
 
-      context 'when recipient should not receive hylafax prints' do
-        let(:recipient) { build(:recipient, send_with_hylafax: false) }
-
+      context 'and with Cups-Printer' do
+        let(:printer) { build(:fax_printer) }
+        
         it 'returns CUPS driver' do
-          expect(subject.driver_class).to eq described_class::CupsDriver
+          expect(subject.driver_class(printer)).to eq described_class::CupsDriver
         end
       end
     end
@@ -347,12 +355,11 @@ describe Print do
   describe '#driver' do
     let(:driver) { double(:driver) }
     let(:driver_class) { double('driver_class') }
+    subject { build(:print) }
 
     before do
-      allow(driver).to receive(:run)
       allow(driver_class).to receive(:new).and_return(driver)
-      allow(described_class).to receive(:driver_class).
-        and_return(driver_class)
+      allow(subject).to receive(:driver_class) { driver_class }
     end
 
     it 'initializes driver' do
@@ -361,9 +368,8 @@ describe Print do
     end
 
     it 'returns cached driver' do
-      allow(driver_class).to receive(:new).and_return(driver)
-      2.times { expect(subject.send(:driver)).to eq driver }
-      expect(driver_class).to have_received(:new).twice # wg. callback "twice", sonst "once"
+      2.times { subject.send(:driver) }
+      expect(driver_class).to have_received(:new).once
     end
   end
 end

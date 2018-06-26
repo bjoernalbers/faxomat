@@ -13,7 +13,7 @@ class Print < Delivery
     # Updates status of active print jobs.
     def update_active
       Printer.active.find_each do |printer|
-        statuses_by_job_number = driver_class.statuses(printer)
+        statuses_by_job_number = driver_class(printer).statuses(printer)
         printer.prints.active.find_each do |print|
           if status = statuses_by_job_number[print.job_number]
             print.update!(status: status)
@@ -30,8 +30,12 @@ class Print < Delivery
       @fake_printing = true_or_false
     end
 
-    def driver_class
-      fake_printing? ? self::TestDriver : self::CupsDriver
+    def driver_class(printer)
+      if fake_printing?
+        self::TestDriver
+      else
+        printer.class == HylafaxPrinter ? self::HylafaxDriver : self::CupsDriver
+      end
     end
   end
 
@@ -122,6 +126,16 @@ class Print < Delivery
   end
 
   def driver
-    @driver ||= self.class.driver_class.new(self)
+    @driver ||= driver_class.new(self)
+  end
+
+  def driver_class
+    if self.class.fake_printing?
+      self.class::TestDriver
+    elsif document.fax_number.present? && document.send_with_hylafax?
+      self.class::HylafaxDriver
+    else
+      self.class::CupsDriver
+    end
   end
 end

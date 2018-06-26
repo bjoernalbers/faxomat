@@ -80,7 +80,7 @@ class Document < ActiveRecord::Base
   end
 
   delegate :path, :content_type, :fingerprint, to: :file
-  delegate :fax_number, to: :recipient
+  delegate :fax_number, :send_with_hylafax?, to: :recipient
 
   def deliver
     DeliveryJob.perform_later(id)

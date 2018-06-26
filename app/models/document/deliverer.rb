@@ -25,7 +25,11 @@ class Document::Deliverer
   private
 
   def printer
-    (recipient.fax_number.present? ? FaxPrinter : PaperPrinter).default
+    (if recipient.fax_number.present?
+      recipient.send_with_hylafax? ? HylafaxPrinter : FaxPrinter
+    else
+      PaperPrinter
+    end).default
   end
 
   def directory
