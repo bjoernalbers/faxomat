@@ -161,14 +161,14 @@ describe Recipient do
   end
 
   describe '#send_with_hylafax' do
-    it 'defaults to false' do
+    it 'defaults to true' do
       subject = described_class.new
-      expect(subject.send_with_hylafax).to eq false
+      expect(subject.send_with_hylafax).to eq true
     end
 
-    it 'can be set to true' do
-      subject = described_class.new(send_with_hylafax: true)
-      expect(subject.send_with_hylafax).to eq true
+    it 'can be set to false' do
+      subject = described_class.new(send_with_hylafax: false)
+      expect(subject.send_with_hylafax).to eq false
     end
   end
 end
