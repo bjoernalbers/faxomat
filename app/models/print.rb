@@ -132,10 +132,8 @@ class Print < Delivery
   def driver_class
     if self.class.fake_printing?
       self.class::TestDriver
-    elsif document.fax_number.present? && document.send_with_hylafax?
-      self.class::HylafaxDriver
     else
-      self.class::CupsDriver
+      printer.class == HylafaxPrinter ? self.class::HylafaxDriver : self.class::CupsDriver
     end
   end
 end

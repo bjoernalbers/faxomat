@@ -372,4 +372,34 @@ describe Print do
       expect(driver_class).to have_received(:new).once
     end
   end
+
+  describe '#driver_class' do
+    subject { build(:print) }
+
+    context 'with fake printing enabled' do
+      before do
+        allow(described_class).to receive(:fake_printing?) { true }
+      end
+
+      it 'returns test driver' do
+        expect(subject.send(:driver_class)).to eq described_class::TestDriver
+      end
+    end
+
+    context 'with fake printing disabled' do
+      before do
+        allow(described_class).to receive(:fake_printing?) { false }
+      end
+
+      it 'and HylaFAX printer returns HylafaxDriver' do
+        subject.printer = build(:hylafax_printer)
+        expect(subject.send(:driver_class)).to eq described_class::HylafaxDriver
+      end
+
+      it 'but no HylaFAX printer returns CupsDriver' do
+        subject.printer = build(:paper_printer)
+        expect(subject.send(:driver_class)).to eq described_class::CupsDriver
+      end
+    end
+  end
 end
