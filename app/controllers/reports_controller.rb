@@ -60,7 +60,7 @@ class ReportsController < ApplicationController
     if params[:filter] == 'today'
       current_user.reports.where('updated_at > ?', Time.zone.now.beginning_of_day).order(updated_at: :desc)
     elsif params[:filter] == 'unreleased'
-      Report.unreleased
+      Report.unreleased.joins(:patient).order('patients.last_name')
     else
       current_user.reports.unsigned
     end
