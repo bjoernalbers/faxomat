@@ -146,6 +146,15 @@ class ReportPdf
         text signing.suffix, size: 11.pt
       end
     end
+
+    number_pages "Seite <page> von <total> - #{report.patient_name}",
+      {
+        start_count_at: 2,
+        page_filter: lambda{ |pg| pg != 1 },
+        at: [0, 0],
+        align: :center,
+        size: 10,
+      }
   end
 
   def watermark
