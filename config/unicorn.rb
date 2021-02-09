@@ -1,4 +1,4 @@
-listen '127.0.0.1:3000'
+listen '0.0.0.0:3000'
 worker_processes 2
 timeout 30
 pid '/tmp/unicorn.pid'
