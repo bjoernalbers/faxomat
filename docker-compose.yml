@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env/development/web
+      - .env/development/db
+    volumes:
+      - .:/opt/faxomat
+  db:
+    image: postgres:9.5
+    env_file:
+      - .env/development/db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
