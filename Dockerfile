@@ -7,7 +7,7 @@ RUN apt-get update && \
 RUN mkdir -p /opt/faxomat
 WORKDIR /opt/faxomat
 COPY Gemfile* ./
-RUN bundle install
+RUN bundle install --binstubs
 COPY . .
 EXPOSE 3000
 CMD ["bundle", "exec", "unicorn", "-c", "config/unicorn.rb"]
