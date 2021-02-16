@@ -9,6 +9,7 @@ services:
       - .env/development/web
       - .env/development/db
     volumes:
+      - storage:/opt/faxomat/storage
       - .:/opt/faxomat
   db:
     image: postgres:9.5
@@ -19,3 +20,4 @@ services:
 
 volumes:
   pgdata:
+  storage:

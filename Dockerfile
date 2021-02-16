@@ -6,6 +6,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /opt/faxomat
 WORKDIR /opt/faxomat
+VOLUME /opt/faxomat/storage
 COPY Gemfile* ./
 RUN bundle install --binstubs
 COPY . .
