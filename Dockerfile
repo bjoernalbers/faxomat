@@ -2,13 +2,17 @@ FROM ruby:2.0
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
     nodejs \
+    cups \
     libcups2-dev && \
   rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /opt/faxomat
 WORKDIR /opt/faxomat
-VOLUME /opt/faxomat/storage
 COPY Gemfile* ./
 RUN bundle install --binstubs
 COPY . .
+COPY cupsd.conf /etc/cups/cupsd.conf
+VOLUME /opt/faxomat/storage
+VOLUME ["/var/spool/cups", "/var/cache/cups", "/var/log/cups", "/var/run/cups", "/etc/cups"]
 EXPOSE 3000
+ENTRYPOINT ["/opt/faxomat/docker-entrypoint.sh"]
 CMD ["bundle", "exec", "unicorn", "-c", "config/unicorn.rb"]

@@ -4,6 +4,7 @@ services:
   web:
     build: .
     ports:
+      - "631:631"
       - "3000:3000"
     env_file:
       - .env/development/web
@@ -11,6 +12,11 @@ services:
     volumes:
       - storage:/opt/faxomat/storage
       - .:/opt/faxomat
+      - cups_spool:/var/spool/cups
+      - cups_cache:/var/cache/cups
+      - cups_log:/var/log/cups
+      - cups_run:/var/run/cups
+      - cups_etc:/etc/cups
   db:
     image: postgres:9.5
     env_file:
@@ -21,3 +27,8 @@ services:
 volumes:
   pgdata:
   storage:
+  cups_spool:
+  cups_cache:
+  cups_log:
+  cups_run:
+  cups_etc:
