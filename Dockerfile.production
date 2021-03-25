@@ -7,8 +7,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /opt/faxomat
 WORKDIR /opt/faxomat
+RUN mkdir -p vendor/cache
+COPY vendor/cache vendor/cache
 COPY Gemfile* ./
-RUN bundle install --binstubs
+RUN bundle install --binstubs --local
 COPY . .
 COPY cupsd.conf /etc/cups/cupsd.conf
 RUN bin/rake assets:precompile

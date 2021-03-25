@@ -1,0 +1,12 @@
+Makefile
+*.o
+*.bundle
+*.so
+*.out
+*.log
+pkg
+doc
+.DS_Store
+*.gem
+ext/build.sh
+website/*

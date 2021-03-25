@@ -1,0 +1,49 @@
+== Version 0.0.10
+2014-12-05: Build compatibility with Mac OS X 10.10 (Yosemite)
+
+== Version 0.0.7
+
+2010-11-12: PrintJob instances now take an options hash, thanks to [ransombriggs]
+
+== Version 0.0.6
+
+2009-06-05: Added Transient adapter
+
+2009-06-26: Fixed bug when trying to print to a server with no default printer specified
+
+== Version 0.0.5
+
+2009-05-19: Added a Cups.options_for to view print server options [butzopower]
+
+2009-05-18: Job state bug fixes by [butzopower]
+
+2009-05-13: Proper RDoc
+
+2009-05-12: Rubyforge project created
+
+* Created holding page [http://cups.rubyforge.org/]
+
+== Version 0.0.4
+
+2009-03-03: Tweaks to cups.c
+
+* If no printer is specified for a PrintJob, it falls back to the default
+* An error now gets raised if a non-existent printer/print class is specified
+* More tests
+
+== Version 0.0.3
+
+2009-02-26: Packaging tweaks
+
+* Warns if libcups isn't installed
+* Started documenting methods
+
+== Version 0.0.2
+
+2009-02-26
+
+* Started extending test coverage
+
+== Version 0.0.1
+
+2009-02-22: Initial release
