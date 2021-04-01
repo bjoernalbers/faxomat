@@ -39,7 +39,7 @@ class Document < ActiveRecord::Base
     end
 
     def without_active_or_completed_delivery
-      where.not(id: Delivery.active_or_completed.select(:document_id))
+      where(Delivery.active_or_completed.where('deliveries.document_id = documents.id').exists.not)
     end
 
     def exportable_to_evk
