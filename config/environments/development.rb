@@ -41,4 +41,7 @@ Rails.application.configure do
 
   # Enable single-line logging
   config.lograge.enabled = true
+
+  # Log to STDOUT
+  config.logger = ActiveSupport::Logger.new(STDOUT)
 end
