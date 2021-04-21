@@ -79,4 +79,4 @@ gem 'paranoia', '~> 2.2.0.pre'
 
 gem 'delayed_job_active_record'
 
-gem 'hylafax'
+gem 'hylafax', '~> 0.4'

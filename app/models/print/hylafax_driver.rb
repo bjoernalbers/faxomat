@@ -8,7 +8,8 @@ class Print::HylafaxDriver
         host: printer.host,
         port: printer.port,
         user: printer.user,
-        password: printer.password).inject({}) do |memo, (job_number,status)|
+        password: printer.password,
+        passive: true).inject({}) do |memo, (job_number,status)|
           memo[job_number] = convert_status(status)
           memo
         end
@@ -36,7 +37,8 @@ class Print::HylafaxDriver
       user: printer.user,
       password: printer.password,
       dialstring: dialstring,
-      document: print.path)
+      document: print.path,
+      passive: true)
   end
 
   private

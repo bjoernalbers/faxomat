@@ -110,7 +110,7 @@ GEM
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     hashery (2.1.1)
-    hylafax (0.3.1)
+    hylafax (0.4.0)
     i18n (0.7.0)
     jbuilder (2.3.1)
       activesupport (>= 3.0.0, < 5)
@@ -282,7 +282,7 @@ DEPENDENCIES
   devise-i18n (~> 0.12)
   factory_girl_rails (~> 4.5)
   faker (~> 1.4)
-  hylafax
+  hylafax (~> 0.4)
   jbuilder (~> 2.0)
   jquery-rails
   lograge

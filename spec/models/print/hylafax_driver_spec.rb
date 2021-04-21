@@ -15,7 +15,8 @@ describe Print::HylafaxDriver do
         with(host: printer.host,
              port: printer.port,
              user: printer.user,
-             password: printer.password)
+             password: printer.password,
+             passive: true)
     end
 
     it 'converts and returns hash of hylafax job statuses' do
@@ -41,7 +42,8 @@ describe Print::HylafaxDriver do
              user: printer.user,
              password: printer.password,
              dialstring: printer.dialout_prefix.to_s + print.fax_number,
-             document: print.path)
+             document: print.path,
+             passive: true)
     end
 
     it 'returns job_number' do
