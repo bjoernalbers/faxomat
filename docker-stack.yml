@@ -11,6 +11,7 @@ services:
      - .env/production/db
     volumes:
       - storage:/opt/faxomat/storage
+      - export:/opt/faxomat/export
       - cups_spool:/var/spool/cups
       - cups_cache:/var/cache/cups
       - cups_log:/var/log/cups
@@ -26,6 +27,7 @@ services:
 volumes:
   pgdata:
   storage:
+  export:
   cups_spool:
   cups_cache:
   cups_log:

@@ -6,6 +6,7 @@ RUN apt-get update && \
     libcups2-dev && \
   rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /opt/faxomat
+RUN mkdir -p /opt/faxomat/export
 WORKDIR /opt/faxomat
 RUN mkdir -p vendor/cache
 COPY vendor/cache vendor/cache
@@ -13,7 +14,7 @@ COPY Gemfile* ./
 RUN bundle install --binstubs --local
 COPY . .
 COPY cupsd.conf /etc/cups/cupsd.conf
-VOLUME /opt/faxomat/storage
+VOLUME ["/opt/faxomat/storage", "/opt/faxomat/export"]
 VOLUME ["/var/spool/cups", "/var/cache/cups", "/var/log/cups", "/var/run/cups", "/etc/cups"]
 EXPOSE 3000
 ENTRYPOINT ["/opt/faxomat/docker-entrypoint.sh"]
