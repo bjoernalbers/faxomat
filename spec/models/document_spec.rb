@@ -222,12 +222,12 @@ describe Document do
     let(:subject) { described_class.with_evk_recipient }
 
     it 'includes document with EVK recipient' do
-      recipient.update(fax_number: '02941671')
+      recipient.update!(fax_number: '02941670')
       expect(subject).to include document
     end
 
     it 'excludes document without EVK recipient' do
-      recipient.update(fax_number: '02941672')
+      recipient.update!(fax_number: '02941680')
       expect(subject).not_to include document
     end
   end
@@ -373,7 +373,7 @@ describe Document do
     let(:subject) { build(:document, recipient: recipient) }
 
     context 'with EVK fax number prefix' do
-      let(:recipient) { create(:recipient, fax_number: '02941671') }
+      let(:recipient) { create(:recipient, fax_number: '02941670') }
 
       it 'is true' do
         expect(subject.recipient_is_evk?).to eq true
@@ -381,7 +381,7 @@ describe Document do
     end
 
     context 'with different fax number prefix' do
-      let(:recipient) { create(:recipient, fax_number: '02941672') }
+      let(:recipient) { create(:recipient, fax_number: '02941680') }
 
       it 'is false' do
         expect(subject.recipient_is_evk?).to eq false
