@@ -1,3 +1,4 @@
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=Platine-Flasche-Stock
 POSTGRES_DB=faxomat_development
+TZ=Europe/Berlin

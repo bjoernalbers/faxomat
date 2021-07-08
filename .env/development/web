@@ -1,1 +1,2 @@
 DATABASE_HOST=db
+TZ=Europe/Berlin
