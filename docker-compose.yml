@@ -24,6 +24,16 @@ services:
       - .env/development/db
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command:
+      - postgres
+      - -c
+      - shared_buffers=1GB
+      - -c
+      - work_mem=64MB
+      - -c
+      - synchronous_commit=off
+      - -c
+      - fsync=off
 
 volumes:
   pgdata:
