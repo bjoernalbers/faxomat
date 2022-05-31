@@ -1,62 +1,29 @@
-# Faxomat - A Fax Machine with HTTP API
+# Faxomat - Send faxes via HTTP
 
-Fax isn't going to be dead in the near future.
-It exists since the age of dinosaurs and will probably survive humans as well.
-But that doesn't mean that we can't automate the shit out of it, right?
-Faxomat turns a Mac + USB modem + phone line into a fax machine with a modern
-HTTP API.
-Sending a fax is easy as...
+Faxomat provides a simple HTTP API for sending faxes like this:
 
 ```
 /usr/bin/curl \
   -F fax[phone]="0123456789" \
   -F fax[title]="hello, world." \
   -F fax[document]="@hello.pdf;type=application/pdf" \
-  http://localhost:5000/faxes
+  http://localhost:3000/faxes
 ```
 
+## Things you have to bring for production
 
-## Things you have to bring...
+You need the following:
 
-- phone line would be nice
-- USB-modem (USR805637 from US Robotics works fine)
-- Mac with a decent version of Mac OS X (Mavericks is ok, Tiger probably not)
-- beer & pizza for first deployment
+- phone line and USB modem
+- a hylafax server
+- Docker for deployment of faxomat
 
+## Quickstart (Development Environment)
 
-## Quickstart
-
-- Install XCode along with Command Line Developer Tools
-- Install Bundler with `sudo gem install bundler`
-- Set up your USB-modem and name it "Fax" (extra points when you verify it
-  by "printing" a test fax manually)
-- clone this repo and `cd` into it
-- bootstrap with...
-
-```
-bundle install
-bin/rake db:setup
-bin/rails server
-```
-
-- send a test-fax and the the web UI for open faxes (they will show up in the
-  printer queue as well)
-- done (now celebrate with beer & pizza)
-
-** Note: The previous setup task creates a default fax printer named 'Fax' in the database.
-Make sure that the name corresponds to the actual fax printer name or rename it in the database!**
-
-## After that
-
-TODO: Describe troubleshooting for "too many open files" errors!
-TODO: Describe deployment with launchd!
-
-
-## Deployment
-
-I suggest to use PostgreSQL as production database.
-To do that you have to install it via homebrew which is quite [simple](http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/)
-
+- setup the the hylafax server and make sure it is working
+- install docker
+- clone this repo and run `docker compose up` to start the services
+- then initialize the database in another terminal via `docker compose run bin/rake db:setup`
 
 ## License
 
