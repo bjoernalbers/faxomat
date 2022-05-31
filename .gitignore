@@ -23,8 +23,5 @@
 
 /.capistrano
 
-# Ansible stuff
-/playbooks
-
 # Production environment variables
 /.env/production
