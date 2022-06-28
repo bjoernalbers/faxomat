@@ -11,7 +11,7 @@ WORKDIR /opt/faxomat
 RUN mkdir -p vendor/cache
 COPY vendor/cache vendor/cache
 COPY Gemfile* ./
-RUN bundle install --binstubs --local
+RUN bundle install --local
 COPY . .
 COPY cupsd.conf /etc/cups/cupsd.conf
 VOLUME ["/opt/faxomat/storage", "/opt/faxomat/export"]
