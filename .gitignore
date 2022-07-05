@@ -15,10 +15,5 @@
 # Ignore stored attachments.
 /storage
 
-# Ignore site-specific deployment configuration
-/config/deploy
-
-/.capistrano
-
 # Production environment variables
 /.env/production

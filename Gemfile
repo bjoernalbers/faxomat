@@ -32,12 +32,6 @@ gem 'unicorn'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-group :development do
-  # Use Capistrano for deployment
-  gem 'capistrano-rails'
-  gem 'capistrano', '3.3.5'
-end
-
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
   gem 'shoulda-matchers', '~> 2.8'
