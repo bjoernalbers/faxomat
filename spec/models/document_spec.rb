@@ -196,22 +196,6 @@ describe Document do
     end
   end
 
-  describe '.with_evk_recipient' do
-    let(:recipient) { create(:recipient) }
-    let!(:document) { create(:document, recipient: recipient) }
-    let(:subject) { described_class.with_evk_recipient }
-
-    it 'includes document with EVK recipient' do
-      recipient.update!(fax_number: '02941670')
-      expect(subject).to include document
-    end
-
-    it 'excludes document without EVK recipient' do
-      recipient.update!(fax_number: '02941680')
-      expect(subject).not_to include document
-    end
-  end
-
   describe '.search' do
     let(:subject) { described_class }
     let!(:document) { create(:document, title: 'Chunky Bacon') }
