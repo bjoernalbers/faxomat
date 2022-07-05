@@ -38,11 +38,6 @@ class Document < ActiveRecord::Base
       where(Delivery.active_or_completed.where('deliveries.document_id = documents.id').exists.not)
     end
 
-    def with_verified_report
-      joins(:report).
-        merge(Report.verified)
-    end
-
     def with_report
       where.not(report_id: nil)
     end
