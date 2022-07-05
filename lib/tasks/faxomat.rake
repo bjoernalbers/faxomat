@@ -7,12 +7,6 @@ namespace :faxomat do
     logger
   end
 
-  desc 'Update status of active prints.'
-  task :check => :environment do
-    puts "#{Time.zone.now.iso8601} Updating active print jobs on #{Rails.env}..."
-    Print.update_active
-  end
-
   desc 'Start the scheduler to run periodic tasks.'
   task :scheduler => :environment do |task|
     scheduler = Rufus::Scheduler.new
