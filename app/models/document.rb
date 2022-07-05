@@ -38,10 +38,6 @@ class Document < ActiveRecord::Base
       where(Delivery.active_or_completed.where('deliveries.document_id = documents.id').exists.not)
     end
 
-    def with_report
-      where.not(report_id: nil)
-    end
-
     def search(query)
       if query[:title].present?
         result = all

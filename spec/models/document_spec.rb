@@ -180,22 +180,6 @@ describe Document do
     end
   end
 
-  describe '.with_report' do
-    let(:subject) { described_class.with_report }
-
-    it 'includes document with report' do
-      document = create(:document, report: create(:report))
-      expect(document.report).not_to be nil
-      expect(subject).to include document
-    end
-
-    it 'excludes document without report' do
-      document = create(:document)
-      expect(document.report).to be nil
-      expect(subject).not_to include document
-    end
-  end
-
   describe '.search' do
     let(:subject) { described_class }
     let!(:document) { create(:document, title: 'Chunky Bacon') }
