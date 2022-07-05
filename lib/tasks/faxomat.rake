@@ -40,21 +40,4 @@ namespace :faxomat do
 
     scheduler.join
   end
-
-  desc 'Delete old exports.'
-  task :delete_old_exports => :environment do |task|
-    logger = build_logger
-    deleted_exports =
-      Export.without_deleted.where('created_at < ?', 3.months.ago).destroy_all
-    count = deleted_exports.count
-    noun = Export.model_name.human(count: count)
-    unless count.zero?
-      deleted_exports.each do |e|
-        logger.debug {
-          "#{task.name}: #{e.model_name.human} #{e.id} (#{e.destination})"
-        }
-      end
-    end
-    logger.info "#{task.name}: #{count} #{noun} gelöscht"
-  end
 end
