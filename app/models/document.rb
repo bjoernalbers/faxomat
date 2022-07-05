@@ -38,16 +38,6 @@ class Document < ActiveRecord::Base
       where(Delivery.active_or_completed.where('deliveries.document_id = documents.id').exists.not)
     end
 
-    def exportable_to_evk
-      without_export.
-        with_evk_recipient.
-        with_verified_report
-    end
-
-    def without_export
-      where.not(id: Export.select(:document_id))
-    end
-
     def with_evk_recipient
       joins(:recipient).
         merge(Recipient.where('fax_number LIKE ?', '0294167%'))

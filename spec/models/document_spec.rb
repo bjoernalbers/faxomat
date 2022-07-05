@@ -196,26 +196,6 @@ describe Document do
     end
   end
 
-  describe '.without_export' do
-    let!(:document) { create(:document) }
-    let(:subject) { described_class.without_export }
-
-    it 'includes document without export' do
-      expect(subject).to include document
-    end
-
-    it 'excludes document with export' do
-      create(:export, document: document)
-      expect(subject).not_to include document
-    end
-
-    it 'excludes document with soft-deleted export' do
-      export = create(:export, document: document)
-      export.destroy
-      expect(subject).not_to include document
-    end
-  end
-
   describe '.with_evk_recipient' do
     let(:recipient) { create(:recipient) }
     let!(:document) { create(:document, recipient: recipient) }
